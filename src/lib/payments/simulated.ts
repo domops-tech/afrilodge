@@ -1,0 +1,96 @@
+import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
+import type {
+  CreateIntentParams,
+  CreateIntentResult,
+  PaymentProvider,
+  ProviderPaymentStatus,
+} from "@/lib/payments/provider";
+
+/**
+ * Simulateur Mobile Money — tient lieu de PSP réel tant que le §12 du CDC
+ * n'est pas tranché (établissement agréé BCEAO). Reproduit le contrat
+ * complet du port `PaymentProvider` : intention, conservation, libération,
+ * remboursement, webhooks signés et idempotents. Brancher le PSP réel plus
+ * tard consiste à écrire un second fichier qui implémente la même
+ * interface — aucun appelant ne change.
+ *
+ * État conservé en mémoire du process, sur `globalThis` plutôt que sur une
+ * variable de module : Next.js compile les Server Actions (création
+ * d'intention) et les Route Handlers (réception du webhook) en bundles
+ * distincts, chacun avec sa propre instance de module — voir le même
+ * correctif sur src/lib/sms/provider.ts pour le détail. Suffisant pour un
+ * simulateur de développement, pas pour une exécution multi-instance. À
+ * remplacer par l'état réel du PSP au moment de l'intégration (CDC §12).
+ */
+const globalForPayments = globalThis as unknown as {
+  simulatedPaymentState: Map<string, ProviderPaymentStatus> | undefined;
+};
+const sharedState =
+  globalForPayments.simulatedPaymentState ?? new Map<string, ProviderPaymentStatus>();
+globalForPayments.simulatedPaymentState = sharedState;
+
+class SimulatedMobileMoneyProvider implements PaymentProvider {
+  readonly name = "simulated";
+  private state = sharedState;
+
+  async createIntent(params: CreateIntentParams): Promise<CreateIntentResult> {
+    const providerIntentRef = `sim_${randomUUID()}`;
+    this.state.set(providerIntentRef, "pending");
+    console.log(
+      `[PaymentSimulator] intention créée pour la réservation ${params.bookingId} : ${providerIntentRef} (${params.amount} FCFA)`
+    );
+    return { providerIntentRef };
+  }
+
+  async getStatus(providerIntentRef: string): Promise<ProviderPaymentStatus> {
+    return this.state.get(providerIntentRef) ?? "failed";
+  }
+
+  /**
+   * Simule le voyageur qui complète le paiement sur ses propres canaux
+   * Mobile Money. Réservé au développement et aux tests — le PSP réel
+   * appellera notre webhook de son propre côté.
+   */
+  simulatePayerCompletion(providerIntentRef: string): void {
+    if (this.state.get(providerIntentRef) === "pending") {
+      this.state.set(providerIntentRef, "held");
+    }
+  }
+
+  async release(providerIntentRef: string): Promise<void> {
+    if (this.state.get(providerIntentRef) !== "held") {
+      throw new Error(`Impossible de libérer des fonds non conservés : ${providerIntentRef}`);
+    }
+    this.state.set(providerIntentRef, "released");
+  }
+
+  async refund(providerIntentRef: string): Promise<void> {
+    this.state.set(providerIntentRef, "refunded");
+  }
+
+  buildWebhookSignature(rawBody: string): string {
+    const secret = process.env.PAYMENT_WEBHOOK_SECRET ?? "";
+    return createHmac("sha256", secret).update(rawBody).digest("hex");
+  }
+
+  verifyWebhook(rawBody: string, signatureHeader: string | null): boolean {
+    if (!signatureHeader) return false;
+    const expected = Buffer.from(this.buildWebhookSignature(rawBody));
+    const actual = Buffer.from(signatureHeader);
+    return expected.length === actual.length && timingSafeEqual(expected, actual);
+  }
+}
+
+let provider: PaymentProvider | undefined;
+
+export function getPaymentProvider(): PaymentProvider {
+  if (provider) return provider;
+
+  switch (process.env.PAYMENT_PROVIDER) {
+    case "simulated":
+    default:
+      provider = new SimulatedMobileMoneyProvider();
+  }
+
+  return provider;
+}

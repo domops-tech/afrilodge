@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  DATABASE_URL: "postgresql://sejours:sejours@localhost:5432/sejours?schema=public"
+  AUTH_SECRET: "ci-secret-not-for-production"
+  PAYMENT_WEBHOOK_SECRET: "ci-secret-not-for-production"
+  SMS_PROVIDER: "console"
+  PAYMENT_PROVIDER: "simulated"
+
+jobs:
+  checks:
+    name: Lint, typecheck, unit tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: sejours
+          POSTGRES_PASSWORD: sejours
+          POSTGRES_DB: sejours
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U sejours -d sejours"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npx prisma migrate deploy
+      - run: npm test
+
+  e2e:
+    name: End-to-end (Playwright)
+    runs-on: ubuntu-latest
+    needs: checks
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: sejours
+          POSTGRES_PASSWORD: sejours
+          POSTGRES_DB: sejours
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U sejours -d sejours"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx prisma migrate deploy
+      - run: npx prisma db seed
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14

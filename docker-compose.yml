@@ -1,0 +1,45 @@
+name: sejours
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sejours
+      POSTGRES_PASSWORD: sejours
+      POSTGRES_DB: sejours
+    ports:
+      # 5433 sur l'hôte : le 5432 par défaut est déjà occupé sur cette machine
+      # par un autre projet.
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sejours -d sejours"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Stockage objet S3-compatible pour les photographies de vérification
+  # (CDC §7.1 — "stockage sur un service objet, servi par un réseau de diffusion").
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: sejours
+      MINIO_ROOT_PASSWORD: sejours-secret
+    ports:
+      - "9000:9000" # API S3
+      - "9001:9001" # console web
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
+  minio_data:

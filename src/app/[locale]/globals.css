@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+/*
+ * Jetons du design system minimal (S0-6). Palette volontairement réduite :
+ * un accent, une couleur de succès pour la mention « Vérifié », des gris
+ * neutres. Tout composant de base (bouton, champ, carte, badge) doit
+ * consommer ces variables plutôt que des couleurs en dur, pour que le thème
+ * sombre reste correct partout.
+ */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --surface: #f8f8f7;
+  --border: #e4e4e2;
+  --muted: #6b6b68;
+
+  --accent: #b45309; /* terre cuite — évoque le meublé, pas une banque */
+  --accent-foreground: #ffffff;
+
+  --verified: #15803d;
+  --verified-foreground: #ffffff;
+
+  --danger: #b91c1c;
+
+  --radius: 0.75rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-verified: var(--verified);
+  --color-verified-foreground: var(--verified-foreground);
+  --color-danger: var(--danger);
+  --radius-default: var(--radius);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0b0b0a;
+    --foreground: #ededec;
+    --surface: #171715;
+    --border: #2c2c29;
+    --muted: #9a9a96;
+
+    --accent: #d97a2b;
+    --accent-foreground: #171412;
+
+    --verified: #4ade80;
+    --verified-foreground: #0b1f10;
+
+    --danger: #f87171;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Toute la surface publique est pensée pour un écran de 360px de large
+   d'abord (CDC §2, §11.3) : pas de largeur minimale supérieure ici. */

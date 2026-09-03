@@ -1,0 +1,43 @@
+{
+  "common": {
+    "appName": "Séjours",
+    "loading": "Loading…",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "back": "Back",
+    "language": "Language",
+    "comingSoon": "This page is coming in a future sprint."
+  },
+  "nav": {
+    "search": "Search",
+    "owner": "Owner space",
+    "field": "Field app",
+    "admin": "Back office",
+    "login": "Log in",
+    "logout": "Log out"
+  },
+  "verification": {
+    "badge": "Verified",
+    "visitedOn": "Visited on {date}",
+    "verifiedBy": "Verified by {agentName}",
+    "expiresOn": "Valid until {date}",
+    "expired": "Verification expired"
+  },
+  "auth": {
+    "phoneLabel": "Phone number",
+    "phonePlaceholder": "+225 07 00 00 00 00",
+    "fullNameLabel": "Full name (first login)",
+    "sendCode": "Send code",
+    "codeLabel": "Code received by SMS",
+    "codeSent": "A code was sent to {phone}.",
+    "verify": "Verify",
+    "invalidCode": "Incorrect code. Try again.",
+    "expiredCode": "This code has expired, request a new one.",
+    "tooManyAttempts": "Too many attempts. Request a new code.",
+    "rateLimited": "Too many requests for this number. Try again in a few minutes."
+  },
+  "home": {
+    "tagline": "A furnished home, verified on site, booked with Mobile Money.",
+    "searchCta": "Find a home"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "common": {
+    "appName": "Séjours",
+    "loading": "Chargement…",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "language": "Langue",
+    "comingSoon": "Cette page arrive dans un prochain sprint."
+  },
+  "nav": {
+    "search": "Rechercher",
+    "owner": "Espace propriétaire",
+    "field": "Application terrain",
+    "admin": "Back-office",
+    "login": "Se connecter",
+    "logout": "Se déconnecter"
+  },
+  "verification": {
+    "badge": "Vérifié",
+    "visitedOn": "Visité le {date}",
+    "verifiedBy": "Vérifié par {agentName}",
+    "expiresOn": "Valable jusqu'au {date}",
+    "expired": "Vérification expirée"
+  },
+  "auth": {
+    "phoneLabel": "Numéro de téléphone",
+    "phonePlaceholder": "+225 07 00 00 00 00",
+    "fullNameLabel": "Nom complet (première connexion)",
+    "sendCode": "Envoyer le code",
+    "codeLabel": "Code reçu par SMS",
+    "codeSent": "Un code a été envoyé au {phone}.",
+    "verify": "Vérifier",
+    "invalidCode": "Code incorrect. Réessayez.",
+    "expiredCode": "Ce code a expiré, demandez-en un nouveau.",
+    "tooManyAttempts": "Trop de tentatives. Demandez un nouveau code.",
+    "rateLimited": "Trop de demandes pour ce numéro. Réessayez dans quelques minutes."
+  },
+  "home": {
+    "tagline": "Un logement meublé, vérifié sur place, réservé par Mobile Money.",
+    "searchCta": "Trouver un logement"
+  }
+}

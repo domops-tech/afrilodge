@@ -1,0 +1,52 @@
+# Séjours — VD Technologies
+
+Plateforme de réservation de logements meublés vérifiés. Cahier des charges
+complet : `docs/cdc/VD_Technologies_CDC_Sejours_v1.docx-1.pdf`. Suivi de
+projet agile : `docs/agile/` (backlog, definition of done, journal de
+sprints, décisions d'architecture).
+
+## Démarrage
+
+```bash
+cp .env.example .env          # ajuster si besoin
+docker compose up -d          # PostgreSQL (port 5433) + MinIO
+npm install
+npm run db:migrate            # première fois seulement
+npm run db:seed
+npm run dev
+```
+
+Ouvrir `http://localhost:3000`. Le fournisseur SMS de développement
+(`SMS_PROVIDER=console`) journalise le code à usage unique dans les logs du
+serveur au lieu de l'envoyer.
+
+## Scripts
+
+| Commande | Rôle |
+|---|---|
+| `npm run dev` | Serveur de développement |
+| `npm run build` / `npm run start` | Build et exécution en production |
+| `npm run lint` / `npm run typecheck` | Qualité statique |
+| `npm test` / `npm run test:watch` | Tests unitaires (Vitest) |
+| `npm run test:e2e` | Tests de bout en bout (Playwright — `npx playwright install chromium` une première fois) |
+| `npm run db:migrate` / `npm run db:seed` / `npm run db:studio` | Base de données (Prisma 7) |
+
+## Comptes de démonstration (`prisma/seed.ts`)
+
+Connexion par téléphone + code à usage unique (`+225…`, voir le seed pour la
+liste complète). Le code s'affiche dans les logs du serveur en
+développement.
+
+## Architecture
+
+Voir `docs/agile/decisions/` pour le détail et les raisons de chaque choix.
+En résumé : Next.js 16 (App Router, RSC), TypeScript strict, PostgreSQL via
+Prisma 7, PWA, i18n FR/EN dès le socle, un seul dépôt pour les quatre
+surfaces (voyageur, propriétaire, agent, admin) séparées par groupes de
+routes sous `src/app/[locale]/`.
+
+Points d'attention propres à ce dépôt (détaillés dans les fiches de
+décision) : `src/proxy.ts` (renommage `middleware` → `proxy` de Next 16),
+Prisma 7 (driver adapter explicite, client généré hors `node_modules`), et
+l'état en mémoire partagé entre Server Actions et Route Handlers, qui doit
+vivre sur `globalThis` et non sur une variable de module.

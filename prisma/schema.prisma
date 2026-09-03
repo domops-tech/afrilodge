@@ -1,0 +1,484 @@
+// Schéma de données — Plateforme de logements meublés vérifiés (VD Technologies)
+// Référence unique du domaine. Toute règle métier structurante décrite dans le
+// CDC (docs/cdc/) qui peut être portée par le schéma l'est ici, pas seulement
+// dans le code applicatif.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Comptes — propriétaires, agents, administrateurs.
+// Le voyageur n'a pas de compte (CDC §2, §3) : il est identifié par une
+// session éphémère liée à sa réservation, voir `GuestSession`.
+// ---------------------------------------------------------------------------
+
+enum UserRole {
+  OWNER
+  AGENT
+  ADMIN
+}
+
+model User {
+  id          String   @id @default(cuid())
+  role        UserRole
+  phone       String   @unique
+  email       String?
+  fullName    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Un propriétaire possède des biens ; un agent réalise des visites.
+  properties       Property[]           @relation("PropertyOwner")
+  visits           Visit[]              @relation("VisitAgent")
+  verificationReqs VerificationRequest[] @relation("VerificationRequestOwner")
+  otpCodes         OtpCode[]
+  auditLogs        AuditLog[]
+
+  @@index([role])
+}
+
+// ---------------------------------------------------------------------------
+// Authentification téléphone + code à usage unique.
+// Partagée par les quatre surfaces (voyageur, propriétaire, agent, admin) —
+// voir src/lib/auth/otp.ts, à réutiliser, jamais dupliquer.
+// ---------------------------------------------------------------------------
+
+enum OtpPurpose {
+  OWNER_LOGIN
+  AGENT_LOGIN
+  ADMIN_LOGIN
+  GUEST_BOOKING
+}
+
+model OtpCode {
+  id          String     @id @default(cuid())
+  phone       String
+  purpose     OtpPurpose
+  codeHash    String
+  attempts    Int        @default(0)
+  consumedAt  DateTime?
+  expiresAt   DateTime
+  createdAt   DateTime   @default(now())
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String?
+
+  @@index([phone, purpose])
+}
+
+// Session éphémère du voyageur, ouverte par OTP au moment de réserver,
+// jamais un compte (CDC §2, §6.2).
+model GuestSession {
+  id        String   @id @default(cuid())
+  phone     String
+  fullName  String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  bookings Booking[]
+
+  @@index([phone])
+}
+
+// ---------------------------------------------------------------------------
+// Biens et vérification — le cœur opérationnel du produit (CDC §4).
+// ---------------------------------------------------------------------------
+
+enum PropertyStatus {
+  DRAFT // créé par le propriétaire, jamais visité
+  PENDING_VERIFICATION // visite demandée, en attente de planification ou de traitement
+  PUBLISHED // porte une Verification active
+  UNPUBLISHED // mention retirée ou expirée, non visible du public
+}
+
+model Property {
+  id          String         @id @default(cuid())
+  status      PropertyStatus @default(DRAFT)
+
+  // Modifiable par le propriétaire (CDC §6.3).
+  title       String
+  description String
+  pricePerNight Int          // en francs CFA, entier — pas de sous-unité décimale
+  maxGuests   Int
+
+  // Constaté par la visite, écriture seule pour le propriétaire une fois vérifié
+  // (CDC §6.3). Modifié uniquement par le flux de vérification / back-office.
+  neighborhood   String
+  city           String
+  latitude       Float?
+  longitude      Float?
+  accessLandmarks String?    // points de repère d'accès, en l'absence d'adressage formel
+
+  owner   User   @relation("PropertyOwner", fields: [ownerId], references: [id])
+  ownerId String
+
+  verificationRequests VerificationRequest[]
+  verification         Verification?
+  amenities             PropertyAmenity[]
+  availability          AvailabilityDay[]
+  bookings              Booking[]
+  disputes               Dispute[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([neighborhood, city])
+}
+
+// Équipement annoncé par le propriétaire ; `confirmed` est renseigné par la
+// visite (voir AmenityCheck), jamais par le propriétaire directement.
+model PropertyAmenity {
+  id         String   @id @default(cuid())
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId String
+  name       String
+  confirmed  Boolean? // null = pas encore vérifié
+
+  @@index([propertyId])
+}
+
+enum VerificationRequestStatus {
+  REQUESTED
+  SCHEDULED
+  VISITED
+  APPROVED
+  REJECTED
+}
+
+// Le propriétaire sollicite une vérification et règle le pack (CDC §4.1.1).
+model VerificationRequest {
+  id        String                     @id @default(cuid())
+  status    VerificationRequestStatus  @default(REQUESTED)
+
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId String
+
+  owner   User   @relation("VerificationRequestOwner", fields: [ownerId], references: [id])
+  ownerId String
+
+  packPaid  Boolean  @default(false)
+  visit     Visit?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([propertyId])
+}
+
+// Emplacement imposé de prise de vue (CDC §4.1.4) — liste de référence,
+// pas une saisie libre de l'agent.
+enum PhotoSlot {
+  FACADE
+  ENTREE
+  PIECE
+  SANITAIRES
+  CUISINE
+  VUE
+  ACCES
+}
+
+model Visit {
+  id            String   @id @default(cuid())
+  scheduledAt   DateTime
+  startedAt     DateTime?
+  completedAt   DateTime?
+
+  // Horodatage + géolocalisation de l'intervention (CDC §4.1.3).
+  checkInAt        DateTime?
+  checkInLatitude  Float?
+  checkInLongitude Float?
+
+  verificationRequest   VerificationRequest @relation(fields: [verificationRequestId], references: [id], onDelete: Cascade)
+  verificationRequestId String              @unique
+
+  agent   User   @relation("VisitAgent", fields: [agentId], references: [id])
+  agentId String
+
+  photos        VisitPhoto[]
+  amenityChecks AmenityCheck[]
+  identityCheck IdentityCheck?
+  verification  Verification?
+
+  // Support du mode hors connexion (CDC §6.4) : la visite est créée côté
+  // client avant d'exister côté serveur, ce champ absorbe la resynchronisation.
+  clientVisitId String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([agentId])
+}
+
+model VisitPhoto {
+  id        String    @id @default(cuid())
+  visit     Visit     @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  visitId   String
+  slot      PhotoSlot
+  storageKey String   // clé dans le service objet, pas l'image elle-même
+  takenAt    DateTime
+  latitude   Float?
+  longitude  Float?
+
+  @@index([visitId])
+}
+
+// Écart entre équipement annoncé et équipement constaté (CDC §4.1.5).
+model AmenityCheck {
+  id           String  @id @default(cuid())
+  visit        Visit   @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  visitId      String
+  amenityName  String
+  announced    Boolean
+  observed     Boolean
+  note         String?
+
+  @@index([visitId])
+}
+
+// Pièce d'identité et titre à louer du propriétaire (CDC §4.1.7).
+// Accès strictement limité à l'agent qui l'a saisi et au back-office.
+model IdentityCheck {
+  id                 String  @id @default(cuid())
+  visit              Visit   @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  visitId            String  @unique
+  identityDocumentRef String // référence de stockage chiffré, jamais le document en clair ici
+  titleToRentRef      String
+  verifiedByAgent     Boolean @default(false)
+}
+
+enum VerificationStatus {
+  ACTIVE
+  EXPIRED
+  WITHDRAWN
+}
+
+// La mention « Vérifié » elle-même (CDC §4.2). Ne peut exister que rattachée
+// à une Visit complétée — voir contrainte d'unicité sur `visitId` et
+// `propertyId`, aucune mention n'est achetable indépendamment de la visite.
+model Verification {
+  id        String              @id @default(cuid())
+  status    VerificationStatus  @default(ACTIVE)
+  visitDate DateTime
+  expiresAt DateTime            // visitDate + 12 mois (CDC §4.2)
+
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId String   @unique
+
+  visit   Visit  @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  visitId String @unique
+
+  // TODO-JURIDIQUE : formulation exacte à valider par un conseil (CDC §4.2, §10.1).
+  attestationLabel String @default("Constaté par visite physique à la date indiquée.")
+
+  approvedBy   String? // id de l'administrateur ayant validé (pas de FK dure : traçabilité, pas de contrainte)
+  approvedAt   DateTime?
+  withdrawnAt  DateTime?
+  withdrawnReason String?
+
+  disputes Dispute[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, expiresAt])
+}
+
+// ---------------------------------------------------------------------------
+// Disponibilité et réservation.
+// ---------------------------------------------------------------------------
+
+enum AvailabilityStatus {
+  OPEN
+  HELD // verrouillé le temps d'une demande en attente de paiement
+  BOOKED
+  BLOCKED // bloqué par le propriétaire, hors réservation
+}
+
+// Une ligne par nuit et par bien : source unique de vérité du calendrier
+// (CDC §7.3 — "première source d'incohérence dans ce type de produit").
+model AvailabilityDay {
+  id         String              @id @default(cuid())
+  property   Property            @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId String
+  date       DateTime            @db.Date
+  status     AvailabilityStatus  @default(OPEN)
+
+  booking   Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  bookingId String?
+
+  @@unique([propertyId, date])
+  @@index([propertyId, status])
+}
+
+enum BookingStatus {
+  REQUESTED
+  ACCEPTED
+  PAID
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  DISPUTED
+}
+
+// Machine à états du CDC §7.2. Toute transition passe par
+// src/lib/booking/state-machine.ts — jamais d'écriture directe de `status`
+// ailleurs dans le code.
+model Booking {
+  id      String        @id @default(cuid())
+  status  BookingStatus @default(REQUESTED)
+
+  property   Property @relation(fields: [propertyId], references: [id])
+  propertyId String
+
+  guestSession   GuestSession @relation(fields: [guestSessionId], references: [id])
+  guestSessionId String
+
+  checkIn  DateTime @db.Date
+  checkOut DateTime @db.Date
+  guests   Int
+
+  stayCode        String    @unique // remis au voyageur à la confirmation (CDC §5.1.6)
+  accessInfo       String?  // coordonnées d'accès, masquées avant confirmation (CDC §6.1)
+  arrivalConfirmedAt DateTime? // déclenche la libération des fonds (CDC §5.1.7)
+
+  // Le verrou de calendrier expire si le paiement n'intervient pas
+  // (CDC §7.3) : passé ce délai, les AvailabilityDay associés repassent à OPEN.
+  holdExpiresAt DateTime?
+
+  availabilityDays AvailabilityDay[]
+  payment           Payment?
+  dispute            Dispute?
+  auditLogs          AuditLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([propertyId])
+}
+
+// ---------------------------------------------------------------------------
+// Paiement — derrière le port PaymentProvider (CDC §8).
+// Aucun fonds ne transite par VD Technologies : ces tables ne conservent que
+// l'état déclaré par l'établissement agréé, jamais les fonds eux-mêmes.
+// ---------------------------------------------------------------------------
+
+enum PaymentStatus {
+  INTENT_CREATED
+  HELD // fonds conservés par l'établissement agréé
+  RELEASED
+  REFUNDED
+  FAILED
+}
+
+model Payment {
+  id      String        @id @default(cuid())
+  status  PaymentStatus @default(INTENT_CREATED)
+
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  bookingId String  @unique
+
+  providerName        String // "simulated" en v1, nom du PSP réel ensuite (CDC §12)
+  providerIntentRef    String @unique // référence de l'intention chez le PSP
+  amount               Int    // francs CFA
+  commissionAmount     Int?
+
+  events PaymentEvent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Journal des webhooks reçus du PSP — l'état de Payment ne suit jamais
+// l'appel HTTP sortant, uniquement l'événement reçu ici (voir plan §Architecture).
+model PaymentEvent {
+  id        String   @id @default(cuid())
+  payment   Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  paymentId String
+  type      String   // ex. "intent.created", "funds.held", "funds.released", "refund.executed"
+  externalId String  @unique // idempotence : un même événement PSP n'est traité qu'une fois
+  payload   Json
+  receivedAt DateTime @default(now())
+
+  @@index([paymentId])
+}
+
+model CommissionEntry {
+  id        String   @id @default(cuid())
+  bookingId String   @unique
+  amount    Int
+  rate      Float
+  settledAt DateTime?
+  createdAt DateTime @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Litiges et journal d'audit.
+// ---------------------------------------------------------------------------
+
+enum DisputeStatus {
+  OPEN
+  COUNTER_VISIT_SCHEDULED
+  RESOLVED_KEPT
+  RESOLVED_WITHDRAWN
+}
+
+// Écart signalé par un voyageur (CDC §4.2 dernier point) : peut porter sur
+// une réservation, et déclenche le cas échéant un retrait de mention.
+model Dispute {
+  id     String        @id @default(cuid())
+  status DisputeStatus @default(OPEN)
+  reason String
+
+  booking   Booking? @relation(fields: [bookingId], references: [id])
+  bookingId String?  @unique
+
+  property   Property @relation(fields: [propertyId], references: [id])
+  propertyId String
+
+  verification   Verification? @relation(fields: [verificationId], references: [id])
+  verificationId String?
+
+  resolutionNote String?
+  resolvedAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Notifications sortantes (SMS/email) — journal, pas la file d'envoi elle-même.
+model Notification {
+  id        String   @id @default(cuid())
+  channel   String   // "sms" | "email"
+  recipient String
+  template  String
+  sentAt    DateTime?
+  createdAt DateTime @default(now())
+}
+
+// Une ligne par changement d'état significatif (réservation, vérification,
+// litige). Sert de preuve pour les critères d'acceptation du CDC §11.
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  actor   User?   @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  actorId String?
+
+  booking   Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  bookingId String?
+
+  @@index([entity, entityId])
+}
