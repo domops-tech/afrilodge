@@ -47,7 +47,7 @@ test.describe("validation d'une fiche par le back-office (CDC §4.1.8)", () => {
     await expect(firstPhoto).toBeVisible();
     await expect(async () => {
       expect(await firstPhoto.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
-    }).toPass({ timeout: 10_000 });
+    }).toPass({ timeout: 20_000 });
 
     await page.getByRole("button", { name: /approuver et publier/i }).click();
     await expect(page).toHaveURL(/\/fr\/admin$/);

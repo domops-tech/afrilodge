@@ -171,10 +171,53 @@
     "paymentsTitle": "Payouts and commissions",
     "noPayments": "No payout yet.",
     "noProperties": "You don't have any property yet.",
+    "acceptBookingCta": "Accept",
+    "refuseBookingCta": "Decline",
+    "bookingStatus": {
+      "REQUESTED": "Request pending",
+      "ACCEPTED": "Accepted, awaiting payment",
+      "PAID": "Paid",
+      "IN_PROGRESS": "Stay in progress",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled",
+      "DISPUTED": "Dispute in progress"
+    },
     "error": {
       "invalide": "Some information is invalid. Check the form.",
       "demande-en-cours": "A verification request is already in progress for this property.",
-      "verrouille": "Amenities can no longer be edited: the visit has already taken place."
+      "verrouille": "Amenities can no longer be edited: the visit has already taken place.",
+      "reservation-introuvable": "This booking could not be found for this property.",
+      "transition-refusee": "This booking can no longer be changed in its current state."
     }
+  },
+  "booking": {
+    "backToProperty": "Back to listing",
+    "bookHeading": "Book \"{title}\"",
+    "checkInLabel": "Check-in date",
+    "checkOutLabel": "Check-out date",
+    "guestsLabel": "Number of guests",
+    "nextCta": "Continue",
+    "summaryRange": "{checkIn} → {checkOut} · {guests, plural, one {# guest} other {# guests}}",
+    "fullNameLabel": "Full name",
+    "phoneLabel": "Phone number",
+    "phonePlaceholder": "+225 07 00 00 00 00",
+    "sendCode": "Send code",
+    "codeSent": "A code was sent to {phone}.",
+    "codeLabel": "Code received by SMS",
+    "confirmCta": "Confirm the request",
+    "unavailableRange": "These dates are no longer available. Change your selection.",
+    "invalidRange": "The check-out date must be after the check-in date.",
+    "tooManyGuests": "This property cannot host that many guests.",
+    "invalid": "Some information is invalid.",
+    "rateLimited": "Too many requests for this number. Try again in a few minutes.",
+    "invalidCode": "Incorrect code. Try again.",
+    "expiredCode": "This code has expired, request a new one.",
+    "tooManyAttempts": "Too many attempts. Request a new code.",
+    "confirmationTitle": "Booking request sent",
+    "guestsCount": "{count, plural, one {# guest} other {# guests}}",
+    "statusRequested": "Awaiting acceptance by the property owner.",
+    "statusAccepted": "Booking accepted by the property owner.",
+    "statusCancelled": "This request has been cancelled.",
+    "backToSearch": "Back to search"
   }
 }

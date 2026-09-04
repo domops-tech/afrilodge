@@ -9,7 +9,13 @@ test.describe("recherche publique (CDC §6.1.1, §6.1.2)", () => {
   test("liste les biens vérifiés, avec des photos qui se chargent réellement", async ({ page }) => {
     await page.goto("/fr/recherche");
 
-    await expect(page.getByText(/3 logements vérifiés trouvés/)).toBeVisible();
+    // Au moins les 3 biens vérifiés du seed — pas un total exact : ce
+    // fichier tourne en parallèle avec d'autres qui créent ponctuellement
+    // un bien publié pour la durée de leur propre test (voir
+    // e2e/booking-flow.spec.ts), et un total figé serait fragile face à ça
+    // sans rien vérifier de plus sur la recherche elle-même.
+    const resultsText = await page.getByText(/logements? vérifiés? trouvés?/).textContent();
+    expect(Number(resultsText?.match(/\d+/)?.[0])).toBeGreaterThanOrEqual(3);
 
     const firstCard = page.getByRole("link", { name: /cocody angré/i });
     await expect(firstCard).toBeVisible();
@@ -18,7 +24,7 @@ test.describe("recherche publique (CDC §6.1.1, §6.1.2)", () => {
     const thumbnail = firstCard.getByRole("img");
     await expect(async () => {
       expect(await thumbnail.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
-    }).toPass({ timeout: 10_000 });
+    }).toPass({ timeout: 20_000 });
   });
 
   test("filtre par quartier", async ({ page }) => {

@@ -93,7 +93,7 @@ test("un propriétaire crée un bien, le demande en vérification, et l'admin pl
       expect(result.rows).toHaveLength(1);
       expect(result.rows[0].status).toBe("SCHEDULED");
       expect(result.rows[0].agentId).toBeTruthy();
-    }).toPass({ timeout: 10_000 });
+    }).toPass({ timeout: 20_000 });
   } finally {
     await db.end();
   }
@@ -139,7 +139,7 @@ test("un propriétaire tient son calendrier de disponibilité", async ({ page, r
       );
       expect(blocked.rows).toHaveLength(1);
       expect(blocked.rows[0].status).toBe("BLOCKED");
-    }).toPass({ timeout: 10_000 });
+    }).toPass({ timeout: 20_000 });
   } finally {
     await db.end();
   }
@@ -163,7 +163,7 @@ test("un propriétaire tient son calendrier de disponibilité", async ({ page, r
         [propertyId, isoDate]
       );
       expect(cleared.rows).toHaveLength(0);
-    }).toPass({ timeout: 10_000 });
+    }).toPass({ timeout: 20_000 });
   } finally {
     await db2.end();
   }

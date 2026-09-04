@@ -33,6 +33,7 @@ serveur au lieu de l'envoyer.
 | `npm run db:migrate` / `npm run db:seed` / `npm run db:studio` | Base de données (Prisma 7) |
 | `npm run storage:setup` | Crée le bucket MinIO local et sa politique de lecture |
 | `npm run verifications:expire` | Expire les mentions échues et envoie les relances de renouvellement (CDC §6.5.2) — à planifier en tâche cron externe, voir décision 0005 |
+| `npm run bookings:expire-holds` | Annule les demandes de réservation dont le verrou de calendrier a expiré sans paiement, et libère les jours (CDC §7.3) — même principe, à planifier en tâche cron externe |
 
 ## Comptes de démonstration (`prisma/seed.ts`)
 
@@ -51,6 +52,9 @@ développement.
   test e2e de planification, voir `e2e/owner-space.spec.ts`).
 - Recherche publique (`/recherche`), sans connexion : trois biens
   vérifiés listés, chacun avec sa fiche détaillée complète.
+- Voyageur (`/reserver/<id d'un bien vérifié>`), sans compte : sélection de
+  dates, identification par téléphone + code à usage unique (session
+  éphémère de 6h), demande envoyée au propriétaire — voir épic 5.
 
 ## Architecture
 

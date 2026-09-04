@@ -106,11 +106,11 @@ tient son calendrier.*
 
 | # | Story | Pts | Statut |
 |---|---|---|---|
-| 5.1 | Sélection de dates avec disponibilité temps réel (§6.2.1) | 5 | 🔜 |
-| 5.2 | Verrouillage du calendrier à la demande, expiration si non-paiement (§7.3) | 3 | 🔜 |
-| 5.3 | Identification voyageur par OTP au moment de réserver, sans compte (§6.2.2) | 2 | 🔜 |
-| 5.4 | Acceptation / refus de la demande par le propriétaire | 2 | 🔜 |
-| 5.5 | Réservation < 3 min sur Android d'entrée de gamme (§11.3) — mesure e2e | 3 | 🔜 |
+| 5.1 | Sélection de dates avec disponibilité temps réel (§6.2.1) | 5 | ✅ |
+| 5.2 | Verrouillage du calendrier à la demande, expiration si non-paiement (§7.3) | 3 | ✅ |
+| 5.3 | Identification voyageur par OTP au moment de réserver, sans compte (§6.2.2) | 2 | ✅ |
+| 5.4 | Acceptation / refus de la demande par le propriétaire | 2 | ✅ |
+| 5.5 | Réservation < 3 min sur Android d'entrée de gamme (§11.3) — mesure e2e | 3 | ✅ |
 
 ---
 
@@ -123,12 +123,12 @@ de la commission (voir plan — table des points à trancher).*
 
 | # | Story | Pts | Statut |
 |---|---|---|---|
-| 6.1 | Création d'intention de paiement à l'acceptation (§8.1) | 2 | ⬜ |
-| 6.2 | Redirection vers l'établissement de paiement (§6.2.3) | 2 | ⬜ |
-| 6.3 | Webhook entrant vérifié + idempotent (§8.4) | 3 | ⬜ |
-| 6.4 | Confirmation d'arrivée par le voyageur → ordre de libération (§5.1.7, §8.6) | 3 | ⬜ |
-| 6.5 | Annulation + remboursement selon conditions paramétrables (§6.2.6, §8.7) | 3 | ⬜ |
-| 6.6 | Journal des commissions et rapprochement (§6.5.4, §8.8) | 3 | ⬜ |
+| 6.1 | Création d'intention de paiement à l'acceptation (§8.1) | 2 | 🔜 |
+| 6.2 | Redirection vers l'établissement de paiement (§6.2.3) | 2 | 🔜 |
+| 6.3 | Webhook entrant vérifié + idempotent (§8.4) | 3 | 🔜 |
+| 6.4 | Confirmation d'arrivée par le voyageur → ordre de libération (§5.1.7, §8.6) | 3 | 🔜 |
+| 6.5 | Annulation + remboursement selon conditions paramétrables (§6.2.6, §8.7) | 3 | 🔜 |
+| 6.6 | Journal des commissions et rapprochement (§6.5.4, §8.8) | 3 | 🔜 |
 | 6.7 | Story de branchement du PSP réel (dès le §12 tranché) | 3 | ⬜ |
 
 ---

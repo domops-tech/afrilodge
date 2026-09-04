@@ -171,10 +171,53 @@
     "paymentsTitle": "Règlements et commissions",
     "noPayments": "Aucun règlement pour l'instant.",
     "noProperties": "Vous n'avez pas encore de bien.",
+    "acceptBookingCta": "Accepter",
+    "refuseBookingCta": "Refuser",
+    "bookingStatus": {
+      "REQUESTED": "Demande en attente",
+      "ACCEPTED": "Acceptée, en attente de paiement",
+      "PAID": "Payée",
+      "IN_PROGRESS": "Séjour en cours",
+      "COMPLETED": "Terminée",
+      "CANCELLED": "Annulée",
+      "DISPUTED": "Litige en cours"
+    },
     "error": {
       "invalide": "Certaines informations sont invalides. Vérifiez le formulaire.",
       "demande-en-cours": "Une demande de vérification est déjà en cours pour ce bien.",
-      "verrouille": "Les équipements ne sont plus modifiables : la visite a déjà eu lieu."
+      "verrouille": "Les équipements ne sont plus modifiables : la visite a déjà eu lieu.",
+      "reservation-introuvable": "Cette réservation est introuvable pour ce bien.",
+      "transition-refusee": "Cette réservation ne peut plus être modifiée dans cet état."
     }
+  },
+  "booking": {
+    "backToProperty": "Retour à la fiche",
+    "bookHeading": "Réserver « {title} »",
+    "checkInLabel": "Date d'arrivée",
+    "checkOutLabel": "Date de départ",
+    "guestsLabel": "Nombre de voyageurs",
+    "nextCta": "Continuer",
+    "summaryRange": "{checkIn} → {checkOut} · {guests, plural, one {# voyageur} other {# voyageurs}}",
+    "fullNameLabel": "Nom complet",
+    "phoneLabel": "Numéro de téléphone",
+    "phonePlaceholder": "+225 07 00 00 00 00",
+    "sendCode": "Envoyer le code",
+    "codeSent": "Un code a été envoyé au {phone}.",
+    "codeLabel": "Code reçu par SMS",
+    "confirmCta": "Confirmer la demande",
+    "unavailableRange": "Ces dates ne sont plus disponibles. Modifiez votre sélection.",
+    "invalidRange": "La date de départ doit être postérieure à la date d'arrivée.",
+    "tooManyGuests": "Ce logement n'accueille pas autant de voyageurs.",
+    "invalid": "Certaines informations sont invalides.",
+    "rateLimited": "Trop de demandes pour ce numéro. Réessayez dans quelques minutes.",
+    "invalidCode": "Code incorrect. Réessayez.",
+    "expiredCode": "Ce code a expiré, demandez-en un nouveau.",
+    "tooManyAttempts": "Trop de tentatives. Demandez un nouveau code.",
+    "confirmationTitle": "Demande de réservation envoyée",
+    "guestsCount": "{count, plural, one {# voyageur} other {# voyageurs}}",
+    "statusRequested": "En attente d'acceptation par le propriétaire.",
+    "statusAccepted": "Réservation acceptée par le propriétaire.",
+    "statusCancelled": "Cette demande a été annulée.",
+    "backToSearch": "Retour à la recherche"
   }
 }

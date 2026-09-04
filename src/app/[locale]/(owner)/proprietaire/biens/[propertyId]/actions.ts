@@ -5,6 +5,8 @@ import { prisma } from "@/lib/db/client";
 import { requireRole } from "@/lib/auth/guard";
 import { redirect } from "@/i18n/navigation";
 import { AMENITY_OPTIONS } from "@/lib/property/amenities";
+import { transitionBooking } from "@/lib/booking/state-machine";
+import { startOfUtcDay, addUtcDays } from "@/lib/booking/nights";
 
 /**
  * Actions de l'espace de gestion d'un bien (CDC §6.3). Formulaires
@@ -118,13 +120,10 @@ export async function updateAvailabilityAction(formData: FormData): Promise<void
 
   const blockedDates = new Set(formData.getAll("blockedDate").map(String));
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const window: Date[] = Array.from({ length: WINDOW_DAYS }, (_, i) => {
-    const d = new Date(today);
-    d.setDate(d.getDate() + i);
-    return d;
-  });
+  // UTC, jamais l'heure locale : les clés doivent correspondre à celles
+  // envoyées par le formulaire (voir page.tsx et src/lib/booking/nights.ts).
+  const today = startOfUtcDay();
+  const window: Date[] = Array.from({ length: WINDOW_DAYS }, (_, i) => addUtcDays(today, i));
 
   const existing = await prisma.availabilityDay.findMany({
     where: { propertyId, date: { gte: today, lt: window[window.length - 1] } },
@@ -152,6 +151,62 @@ export async function updateAvailabilityAction(formData: FormData): Promise<void
         await tx.availabilityDay.delete({ where: { id: current.id } });
       }
     }
+  });
+
+  return backTo(propertyId, formData);
+}
+
+/** `redirect()` interrompt le rendu par une exception : cette fonction ne retourne donc jamais quand elle redirige. */
+async function loadOwnedBooking(propertyId: string, bookingId: string, formData: FormData) {
+  const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
+  if (!booking || booking.propertyId !== propertyId) {
+    return backTo(propertyId, formData, "reservation-introuvable");
+  }
+  return booking;
+}
+
+/** Acceptation d'une demande (CDC §5.2.19, épic 5.4) — le calendrier reste HELD jusqu'au paiement (Sprint 6). */
+export async function acceptBookingAction(formData: FormData): Promise<void> {
+  const session = await requireRole("OWNER");
+  const propertyId = String(formData.get("propertyId"));
+  const bookingId = String(formData.get("bookingId"));
+  await loadOwnedPropertyOrThrow(propertyId, session.userId);
+  await loadOwnedBooking(propertyId, bookingId, formData);
+
+  try {
+    await transitionBooking({ bookingId, to: "ACCEPTED", actorId: session.userId });
+  } catch {
+    return backTo(propertyId, formData, "transition-refusee");
+  }
+
+  return backTo(propertyId, formData);
+}
+
+/** Refus d'une demande (CDC §5.2.19, épic 5.4) — libère immédiatement le calendrier, sans attendre l'expiration du verrou. */
+export async function refuseBookingAction(formData: FormData): Promise<void> {
+  const session = await requireRole("OWNER");
+  const propertyId = String(formData.get("propertyId"));
+  const bookingId = String(formData.get("bookingId"));
+  await loadOwnedPropertyOrThrow(propertyId, session.userId);
+  const booking = await loadOwnedBooking(propertyId, bookingId, formData);
+
+  try {
+    await transitionBooking({
+      bookingId,
+      to: "CANCELLED",
+      actorId: session.userId,
+      metadata: { reason: "owner_refused" },
+    });
+  } catch {
+    return backTo(propertyId, formData, "transition-refusee");
+  }
+
+  await prisma.availabilityDay.deleteMany({
+    where: {
+      propertyId: booking.propertyId,
+      date: { gte: booking.checkIn, lt: booking.checkOut },
+      status: "HELD",
+    },
   });
 
   return backTo(propertyId, formData);

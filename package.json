@@ -15,7 +15,8 @@
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "storage:setup": "tsx scripts/setup-storage.ts",
-    "verifications:expire": "tsx scripts/expire-verifications.ts"
+    "verifications:expire": "tsx scripts/expire-verifications.ts",
+    "bookings:expire-holds": "tsx scripts/expire-booking-holds.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1126.0",

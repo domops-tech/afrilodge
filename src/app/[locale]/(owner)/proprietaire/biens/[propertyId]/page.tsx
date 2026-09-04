@@ -9,18 +9,17 @@ import { Card } from "@/components/ui/Card";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import { isVerificationValid } from "@/lib/verification/badge";
 import { AMENITY_OPTIONS } from "@/lib/property/amenities";
+import { isoDate as toIsoDate, startOfUtcDay, addUtcDays } from "@/lib/booking/nights";
 import {
   updatePropertyAction,
   requestVerificationAction,
   updateAmenitiesAction,
   updateAvailabilityAction,
+  acceptBookingAction,
+  refuseBookingAction,
 } from "./actions";
 
 const CALENDAR_WINDOW_DAYS = 60;
-
-function toIsoDate(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
 
 // Gestion d'un bien (CDC §6.3) : édition, demande de vérification, suivi de
 // traitement, équipements, calendrier, réservations, règlements.
@@ -34,6 +33,7 @@ export default async function PropertyManagePage({
   const session = await requireRole("OWNER");
   const t = await getTranslations("owner");
   const tVerif = await getTranslations("verification");
+  const tBooking = await getTranslations("booking");
   const format = await getFormatter();
 
   const property = await prisma.property.findUnique({
@@ -54,19 +54,16 @@ export default async function PropertyManagePage({
   const hasVisit = Boolean(latestRequest?.visit);
   const canRequestVerification = !latestRequest || latestRequest.status === "REJECTED";
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const windowEnd = new Date(today);
-  windowEnd.setDate(windowEnd.getDate() + CALENDAR_WINDOW_DAYS);
+  // UTC, jamais l'heure locale (`setHours`/`setDate`) : décale sinon le
+  // calendrier d'un jour dès que le serveur ne tourne pas en UTC — voir
+  // src/lib/booking/nights.ts.
+  const today = startOfUtcDay();
+  const windowEnd = addUtcDays(today, CALENDAR_WINDOW_DAYS);
   const availability = await prisma.availabilityDay.findMany({
     where: { propertyId, date: { gte: today, lt: windowEnd } },
   });
   const availabilityByDate = new Map(availability.map((a) => [toIsoDate(a.date), a.status]));
-  const calendarDays = Array.from({ length: CALENDAR_WINDOW_DAYS }, (_, i) => {
-    const d = new Date(today);
-    d.setDate(d.getDate() + i);
-    return d;
-  });
+  const calendarDays = Array.from({ length: CALENDAR_WINDOW_DAYS }, (_, i) => addUtcDays(today, i));
 
   const bookingIds = property.bookings.map((b) => b.id);
   const commissionEntries =
@@ -239,7 +236,7 @@ export default async function PropertyManagePage({
                     disabled={locked}
                     className="sr-only"
                   />
-                  {day.getDate()}
+                  {day.getUTCDate()}
                 </label>
               );
             })}
@@ -256,12 +253,31 @@ export default async function PropertyManagePage({
           <p className="text-sm text-muted">{t("noBookings")}</p>
         ) : (
           property.bookings.map((booking) => (
-            <Card key={booking.id} className="flex flex-col gap-1 text-sm">
+            <Card key={booking.id} className="flex flex-col gap-2 text-sm" data-testid={`booking-${booking.id}`}>
               <span>
                 {format.dateTime(booking.checkIn, { dateStyle: "medium" })} →{" "}
-                {format.dateTime(booking.checkOut, { dateStyle: "medium" })}
+                {format.dateTime(booking.checkOut, { dateStyle: "medium" })} ·{" "}
+                {tBooking("guestsCount", { count: booking.guests })}
               </span>
-              <span className="text-muted">{booking.status}</span>
+              <span className="text-muted">{t(`bookingStatus.${booking.status}`)}</span>
+              {booking.status === "REQUESTED" ? (
+                <div className="flex gap-2">
+                  <form action={acceptBookingAction}>
+                    <input type="hidden" name="propertyId" value={property.id} />
+                    <input type="hidden" name="bookingId" value={booking.id} />
+                    <input type="hidden" name="locale" value={locale} />
+                    <Button type="submit">{t("acceptBookingCta")}</Button>
+                  </form>
+                  <form action={refuseBookingAction}>
+                    <input type="hidden" name="propertyId" value={property.id} />
+                    <input type="hidden" name="bookingId" value={booking.id} />
+                    <input type="hidden" name="locale" value={locale} />
+                    <Button type="submit" variant="secondary">
+                      {t("refuseBookingCta")}
+                    </Button>
+                  </form>
+                </div>
+              ) : null}
             </Card>
           ))
         )}
