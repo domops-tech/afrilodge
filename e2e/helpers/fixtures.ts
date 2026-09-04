@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { Client } from "pg";
+import { Client } from "pg";
 import type { Page, APIRequestContext } from "@playwright/test";
 import { expect } from "@playwright/test";
 
@@ -37,6 +37,22 @@ export async function loginAsOwner(
   await page.getByLabel(/code reçu par sms/i).fill(code);
   await page.getByRole("button", { name: /vérifier/i }).click();
   await expect(page).toHaveURL(/\/fr\/proprietaire$/);
+}
+
+/** Connexion admin — le compte doit déjà exister (pas d'auto-inscription, contrairement au propriétaire), voir e2e/admin-review.spec.ts. */
+export async function loginAsAdmin(page: Page, request: APIRequestContext, phone: string) {
+  await page.goto("/fr/admin/connexion");
+  await page.getByLabel(/numéro de téléphone/i).fill(phone);
+  await page.getByRole("button", { name: /envoyer le code/i }).click();
+  await expect(page.getByText(new RegExp(phone.replace("+", "\\+")))).toBeVisible();
+
+  const otpResponse = await request.get(`/api/dev/last-otp?phone=${encodeURIComponent(phone)}`);
+  const { code } = await otpResponse.json();
+  expect(code).toMatch(/^\d{6}$/);
+
+  await page.getByLabel(/code reçu par sms/i).fill(code);
+  await page.getByRole("button", { name: /vérifier/i }).click();
+  await expect(page).toHaveURL(/\/fr\/admin$/);
 }
 
 export async function bookAsGuest(
@@ -117,4 +133,82 @@ export async function createVerifiedProperty(
 export async function deleteProperty(db: Client, propertyId: string) {
   await db.query(`DELETE FROM "Booking" WHERE "propertyId" = $1`, [propertyId]);
   await db.query(`DELETE FROM "Property" WHERE id = $1`, [propertyId]);
+}
+
+/**
+ * Bien + demande + acceptation, jusqu'à l'intention de paiement — partagé
+ * par e2e/payment-flow.spec.ts et e2e/dispute-flow.spec.ts, qui ont toutes
+ * deux besoin d'une réservation ACCEPTED comme point de départ.
+ */
+export async function setUpAcceptedBooking(params: {
+  ownerPage: Page;
+  guestPage: Page;
+  request: APIRequestContext;
+  ownerFullName: string;
+  price: number;
+  checkInOffsetDays: number;
+  nights: number;
+}) {
+  const { ownerPage, guestPage, request, ownerFullName, price, checkInOffsetDays, nights } = params;
+  const ownerPhone = randomPhone();
+  await loginAsOwner(ownerPage, request, ownerPhone, ownerFullName);
+
+  const setupDb = new Client({ connectionString: process.env.DATABASE_URL });
+  await setupDb.connect();
+  let propertyId: string;
+  try {
+    const owner = await setupDb.query(`SELECT id FROM "User" WHERE phone = $1`, [ownerPhone]);
+    const agent = await setupDb.query(`SELECT id FROM "User" WHERE phone = $1`, [AGENT_ID_PHONE]);
+    propertyId = await createVerifiedProperty(setupDb, owner.rows[0].id, agent.rows[0].id, price);
+  } finally {
+    await setupDb.end();
+  }
+
+  const checkIn = new Date();
+  checkIn.setDate(checkIn.getDate() + checkInOffsetDays);
+  const checkOut = new Date();
+  checkOut.setDate(checkOut.getDate() + checkInOffsetDays + nights);
+
+  const guestPhone = randomPhone();
+  const bookingId = await bookAsGuest(guestPage, request, {
+    propertyId,
+    checkIn: isoDate(checkIn),
+    checkOut: isoDate(checkOut),
+    guestPhone,
+    guestName: "Voyageur de Test",
+  });
+
+  await ownerPage.goto(`/fr/proprietaire/biens/${propertyId}`);
+  await ownerPage.getByTestId(`booking-${bookingId}`).getByRole("button", { name: /^accepter$/i }).click();
+
+  return { propertyId, bookingId, checkIn, checkOut };
+}
+
+/**
+ * `acceptBookingAction` crée l'intention de paiement en même temps que la
+ * transition — la page de paiement 404 tant qu'elle n'a pas encore
+ * committé (`Payment.status !== "INTENT_CREATED"`). À appeler après
+ * `setUpAcceptedBooking` et avant toute navigation vers
+ * `/reserver/paiement/[bookingId]`.
+ */
+export async function waitForPaymentIntent(bookingId: string): Promise<void> {
+  const db = new Client({ connectionString: process.env.DATABASE_URL });
+  await db.connect();
+  try {
+    await expect(async () => {
+      const result = await db.query(`SELECT status FROM "Payment" WHERE "bookingId" = $1`, [bookingId]);
+      expect(result.rows[0]?.status).toBe("INTENT_CREATED");
+    }).toPass({ timeout: 20_000 });
+  } finally {
+    await db.end();
+  }
+}
+
+/** Paie via le vrai bouton de l'interface puis confirme l'arrivée — voir décision 0012 sur pourquoi jamais un webhook fabriqué à la main quand la suite dépend de `release()`. */
+export async function payAndConfirmArrival(guestPage: Page, bookingId: string) {
+  await waitForPaymentIntent(bookingId);
+  await guestPage.goto(`/fr/reserver/paiement/${bookingId}`);
+  await guestPage.getByRole("button", { name: /payer via mobile money/i }).click();
+  await expect(guestPage).toHaveURL(new RegExp(`/fr/reserver/confirmation/${bookingId}$`));
+  await guestPage.getByRole("button", { name: /confirmer mon arrivée/i }).click();
 }

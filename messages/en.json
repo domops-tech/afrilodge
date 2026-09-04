@@ -123,7 +123,32 @@
     "settingsError": "Some values are invalid.",
     "settingsSaveCta": "Save",
     "commissionRateLabel": "Commission rate (%)",
-    "refundWindowLabel": "Full refund window (days before arrival)"
+    "refundWindowLabel": "Full refund window (days before arrival)",
+    "disputesTitle": "Disputes",
+    "disputesEmpty": "No dispute yet.",
+    "disputeActionError": "This action is no longer possible for this dispute.",
+    "disputeStatus": {
+      "OPEN": "Open",
+      "COUNTER_VISIT_SCHEDULED": "Counter-visit in progress",
+      "RESOLVED_KEPT": "Resolved — badge kept",
+      "RESOLVED_WITHDRAWN": "Resolved — badge withdrawn"
+    },
+    "triggerCounterVisitCta": "Trigger a counter-visit",
+    "resolutionNoteLabel": "Reason for the decision",
+    "resolveKeptCta": "Keep the badge",
+    "resolveWithdrawnCta": "Withdraw the badge",
+    "counterVisitRequestStatus": {
+      "REQUESTED": "Awaiting scheduling",
+      "SCHEDULED": "Visit scheduled",
+      "VISITED": "Visited, awaiting decision",
+      "APPROVED": "Decided",
+      "REJECTED": "Decided"
+    },
+    "counterVisitBadge": "Counter-visit — Dispute",
+    "counterVisitContext": "Counter-visit triggered following a report: \"{reason}\"",
+    "disputeDecisionTitle": "Counter-visit outcome",
+    "dismissDisputeCta": "Discrepancy not confirmed — keep the badge",
+    "confirmDiscrepancyCta": "Discrepancy confirmed — withdraw the badge"
   },
   "search": {
     "title": "Search for a home",
@@ -240,10 +265,21 @@
     "stayCodeLabel": "Stay code: {code}",
     "confirmArrivalCta": "Confirm my arrival",
     "cancelCta": "Cancel the booking",
+    "reportDisputeLabel": "Describe the discrepancy you found",
+    "reportDisputeCta": "Report a problem",
+    "disputeTitle": "Report",
+    "disputeStatus": {
+      "OPEN": "Being processed.",
+      "COUNTER_VISIT_SCHEDULED": "A counter-visit has been triggered.",
+      "RESOLVED_KEPT": "Processed: the \"Verified\" badge is kept.",
+      "RESOLVED_WITHDRAWN": "Processed: the \"Verified\" badge has been withdrawn."
+    },
     "error": {
       "etat-invalide": "This action is no longer possible in the booking's current state.",
       "annulation-impossible": "This booking can no longer be cancelled.",
-      "delai-depasse": "The refundable cancellation window has passed for this booking."
+      "delai-depasse": "The refundable cancellation window has passed for this booking.",
+      "signalement-impossible": "A report can only be made once, during the stay.",
+      "motif-requis": "Describe the discrepancy you found (10 characters minimum)."
     }
   }
 }

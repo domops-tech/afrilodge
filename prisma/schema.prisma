@@ -172,6 +172,13 @@ model VerificationRequest {
   // l'espace propriétaire affiche.
   rejectionReason String?
 
+  // Une contre-visite (CDC §6.5.3, épic 7.2) est une VerificationRequest
+  // comme une autre — même planification, même app terrain, même file
+  // d'attente admin — seule la décision finale diffère (retrait de mention
+  // plutôt que publication, voir fiches/[requestId]/DisputeReviewPanel).
+  // Ce lien est ce qui distingue les deux.
+  dispute Dispute?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -465,6 +472,12 @@ model Dispute {
 
   verification   Verification? @relation(fields: [verificationId], references: [id])
   verificationId String?
+
+  // Contre-visite déclenchée pour instruire ce litige (épic 7.2) — voir
+  // VerificationRequest.dispute. Optionnel : un litige peut se résoudre
+  // sans contre-visite (épic 7.4).
+  counterVisitRequest   VerificationRequest? @relation(fields: [counterVisitRequestId], references: [id])
+  counterVisitRequestId String?              @unique
 
   resolutionNote String?
   resolvedAt     DateTime?

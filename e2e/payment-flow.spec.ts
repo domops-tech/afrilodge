@@ -2,15 +2,7 @@ import "dotenv/config";
 import { randomUUID, createHmac } from "node:crypto";
 import { Client } from "pg";
 import { test, expect } from "@playwright/test";
-import {
-  AGENT_ID_PHONE,
-  randomPhone,
-  isoDate,
-  loginAsOwner,
-  bookAsGuest,
-  createVerifiedProperty,
-  deleteProperty,
-} from "./helpers/fixtures";
+import { isoDate, deleteProperty, setUpAcceptedBooking } from "./helpers/fixtures";
 
 // Paiement, confirmation d'arrivée, libération des fonds et annulation
 // (CDC §8, épic 6). Un propriétaire et un bien vérifié sont créés
@@ -40,50 +32,6 @@ import {
 function signWebhook(rawBody: string): string {
   const secret = process.env.PAYMENT_WEBHOOK_SECRET ?? "";
   return createHmac("sha256", secret).update(rawBody).digest("hex");
-}
-
-async function setUpAcceptedBooking(params: {
-  ownerPage: import("@playwright/test").Page;
-  guestPage: import("@playwright/test").Page;
-  request: import("@playwright/test").APIRequestContext;
-  ownerFullName: string;
-  price: number;
-  checkInOffsetDays: number;
-  nights: number;
-}) {
-  const { ownerPage, guestPage, request, ownerFullName, price, checkInOffsetDays, nights } = params;
-  const ownerPhone = randomPhone();
-  await loginAsOwner(ownerPage, request, ownerPhone, ownerFullName);
-
-  const setupDb = new Client({ connectionString: process.env.DATABASE_URL });
-  await setupDb.connect();
-  let propertyId: string;
-  try {
-    const owner = await setupDb.query(`SELECT id FROM "User" WHERE phone = $1`, [ownerPhone]);
-    const agent = await setupDb.query(`SELECT id FROM "User" WHERE phone = $1`, [AGENT_ID_PHONE]);
-    propertyId = await createVerifiedProperty(setupDb, owner.rows[0].id, agent.rows[0].id, price);
-  } finally {
-    await setupDb.end();
-  }
-
-  const checkIn = new Date();
-  checkIn.setDate(checkIn.getDate() + checkInOffsetDays);
-  const checkOut = new Date();
-  checkOut.setDate(checkOut.getDate() + checkInOffsetDays + nights);
-
-  const guestPhone = randomPhone();
-  const bookingId = await bookAsGuest(guestPage, request, {
-    propertyId,
-    checkIn: isoDate(checkIn),
-    checkOut: isoDate(checkOut),
-    guestPhone,
-    guestName: "Voyageur de Test",
-  });
-
-  await ownerPage.goto(`/fr/proprietaire/biens/${propertyId}`);
-  await ownerPage.getByTestId(`booking-${bookingId}`).getByRole("button", { name: /^accepter$/i }).click();
-
-  return { propertyId, bookingId, checkIn, checkOut };
 }
 
 test("paiement confirmé par webhook, vérifié et idempotent — commission créée", async ({

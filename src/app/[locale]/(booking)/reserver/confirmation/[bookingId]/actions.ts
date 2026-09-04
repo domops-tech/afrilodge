@@ -1,5 +1,6 @@
 "use server";
 
+import { z } from "zod";
 import { prisma } from "@/lib/db/client";
 import { requireGuestSession } from "@/lib/auth/guard";
 import { redirect } from "@/i18n/navigation";
@@ -11,10 +12,11 @@ import { processPaymentWebhook } from "@/lib/payments/webhook-handler";
 import { confirmArrivalAndRelease } from "@/lib/payments/release";
 
 /**
- * Confirmation d'arrivée et annulation, côté voyageur (CDC §5.1.7, §6.2.6,
- * épics 6.4, 6.5). Formulaires classiques comme le reste de l'espace
- * propriétaire (§backTo pattern) : chaque échec métier redirige avec
- * `?erreur=code`, lu par la page pour afficher un message.
+ * Confirmation d'arrivée, annulation et signalement d'écart, côté voyageur
+ * (CDC §4.2 dernier point, §5.1.7, §6.2.6, épics 6.4, 6.5, 7.1). Formulaires
+ * classiques comme le reste de l'espace propriétaire (§backTo pattern) :
+ * chaque échec métier redirige avec `?erreur=code`, lu par la page pour
+ * afficher un message.
  */
 
 function backTo(bookingId: string, formData: FormData, error?: string) {
@@ -97,4 +99,47 @@ export async function cancelBookingAction(formData: FormData): Promise<void> {
   }
 
   return backTo(bookingId, formData, "annulation-impossible");
+}
+
+const reportDisputeSchema = z.object({
+  reason: z.string().trim().min(10),
+});
+
+/**
+ * Signalement d'écart (CDC §4.2 dernier point, épic 7.1) : le voyageur sur
+ * place constate que le bien ne correspond pas à ce qui a été vérifié. Un
+ * seul signalement actif par réservation (`Dispute.bookingId` est unique) —
+ * la garde ci-dessous l'empêche d'en ouvrir un second pendant qu'un premier
+ * est en cours de traitement.
+ */
+export async function reportDisputeAction(formData: FormData): Promise<void> {
+  const session = await requireGuestSession();
+  const bookingId = String(formData.get("bookingId"));
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+    include: { property: { include: { verification: true } }, dispute: true },
+  });
+  if (!booking || booking.guestSessionId !== session.guestSessionId) {
+    throw new Error("Réservation introuvable pour cette session.");
+  }
+
+  if (booking.status !== "IN_PROGRESS" || booking.dispute) {
+    return backTo(bookingId, formData, "signalement-impossible");
+  }
+
+  const parsed = reportDisputeSchema.safeParse({ reason: formData.get("reason") });
+  if (!parsed.success) {
+    return backTo(bookingId, formData, "motif-requis");
+  }
+
+  await prisma.dispute.create({
+    data: {
+      bookingId,
+      propertyId: booking.propertyId,
+      verificationId: booking.property.verification?.id,
+      reason: parsed.data.reason,
+    },
+  });
+
+  return backTo(bookingId, formData);
 }

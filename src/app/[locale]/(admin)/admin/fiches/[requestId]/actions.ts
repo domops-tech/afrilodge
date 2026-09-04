@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db/client";
 import { requireRole } from "@/lib/auth/guard";
 import { redirect } from "@/i18n/navigation";
 import { computeExpiresAt } from "@/lib/verification/badge";
+import { withdrawVerification } from "@/lib/verification/withdraw";
 
 /**
  * Validation ou refus d'une fiche par le back-office (CDC §4.1.8) —
@@ -18,7 +19,7 @@ export type DecisionState = { status: "idle" | "error"; message?: string };
 async function loadRequestOrThrow(requestId: string) {
   const request = await prisma.verificationRequest.findUniqueOrThrow({
     where: { id: requestId },
-    include: { visit: { include: { amenityChecks: true } } },
+    include: { visit: { include: { amenityChecks: true } }, dispute: true },
   });
   if (request.status !== "VISITED" || !request.visit) {
     throw new Error("Fiche non éligible à une décision (déjà traitée ou non visitée).");
@@ -85,6 +86,73 @@ export async function approveVerificationAction(
     href: "/admin",
     locale: (formData.get("locale") as string) || "fr",
   });
+}
+
+/**
+ * Issue d'une contre-visite (CDC §6.5.3, épic 7.3) : deux décisions
+ * distinctes de l'approbation/refus normales, une nouvelle Verification ne
+ * peut de toute façon pas être créée ici (`Verification.propertyId` est
+ * unique — le bien en a déjà une). La fiche se referme dans les deux cas
+ * (`REJECTED` : ni approuvée ni republiable telle quelle), seul le sort de
+ * la mention et du litige diffère.
+ */
+async function loadDisputeRequestOrThrow(requestId: string) {
+  const request = await loadRequestOrThrow(requestId);
+  if (!request.dispute) {
+    throw new Error("Cette fiche n'est pas liée à un litige.");
+  }
+  return { ...request, dispute: request.dispute };
+}
+
+/** Écart confirmé par la contre-visite : la mention est retirée (CDC §4.2 dernier point, §6.5.3). */
+export async function confirmDiscrepancyAction(
+  _prev: DecisionState,
+  formData: FormData
+): Promise<DecisionState> {
+  const session = await requireRole("ADMIN");
+  const requestId = String(formData.get("requestId"));
+  const request = await loadDisputeRequestOrThrow(requestId);
+
+  const reason = "Contre-visite : écart confirmé, mention retirée.";
+  await withdrawVerification({
+    verificationId: request.dispute.verificationId,
+    propertyId: request.propertyId,
+    reason,
+    actorId: session.userId,
+  });
+  await prisma.$transaction([
+    prisma.verificationRequest.update({ where: { id: requestId }, data: { status: "REJECTED", rejectionReason: reason } }),
+    prisma.dispute.update({
+      where: { id: request.dispute.id },
+      data: { status: "RESOLVED_WITHDRAWN", resolutionNote: reason, resolvedAt: new Date() },
+    }),
+  ]);
+
+  return redirect({ href: "/admin", locale: (formData.get("locale") as string) || "fr" });
+}
+
+/** Écart non confirmé par la contre-visite : la mention est maintenue (CDC §6.5.3). */
+export async function dismissDisputeAction(
+  _prev: DecisionState,
+  formData: FormData
+): Promise<DecisionState> {
+  const session = await requireRole("ADMIN");
+  const requestId = String(formData.get("requestId"));
+  const request = await loadDisputeRequestOrThrow(requestId);
+
+  const reason = "Contre-visite : écart non confirmé, mention maintenue.";
+  await prisma.$transaction([
+    prisma.verificationRequest.update({ where: { id: requestId }, data: { status: "REJECTED", rejectionReason: reason } }),
+    prisma.dispute.update({
+      where: { id: request.dispute.id },
+      data: { status: "RESOLVED_KEPT", resolutionNote: reason, resolvedAt: new Date() },
+    }),
+    prisma.auditLog.create({
+      data: { action: "dispute.dismissed", entity: "Dispute", entityId: request.dispute.id, actorId: session.userId },
+    }),
+  ]);
+
+  return redirect({ href: "/admin", locale: (formData.get("locale") as string) || "fr" });
 }
 
 const rejectSchema = z.object({

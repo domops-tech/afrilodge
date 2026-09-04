@@ -123,7 +123,32 @@
     "settingsError": "Certaines valeurs sont invalides.",
     "settingsSaveCta": "Enregistrer",
     "commissionRateLabel": "Taux de commission (%)",
-    "refundWindowLabel": "Délai de remboursement intégral (jours avant l'arrivée)"
+    "refundWindowLabel": "Délai de remboursement intégral (jours avant l'arrivée)",
+    "disputesTitle": "Litiges",
+    "disputesEmpty": "Aucun litige pour l'instant.",
+    "disputeActionError": "Cette action n'est plus possible pour ce litige.",
+    "disputeStatus": {
+      "OPEN": "Ouvert",
+      "COUNTER_VISIT_SCHEDULED": "Contre-visite en cours",
+      "RESOLVED_KEPT": "Résolu — mention maintenue",
+      "RESOLVED_WITHDRAWN": "Résolu — mention retirée"
+    },
+    "triggerCounterVisitCta": "Déclencher une contre-visite",
+    "resolutionNoteLabel": "Motif de la décision",
+    "resolveKeptCta": "Maintenir la mention",
+    "resolveWithdrawnCta": "Retirer la mention",
+    "counterVisitRequestStatus": {
+      "REQUESTED": "En attente de planification",
+      "SCHEDULED": "Visite planifiée",
+      "VISITED": "Visitée, en attente de décision",
+      "APPROVED": "Décidée",
+      "REJECTED": "Décidée"
+    },
+    "counterVisitBadge": "Contre-visite — Litige",
+    "counterVisitContext": "Contre-visite déclenchée suite à un signalement : « {reason} »",
+    "disputeDecisionTitle": "Issue de la contre-visite",
+    "dismissDisputeCta": "Écart non confirmé — maintenir la mention",
+    "confirmDiscrepancyCta": "Écart confirmé — retirer la mention"
   },
   "search": {
     "title": "Rechercher un logement",
@@ -240,10 +265,21 @@
     "stayCodeLabel": "Code de séjour : {code}",
     "confirmArrivalCta": "Confirmer mon arrivée",
     "cancelCta": "Annuler la réservation",
+    "reportDisputeLabel": "Décrivez l'écart constaté",
+    "reportDisputeCta": "Signaler un problème",
+    "disputeTitle": "Signalement",
+    "disputeStatus": {
+      "OPEN": "En cours de traitement.",
+      "COUNTER_VISIT_SCHEDULED": "Une contre-visite a été déclenchée.",
+      "RESOLVED_KEPT": "Traité : la mention « Vérifié » est maintenue.",
+      "RESOLVED_WITHDRAWN": "Traité : la mention « Vérifié » a été retirée."
+    },
     "error": {
       "etat-invalide": "Cette action n'est plus possible dans l'état actuel de la réservation.",
       "annulation-impossible": "Cette réservation ne peut plus être annulée.",
-      "delai-depasse": "Le délai d'annulation remboursée est dépassé pour cette réservation."
+      "delai-depasse": "Le délai d'annulation remboursée est dépassé pour cette réservation.",
+      "signalement-impossible": "Un signalement ne peut être fait qu'une fois, pendant le séjour.",
+      "motif-requis": "Décrivez l'écart constaté (10 caractères minimum)."
     }
   }
 }

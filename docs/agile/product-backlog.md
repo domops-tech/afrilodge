@@ -142,11 +142,11 @@ rejoués et consignés.*
 
 | # | Story | Pts | Statut |
 |---|---|---|---|
-| 7.1 | Signalement d'écart par le voyageur (§4.2 dernier point) | 2 | ⬜ |
-| 7.2 | Déclenchement d'une contre-visite | 2 | ⬜ |
-| 7.3 | Retrait de mention suite à contre-visite défavorable | 2 | ⬜ |
-| 7.4 | Traitement des litiges au back-office (§6.5.3) | 3 | ⬜ |
-| 7.5 | Recette des 5 critères du §11, consignée dans `docs/agile/recette-v1.md` | 5 | ⬜ |
+| 7.1 | Signalement d'écart par le voyageur (§4.2 dernier point) | 2 | ✅ |
+| 7.2 | Déclenchement d'une contre-visite | 2 | ✅ |
+| 7.3 | Retrait de mention suite à contre-visite défavorable | 2 | ✅ |
+| 7.4 | Traitement des litiges au back-office (§6.5.3) | 3 | ✅ |
+| 7.5 | Recette des 5 critères du §11, consignée dans `docs/agile/recette-v1.md` | 5 | ✅ |
 | 7.6 | 50 réservations réelles sans intervention manuelle (§11.5) — jalon post-launch | — | ⬜ |
 
 ---

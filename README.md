@@ -3,7 +3,8 @@
 Plateforme de réservation de logements meublés vérifiés. Cahier des charges
 complet : `docs/cdc/VD_Technologies_CDC_Sejours_v1.docx-1.pdf`. Suivi de
 projet agile : `docs/agile/` (backlog, definition of done, journal de
-sprints, décisions d'architecture).
+sprints, décisions d'architecture, `recette-v1.md` pour les 5 critères
+d'acceptation du CDC §11).
 
 ## Démarrage
 
@@ -50,17 +51,19 @@ développement.
 - Admin (`/admin/connexion`) : `+2250700000001`. Deux fiches déjà visitées
   attendent une décision : « Villa meublée, Bingerville » et « Chambre
   meublée, Yopougon ». `+2250700000002` (second compte admin, réservé au
-  test e2e de planification, voir `e2e/owner-space.spec.ts`).
+  test e2e de planification, voir `e2e/owner-space.spec.ts`). `/admin/litiges` :
+  signalements en cours, contre-visite ou résolution directe (CDC §6.5.3,
+  épic 7).
 - Recherche publique (`/recherche`), sans connexion : trois biens
   vérifiés listés, chacun avec sa fiche détaillée complète.
 - Voyageur (`/reserver/<id d'un bien vérifié>`), sans compte : sélection de
   dates, identification par téléphone + code à usage unique (session
   éphémère de 6h), demande envoyée au propriétaire, paiement simulé une
-  fois acceptée, confirmation d'arrivée, annulation — voir épics 5 et 6.
-  Simulateur Mobile Money (`PAYMENT_PROVIDER=simulated`) : aucun paiement
-  réel, le bouton « Payer » sur `/reserver/paiement/[bookingId]` tient
-  lieu d'établissement de paiement agréé tant que le §12 du CDC n'est pas
-  tranché.
+  fois acceptée, confirmation d'arrivée, annulation, signalement d'un écart
+  une fois le séjour en cours — voir épics 5, 6 et 7. Simulateur Mobile
+  Money (`PAYMENT_PROVIDER=simulated`) : aucun paiement réel, le bouton
+  « Payer » sur `/reserver/paiement/[bookingId]` tient lieu d'établissement
+  de paiement agréé tant que le §12 du CDC n'est pas tranché.
 
 ## Architecture
 

@@ -7,6 +7,7 @@ import { PropertyImage } from "@/components/PropertyImage";
 import { createDownloadUrl } from "@/lib/storage/client";
 import { computeExpiresAt } from "@/lib/verification/badge";
 import { ReviewPanel } from "./ReviewPanel";
+import { DisputeReviewPanel } from "./DisputeReviewPanel";
 
 // Écran de validation d'une fiche (CDC §4.1.8) : tout ce que l'agent a
 // constaté sur place, pour que l'admin décide en connaissance de cause.
@@ -33,6 +34,7 @@ export default async function FicheReviewPage({
           identityCheck: true,
         },
       },
+      dispute: true,
     },
   });
 
@@ -79,6 +81,12 @@ export default async function FicheReviewPage({
 
       {request.status !== "VISITED" ? (
         <p className="rounded-[var(--radius-default)] bg-surface p-3 text-sm">{t("alreadyDecided")}</p>
+      ) : null}
+
+      {request.dispute ? (
+        <p className="rounded-[var(--radius-default)] bg-danger/10 p-3 text-sm text-danger">
+          {t("counterVisitContext", { reason: request.dispute.reason })}
+        </p>
       ) : null}
 
       <section className="flex flex-col gap-3">
@@ -163,7 +171,11 @@ export default async function FicheReviewPage({
       </section>
 
       {request.status === "VISITED" ? (
-        <ReviewPanel requestId={request.id} locale={locale} />
+        request.dispute ? (
+          <DisputeReviewPanel requestId={request.id} locale={locale} />
+        ) : (
+          <ReviewPanel requestId={request.id} locale={locale} />
+        )
       ) : null}
     </div>
   );

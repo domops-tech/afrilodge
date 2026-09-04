@@ -5,7 +5,8 @@ import { prisma } from "@/lib/db/client";
 import { Link } from "@/i18n/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { confirmArrivalAction, cancelBookingAction } from "./actions";
+import { Field } from "@/components/ui/Field";
+import { confirmArrivalAction, cancelBookingAction, reportDisputeAction } from "./actions";
 
 /**
  * Écran de suivi de la demande (CDC §6.2, épics 5.4, 6.1-6.5) : accessible
@@ -27,7 +28,11 @@ export default async function BookingConfirmationPage({
 
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
-    include: { property: { select: { title: true, neighborhood: true, city: true } }, payment: true },
+    include: {
+      property: { select: { title: true, neighborhood: true, city: true } },
+      payment: true,
+      dispute: true,
+    },
   });
 
   if (!booking || booking.guestSessionId !== session.guestSessionId) {
@@ -91,6 +96,25 @@ export default async function BookingConfirmationPage({
       ) : null}
 
       {booking.status === "CANCELLED" ? <p className="text-sm text-danger">{t("statusCancelled")}</p> : null}
+
+      {booking.status === "IN_PROGRESS" ? (
+        booking.dispute ? (
+          <Card className="flex flex-col gap-1 text-sm">
+            <span className="font-medium">{t("disputeTitle")}</span>
+            <span className="text-muted">{t(`disputeStatus.${booking.dispute.status}`)}</span>
+            {booking.dispute.resolutionNote ? <span>{booking.dispute.resolutionNote}</span> : null}
+          </Card>
+        ) : (
+          <form action={reportDisputeAction} className="flex flex-col gap-3">
+            <input type="hidden" name="bookingId" value={booking.id} />
+            <input type="hidden" name="locale" value={locale} />
+            <Field id="reason" name="reason" label={t("reportDisputeLabel")} required />
+            <Button type="submit" variant="secondary" className="w-full">
+              {t("reportDisputeCta")}
+            </Button>
+          </form>
+        )
+      ) : null}
 
       {canCancelFreely || canCancelWithPolicy ? (
         <form action={cancelBookingAction}>
