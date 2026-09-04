@@ -83,18 +83,19 @@ export default async function FicheReviewPage({
 
       <section className="flex flex-col gap-3">
         <h2 className="font-medium">{t("sectionPhotos")}</h2>
-        {[...photosBySlot.entries()].map(([slot, photos]) => (
+        {[...photosBySlot.entries()].map(([slot, photos], slotIndex) => (
           <div key={slot} className="flex flex-col gap-2">
             <span className="text-sm font-medium text-muted">{tField(`slot.${slot}`)}</span>
             <div className="flex flex-wrap gap-2">
-              {photos.map((photo) => (
+              {photos.map((photo, photoIndex) => (
                 <div key={photo.id} className="flex flex-col gap-1">
                   <PropertyImage
                     storageKey={photo.storageKey}
                     alt={photo.label ?? slot}
                     width={160}
                     height={120}
-                    className="rounded-[var(--radius-default)] object-cover"
+                    priority={slotIndex === 0 && photoIndex === 0}
+                    className="h-[120px] w-40 rounded-[var(--radius-default)] object-cover"
                   />
                   {photo.label ? <span className="text-xs text-muted">{photo.label}</span> : null}
                 </div>

@@ -97,7 +97,7 @@ export default async function SearchPage({
         {properties.length === 0 ? (
           <p className="text-sm text-muted">{t("noResults")}</p>
         ) : (
-          properties.map((property) => {
+          properties.map((property, index) => {
             const storageKey = coverByPropertyId.get(property.id);
             return (
               <Link key={property.id} href={`/logements/${property.id}`}>
@@ -113,6 +113,7 @@ export default async function SearchPage({
                       alt={property.title}
                       width={96}
                       height={96}
+                      priority={index === 0}
                       className="h-24 w-24 shrink-0 rounded-[var(--radius-default)] object-cover"
                     />
                   ) : null}

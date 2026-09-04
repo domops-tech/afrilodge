@@ -85,7 +85,7 @@ export default async function PropertyDetailPage({
               height={i === 0 ? 400 : 160}
               priority={i === 0}
               sizes={i === 0 ? "(max-width: 640px) 100vw, 640px" : "(max-width: 640px) 33vw, 240px"}
-              className={`rounded-[var(--radius-default)] object-cover ${i === 0 ? "col-span-2 row-span-2 sm:col-span-1" : ""}`}
+              className={`h-auto w-full rounded-[var(--radius-default)] object-cover ${i === 0 ? "col-span-2 row-span-2 sm:col-span-1" : ""}`}
             />
           ))}
         </div>
