@@ -60,6 +60,11 @@ attribuée et expire à 12 mois.*
 | 2.4 | TODO-JURIDIQUE : formulation de l'attestation validée par un conseil (§4.2, §10.1) — **point ouvert §12, à faire trancher avec vous** | 1 | ✅ |
 | 2.5 | Tâche planifiée d'expiration à 12 mois + relance de renouvellement (§6.5) | 3 | ✅ |
 | 2.6 | Publication automatique de la fiche sous 24h après visite (§11.2) | 2 | ✅ |
+| 2.7 | Planification d'une visite : affectation d'un agent à une demande (§4.1.2) | 2 | ✅ |
+
+*Story 2.7 ajoutée au Sprint 4 : trou du backlog original — sans elle, une
+demande de vérification (épic 4) n'avait jamais de suite. Voir
+`docs/agile/sprints/sprint-04.md`.*
 
 ---
 
@@ -86,11 +91,11 @@ tient son calendrier.*
 
 | # | Story | Pts | Statut |
 |---|---|---|---|
-| 4.1 | Demande de vérification + suivi de traitement (§6.3.1) | 3 | 🔜 |
-| 4.2 | Fiche de bien : prix/description modifiables, reste en lecture seule (§6.3.2) | 3 | 🔜 |
-| 4.3 | Calendrier de disponibilité (§6.3.3) | 5 | 🔜 |
-| 4.4 | Liste des réservations et statuts (§6.3.4) | 2 | 🔜 |
-| 4.5 | Historique des règlements et commissions (§6.3.5) | 2 | 🔜 |
+| 4.1 | Demande de vérification + suivi de traitement (§6.3.1) | 3 | ✅ |
+| 4.2 | Fiche de bien : prix/description modifiables, reste en lecture seule (§6.3.2) | 3 | ✅ |
+| 4.3 | Calendrier de disponibilité (§6.3.3) | 5 | ✅ |
+| 4.4 | Liste des réservations et statuts (§6.3.4) | 2 | ✅ |
+| 4.5 | Historique des règlements et commissions (§6.3.5) | 2 | ✅ |
 
 ---
 
@@ -101,11 +106,11 @@ tient son calendrier.*
 
 | # | Story | Pts | Statut |
 |---|---|---|---|
-| 5.1 | Sélection de dates avec disponibilité temps réel (§6.2.1) | 5 | ⬜ |
-| 5.2 | Verrouillage du calendrier à la demande, expiration si non-paiement (§7.3) | 3 | ⬜ |
-| 5.3 | Identification voyageur par OTP au moment de réserver, sans compte (§6.2.2) | 2 | ⬜ |
-| 5.4 | Acceptation / refus de la demande par le propriétaire | 2 | ⬜ |
-| 5.5 | Réservation < 3 min sur Android d'entrée de gamme (§11.3) — mesure e2e | 3 | ⬜ |
+| 5.1 | Sélection de dates avec disponibilité temps réel (§6.2.1) | 5 | 🔜 |
+| 5.2 | Verrouillage du calendrier à la demande, expiration si non-paiement (§7.3) | 3 | 🔜 |
+| 5.3 | Identification voyageur par OTP au moment de réserver, sans compte (§6.2.2) | 2 | 🔜 |
+| 5.4 | Acceptation / refus de la demande par le propriétaire | 2 | 🔜 |
+| 5.5 | Réservation < 3 min sur Android d'entrée de gamme (§11.3) — mesure e2e | 3 | 🔜 |
 
 ---
 

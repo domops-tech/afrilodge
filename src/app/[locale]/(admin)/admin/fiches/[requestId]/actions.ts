@@ -108,7 +108,7 @@ export async function rejectVerificationAction(
   await prisma.$transaction(async (tx) => {
     const request = await tx.verificationRequest.update({
       where: { id: requestId },
-      data: { status: "REJECTED" },
+      data: { status: "REJECTED", rejectionReason: parsed.data.reason },
     });
     await tx.property.update({ where: { id: request.propertyId }, data: { status: "DRAFT" } });
     await tx.auditLog.create({

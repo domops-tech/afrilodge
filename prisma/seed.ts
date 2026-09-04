@@ -14,6 +14,7 @@ import { join } from "node:path";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { buildStorageKey, putObjectDirect, ensureBucketExists } from "../src/lib/storage/client";
+import { AMENITY_OPTIONS } from "../src/lib/property/amenities";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
@@ -92,6 +93,17 @@ async function main() {
       phone: "+2250700000001",
       email: "admin@vdtechnologies.example",
       fullName: "Admin VD Technologies",
+    },
+  });
+  // Second compte admin : garde l'e2e de planification (Sprint 4)
+  // indépendant de e2e/admin-review.spec.ts, qui s'authentifie déjà avec
+  // le premier — deux tests sur le même numéro courraient sur la même file
+  // d'OTP (voir e2e/admin-review.spec.ts, mode "serial").
+  await prisma.user.create({
+    data: {
+      role: "ADMIN",
+      phone: "+2250700000002",
+      fullName: "Admin Secondaire",
     },
   });
 
@@ -182,7 +194,7 @@ async function main() {
     },
   ];
 
-  const amenityNames = ["Wifi", "Climatisation", "Eau chaude", "Cuisine équipée", "Générateur"];
+  const amenityNames = AMENITY_OPTIONS;
 
   for (const p of propertiesData) {
     const alreadyPublished = p.status === "verified";

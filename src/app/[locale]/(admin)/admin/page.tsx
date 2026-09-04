@@ -6,11 +6,10 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { logoutAction } from "@/lib/auth/logout-action";
 import { isReviewOverdue } from "@/lib/verification/badge";
+import { ScheduleForm } from "./ScheduleForm";
 
-// File des fiches en attente de validation (CDC §6.5.1) — triée par visite
-// la plus ancienne d'abord, celles en retard de plus de 24h signalées
-// (CDC §11.2 : la publication doit intervenir sous 24h après la visite ;
-// rien ne peut le forcer côté logiciel, cette file rend le délai visible).
+// File du back-office : demandes à planifier (CDC §4.1.2) et fiches
+// visitées en attente de validation (CDC §6.5.1), triées par ancienneté.
 export default async function AdminQueuePage({
   params,
 }: PageProps<"/[locale]/admin">) {
@@ -21,8 +20,14 @@ export default async function AdminQueuePage({
   const tNav = await getTranslations("nav");
   const format = await getFormatter();
 
-  const [user, requests] = await Promise.all([
+  const [user, toSchedule, agents, toReview] = await Promise.all([
     prisma.user.findUniqueOrThrow({ where: { id: session.userId } }),
+    prisma.verificationRequest.findMany({
+      where: { status: "REQUESTED" },
+      include: { property: true, owner: true },
+      orderBy: { createdAt: "asc" },
+    }),
+    prisma.user.findMany({ where: { role: "AGENT" }, select: { id: true, fullName: true } }),
     prisma.verificationRequest.findMany({
       where: { status: "VISITED" },
       include: {
@@ -46,13 +51,31 @@ export default async function AdminQueuePage({
         </form>
       </header>
 
-      <h2 className="text-sm font-medium text-muted">{t("queueTitle")}</h2>
+      <section className="flex flex-col gap-3">
+        <h2 className="text-sm font-medium text-muted">{t("toScheduleTitle")}</h2>
+        {toSchedule.length === 0 ? (
+          <p className="text-sm text-muted">{t("noPendingSchedule")}</p>
+        ) : (
+          toSchedule.map((request) => (
+            <Card
+              key={request.id}
+              data-testid={`schedule-request-${request.propertyId}`}
+              className="flex flex-col gap-2"
+            >
+              <span className="font-medium">{request.property.title}</span>
+              <span className="text-sm text-muted">{request.owner.fullName}</span>
+              <ScheduleForm requestId={request.id} locale={locale} agents={agents} />
+            </Card>
+          ))
+        )}
+      </section>
 
-      <div className="flex flex-col gap-3">
-        {requests.length === 0 ? (
+      <section className="flex flex-col gap-3">
+        <h2 className="text-sm font-medium text-muted">{t("queueTitle")}</h2>
+        {toReview.length === 0 ? (
           <p className="text-sm text-muted">{t("noFiches")}</p>
         ) : (
-          requests.map((request) => {
+          toReview.map((request) => {
             const completedAt = request.visit?.completedAt;
             const overdue = completedAt ? isReviewOverdue(completedAt) : false;
             return (
@@ -62,9 +85,7 @@ export default async function AdminQueuePage({
                     <span className="font-medium">{request.property.title}</span>
                     <span className="text-sm text-muted">
                       {request.owner.fullName} · {t("agentLabel", { name: request.visit?.agent.fullName ?? "" })}
-                      {completedAt
-                        ? ` · ${format.relativeTime(completedAt)}`
-                        : null}
+                      {completedAt ? ` · ${format.relativeTime(completedAt)}` : null}
                     </span>
                   </div>
                   {overdue ? (
@@ -77,7 +98,7 @@ export default async function AdminQueuePage({
             );
           })
         )}
-      </div>
+      </section>
     </div>
   );
 }

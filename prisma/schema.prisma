@@ -166,6 +166,12 @@ model VerificationRequest {
   packPaid  Boolean  @default(false)
   visit     Visit?
 
+  // Motif du refus (CDC §6.3.1 — suivi de traitement) : le propriétaire
+  // doit comprendre pourquoi, pas seulement constater un statut REJECTED.
+  // Doublé dans AuditLog pour la traçabilité admin, mais c'est ce champ que
+  // l'espace propriétaire affiche.
+  rejectionReason String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
