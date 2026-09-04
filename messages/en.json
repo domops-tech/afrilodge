@@ -107,5 +107,30 @@
     "reasonRequired": "Provide a reason (5 characters minimum).",
     "visitDateLabel": "Visited on {date}",
     "expiresPreview": "Valid until {date} if approved"
+  },
+  "search": {
+    "title": "Search for a home",
+    "neighborhoodLabel": "Neighborhood",
+    "neighborhoodPlaceholder": "e.g. Plateau",
+    "checkInLabel": "Check-in",
+    "checkOutLabel": "Check-out",
+    "guestsLabel": "Guests",
+    "maxPriceLabel": "Max budget (FCFA/night)",
+    "submit": "Search",
+    "resultsCount": "{count, plural, =0 {No homes found} one {# verified home found} other {# verified homes found}}",
+    "noResults": "No home matches your search.",
+    "perNight": "FCFA / night"
+  },
+  "property": {
+    "backToSearch": "Back to search",
+    "pricePerNight": "{price} FCFA / night",
+    "guestsMax": "{count, plural, one {# guest maximum} other {# guests maximum}}",
+    "sectionAmenities": "Confirmed amenities",
+    "sectionLandmarks": "Access landmarks",
+    "sectionMap": "Approximate location",
+    "mapDisclaimer": "Approximate location — the exact address is shared once the booking is confirmed (CDC §6.1.5).",
+    "bookCta": "Book",
+    "noAmenities": "No confirmed amenities yet.",
+    "noLandmarks": "—"
   }
 }

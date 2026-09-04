@@ -20,6 +20,19 @@ const prisma = new PrismaClient({ adapter });
 
 const SAMPLE_IMAGE = readFileSync(join(__dirname, "..", "e2e", "fixtures", "sample.jpg"));
 
+// Coordonnées approximatives par quartier (Abidjan) — la position exacte
+// n'est jamais capturée en amont : seul le point de repère textuel l'est
+// (CDC §6.1.4). Sert à peupler Property/Visit pour la démonstration de la
+// carte de situation approximative du Sprint 3.
+const NEIGHBORHOOD_COORDS: Record<string, { lat: number; lng: number }> = {
+  Angré: { lat: 5.409, lng: -3.982 },
+  Riviera: { lat: 5.359952, lng: -3.941 },
+  Marcory: { lat: 5.288, lng: -3.98 },
+  Plateau: { lat: 5.32, lng: -4.021 },
+  Bingerville: { lat: 5.356, lng: -3.882 },
+  Yopougon: { lat: 5.345, lng: -4.09 },
+};
+
 function daysFromNow(days: number) {
   const d = new Date();
   d.setDate(d.getDate() + days);
@@ -31,6 +44,20 @@ async function uploadDemoImage(kind: "visit-photo" | "identity-document", visitI
   const storageKey = buildStorageKey(kind, visitId, "jpg");
   await putObjectDirect(storageKey, SAMPLE_IMAGE, "image/jpeg");
   return storageKey;
+}
+
+const PHOTO_SLOTS = ["FACADE", "ENTREE", "SANITAIRES", "CUISINE", "VUE", "ACCES"] as const;
+
+/** Liste imposée de prises de vue (CDC §4.1.4), avec de vraies images envoyées à MinIO. */
+async function createDemoVisitPhotos(visitId: string, takenAt: Date) {
+  for (const slot of PHOTO_SLOTS) {
+    const storageKey = await uploadDemoImage("visit-photo", visitId);
+    await prisma.visitPhoto.create({ data: { visitId, slot, storageKey, takenAt } });
+  }
+  const roomStorageKey = await uploadDemoImage("visit-photo", visitId);
+  await prisma.visitPhoto.create({
+    data: { visitId, slot: "PIECE", label: "Salon", storageKey: roomStorageKey, takenAt },
+  });
 }
 
 async function main() {
@@ -156,10 +183,10 @@ async function main() {
   ];
 
   const amenityNames = ["Wifi", "Climatisation", "Eau chaude", "Cuisine équipée", "Générateur"];
-  const photoSlots = ["FACADE", "ENTREE", "SANITAIRES", "CUISINE", "VUE", "ACCES"] as const;
 
   for (const p of propertiesData) {
     const alreadyPublished = p.status === "verified";
+    const coords = NEIGHBORHOOD_COORDS[p.neighborhood];
     const property = await prisma.property.create({
       data: {
         title: p.title,
@@ -169,6 +196,8 @@ async function main() {
         neighborhood: p.neighborhood,
         city: p.city,
         accessLandmarks: `Repère : à 200 m de la pharmacie principale de ${p.neighborhood}.`,
+        latitude: alreadyPublished ? coords.lat : undefined,
+        longitude: alreadyPublished ? coords.lng : undefined,
         status: alreadyPublished ? "PUBLISHED" : "DRAFT",
         ownerId: p.owner.id,
         amenities: {
@@ -192,8 +221,8 @@ async function main() {
           startedAt: daysFromNow(-10),
           completedAt: daysFromNow(-10),
           checkInAt: daysFromNow(-10),
-          checkInLatitude: 5.359952,
-          checkInLongitude: -3.996452,
+          checkInLatitude: coords.lat,
+          checkInLongitude: coords.lng,
         },
       });
       await prisma.verification.create({
@@ -207,6 +236,7 @@ async function main() {
           approvedAt: daysFromNow(-9),
         },
       });
+      await createDemoVisitPhotos(visit.id, daysFromNow(-10));
       continue;
     }
 
@@ -235,22 +265,13 @@ async function main() {
         startedAt: visitedAt,
         completedAt: visitedAt,
         checkInAt: visitedAt,
-        checkInLatitude: 5.359952,
-        checkInLongitude: -3.996452,
+        checkInLatitude: coords.lat,
+        checkInLongitude: coords.lng,
         accessLandmarks: `Repère : à 200 m de la pharmacie principale de ${p.neighborhood}.`,
       },
     });
 
-    for (const slot of photoSlots) {
-      const storageKey = await uploadDemoImage("visit-photo", visit.id);
-      await prisma.visitPhoto.create({
-        data: { visitId: visit.id, slot, storageKey, takenAt: visitedAt },
-      });
-    }
-    const roomStorageKey = await uploadDemoImage("visit-photo", visit.id);
-    await prisma.visitPhoto.create({
-      data: { visitId: visit.id, slot: "PIECE", label: "Salon", storageKey: roomStorageKey, takenAt: visitedAt },
-    });
+    await createDemoVisitPhotos(visit.id, visitedAt);
 
     await prisma.amenityCheck.createMany({
       data: amenityNames.map((name, i) => ({

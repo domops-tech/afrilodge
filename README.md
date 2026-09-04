@@ -48,6 +48,8 @@ développement.
 - Admin (`/admin/connexion`) : `+2250700000001`. Deux fiches déjà visitées
   attendent une décision : « Villa meublée, Bingerville » et « Chambre
   meublée, Yopougon ».
+- Recherche publique (`/recherche`), sans connexion : trois biens
+  vérifiés listés, chacun avec sa fiche détaillée complète.
 
 ## Architecture
 

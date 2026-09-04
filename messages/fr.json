@@ -107,5 +107,30 @@
     "reasonRequired": "Indiquez un motif (5 caractères minimum).",
     "visitDateLabel": "Visité le {date}",
     "expiresPreview": "Valable jusqu'au {date} si approuvée"
+  },
+  "search": {
+    "title": "Rechercher un logement",
+    "neighborhoodLabel": "Quartier",
+    "neighborhoodPlaceholder": "ex. Plateau",
+    "checkInLabel": "Arrivée",
+    "checkOutLabel": "Départ",
+    "guestsLabel": "Voyageurs",
+    "maxPriceLabel": "Budget max (FCFA/nuit)",
+    "submit": "Rechercher",
+    "resultsCount": "{count, plural, =0 {Aucun logement trouvé} one {# logement vérifié trouvé} other {# logements vérifiés trouvés}}",
+    "noResults": "Aucun logement ne correspond à votre recherche.",
+    "perNight": "FCFA / nuit"
+  },
+  "property": {
+    "backToSearch": "Retour à la recherche",
+    "pricePerNight": "{price} FCFA / nuit",
+    "guestsMax": "{count, plural, one {# voyageur maximum} other {# voyageurs maximum}}",
+    "sectionAmenities": "Équipements constatés",
+    "sectionLandmarks": "Points de repère d'accès",
+    "sectionMap": "Situation approximative",
+    "mapDisclaimer": "Localisation approximative — l'adresse exacte est communiquée après confirmation de la réservation (CDC §6.1.5).",
+    "bookCta": "Réserver",
+    "noAmenities": "Aucun équipement constaté pour l'instant.",
+    "noLandmarks": "—"
   }
 }

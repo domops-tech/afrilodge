@@ -70,12 +70,12 @@ vérifiée, budget de poids tenu.*
 
 | # | Story | Pts | Statut |
 |---|---|---|---|
-| 3.1 | Recherche par quartier, dates, budget, nombre de personnes (§6.1.1) | 5 | 🔜 |
-| 3.2 | Liste de résultats optimisée mobile/réseau lent (§6.1.2) | 3 | 🔜 |
-| 3.3 | Fiche détaillée : photos, équipements, date + agent de vérification (§6.1.3) | 3 | 🔜 |
-| 3.4 | Carte de situation approximative + repères textuels (§6.1.4) | 2 | 🔜 |
-| 3.5 | Masquage des coordonnées propriétaire avant réservation confirmée (§6.1.5) | 1 | 🔜 |
-| 3.6 | Lighthouse CI : budget Ko/fiche en échec bloquant (§7.3) | 3 | 🔜 |
+| 3.1 | Recherche par quartier, dates, budget, nombre de personnes (§6.1.1) | 5 | ✅ |
+| 3.2 | Liste de résultats optimisée mobile/réseau lent (§6.1.2) | 3 | ✅ |
+| 3.3 | Fiche détaillée : photos, équipements, date + agent de vérification (§6.1.3) | 3 | ✅ |
+| 3.4 | Carte de situation approximative + repères textuels (§6.1.4) | 2 | ✅ |
+| 3.5 | Masquage des coordonnées propriétaire avant réservation confirmée (§6.1.5) | 1 | ✅ |
+| 3.6 | Lighthouse CI : budget Ko/fiche en échec bloquant (§7.3) | 3 | ✅ |
 
 ---
 
@@ -86,11 +86,11 @@ tient son calendrier.*
 
 | # | Story | Pts | Statut |
 |---|---|---|---|
-| 4.1 | Demande de vérification + suivi de traitement (§6.3.1) | 3 | ⬜ |
-| 4.2 | Fiche de bien : prix/description modifiables, reste en lecture seule (§6.3.2) | 3 | ⬜ |
-| 4.3 | Calendrier de disponibilité (§6.3.3) | 5 | ⬜ |
-| 4.4 | Liste des réservations et statuts (§6.3.4) | 2 | ⬜ |
-| 4.5 | Historique des règlements et commissions (§6.3.5) | 2 | ⬜ |
+| 4.1 | Demande de vérification + suivi de traitement (§6.3.1) | 3 | 🔜 |
+| 4.2 | Fiche de bien : prix/description modifiables, reste en lecture seule (§6.3.2) | 3 | 🔜 |
+| 4.3 | Calendrier de disponibilité (§6.3.3) | 5 | 🔜 |
+| 4.4 | Liste des réservations et statuts (§6.3.4) | 2 | 🔜 |
+| 4.5 | Historique des règlements et commissions (§6.3.5) | 2 | 🔜 |
 
 ---
 

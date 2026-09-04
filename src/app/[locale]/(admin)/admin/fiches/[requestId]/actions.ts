@@ -18,7 +18,7 @@ export type DecisionState = { status: "idle" | "error"; message?: string };
 async function loadRequestOrThrow(requestId: string) {
   const request = await prisma.verificationRequest.findUniqueOrThrow({
     where: { id: requestId },
-    include: { visit: true },
+    include: { visit: { include: { amenityChecks: true } } },
   });
   if (request.status !== "VISITED" || !request.visit) {
     throw new Error("Fiche non éligible à une décision (déjà traitée ou non visitée).");
@@ -49,7 +49,28 @@ export async function approveVerificationAction(
       },
     });
     await tx.verificationRequest.update({ where: { id: requestId }, data: { status: "APPROVED" } });
-    await tx.property.update({ where: { id: request.propertyId }, data: { status: "PUBLISHED" } });
+    await tx.property.update({
+      where: { id: request.propertyId },
+      data: {
+        status: "PUBLISHED",
+        // Filet de sécurité : normalement déjà copié à la synchronisation
+        // (src/app/api/terrain/visits/[visitId]/sync/route.ts), mais toute
+        // visite ne passe pas nécessairement par cette route (ex. données
+        // de démonstration insérées directement — voir prisma/seed.ts).
+        latitude: request.visit!.checkInLatitude ?? undefined,
+        longitude: request.visit!.checkInLongitude ?? undefined,
+      },
+    });
+
+    // La fiche publique n'affiche que les équipements réellement constatés
+    // (CDC §6.1.3), pas la seule déclaration du propriétaire — voir
+    // prisma/schema.prisma, PropertyAmenity.confirmed.
+    for (const check of request.visit!.amenityChecks) {
+      await tx.propertyAmenity.updateMany({
+        where: { propertyId: request.propertyId, name: check.amenityName },
+        data: { confirmed: check.observed },
+      });
+    }
     await tx.auditLog.create({
       data: {
         action: "verification.approved",

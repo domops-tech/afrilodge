@@ -110,10 +110,17 @@ export async function POST(request: NextRequest, ctx: RouteContext<"/api/terrain
       });
     }
 
-    if (body.accessLandmarks) {
+    if (body.accessLandmarks || body.checkInLatitude !== undefined) {
+      // Constaté par la visite, copié sur la fiche (CDC §6.1.4) — la
+      // position exacte reste approximative à l'affichage public, voir
+      // src/app/[locale]/(public)/logements/[propertyId]/page.tsx.
       await tx.property.update({
         where: { id: visit.verificationRequest.propertyId },
-        data: { accessLandmarks: body.accessLandmarks },
+        data: {
+          accessLandmarks: body.accessLandmarks,
+          latitude: body.checkInLatitude,
+          longitude: body.checkInLongitude,
+        },
       });
     }
 

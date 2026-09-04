@@ -6,6 +6,13 @@ import { resolvePublicStorageUrl } from "@/lib/storage/public-url";
  * (jamais l'image directement — voir prisma/schema.prisma, VisitPhoto).
  * Chargement différé par défaut ; `priority` réservé à l'image au-dessus de
  * la ligne de flottaison (ex. première photo de la fiche détaillée).
+ *
+ * `sizes` doit refléter la taille d'affichage réelle, pas un défaut
+ * générique : un défaut pensé pour une grande image hero a fait demander
+ * un candidat 3840px pour une vignette de 160px lors de la revue admin
+ * (Sprint 2, décision 0007) — next/image choisit sa taille de fichier à
+ * partir de `sizes`, pas de `width`/`height` seuls. Budget CDC §7.3 :
+ * vignette de liste ≤ 30 Ko.
  */
 export function PropertyImage({
   storageKey,
@@ -14,6 +21,7 @@ export function PropertyImage({
   height,
   priority = false,
   className,
+  sizes = `${width}px`,
 }: {
   storageKey: string;
   alt: string;
@@ -21,6 +29,8 @@ export function PropertyImage({
   height: number;
   priority?: boolean;
   className?: string;
+  /** Taille d'affichage réelle de l'image, en CSS `sizes`. Par défaut, la largeur fixe passée. */
+  sizes?: string;
 }) {
   return (
     <Image
@@ -31,7 +41,7 @@ export function PropertyImage({
       loading={priority ? undefined : "lazy"}
       priority={priority}
       className={className}
-      sizes="(max-width: 640px) 100vw, 640px"
+      sizes={sizes}
     />
   );
 }
