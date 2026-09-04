@@ -54,12 +54,12 @@ attribuée et expire à 12 mois.*
 
 | # | Story | Pts | Statut |
 |---|---|---|---|
-| 2.1 | Connexion admin (purpose `ADMIN_LOGIN`) | 1 | 🔜 |
-| 2.2 | File des fiches en attente de validation | 3 | 🔜 |
-| 2.3 | Validation / refus d'une fiche, attribution de la mention (§4.1.8) | 3 | 🔜 |
-| 2.4 | TODO-JURIDIQUE : formulation de l'attestation validée par un conseil (§4.2, §10.1) — **point ouvert §12, à faire trancher avec vous** | 1 | 🔜 |
-| 2.5 | Tâche planifiée d'expiration à 12 mois + relance de renouvellement (§6.5) | 3 | 🔜 |
-| 2.6 | Publication automatique de la fiche sous 24h après visite (§11.2) | 2 | 🔜 |
+| 2.1 | Connexion admin (purpose `ADMIN_LOGIN`) | 1 | ✅ |
+| 2.2 | File des fiches en attente de validation | 3 | ✅ |
+| 2.3 | Validation / refus d'une fiche, attribution de la mention (§4.1.8) | 3 | ✅ |
+| 2.4 | TODO-JURIDIQUE : formulation de l'attestation validée par un conseil (§4.2, §10.1) — **point ouvert §12, à faire trancher avec vous** | 1 | ✅ |
+| 2.5 | Tâche planifiée d'expiration à 12 mois + relance de renouvellement (§6.5) | 3 | ✅ |
+| 2.6 | Publication automatique de la fiche sous 24h après visite (§11.2) | 2 | ✅ |
 
 ---
 
@@ -70,12 +70,12 @@ vérifiée, budget de poids tenu.*
 
 | # | Story | Pts | Statut |
 |---|---|---|---|
-| 3.1 | Recherche par quartier, dates, budget, nombre de personnes (§6.1.1) | 5 | ⬜ |
-| 3.2 | Liste de résultats optimisée mobile/réseau lent (§6.1.2) | 3 | ⬜ |
-| 3.3 | Fiche détaillée : photos, équipements, date + agent de vérification (§6.1.3) | 3 | ⬜ |
-| 3.4 | Carte de situation approximative + repères textuels (§6.1.4) | 2 | ⬜ |
-| 3.5 | Masquage des coordonnées propriétaire avant réservation confirmée (§6.1.5) | 1 | ⬜ |
-| 3.6 | Lighthouse CI : budget Ko/fiche en échec bloquant (§7.3) | 3 | ⬜ |
+| 3.1 | Recherche par quartier, dates, budget, nombre de personnes (§6.1.1) | 5 | 🔜 |
+| 3.2 | Liste de résultats optimisée mobile/réseau lent (§6.1.2) | 3 | 🔜 |
+| 3.3 | Fiche détaillée : photos, équipements, date + agent de vérification (§6.1.3) | 3 | 🔜 |
+| 3.4 | Carte de situation approximative + repères textuels (§6.1.4) | 2 | 🔜 |
+| 3.5 | Masquage des coordonnées propriétaire avant réservation confirmée (§6.1.5) | 1 | 🔜 |
+| 3.6 | Lighthouse CI : budget Ko/fiche en échec bloquant (§7.3) | 3 | 🔜 |
 
 ---
 

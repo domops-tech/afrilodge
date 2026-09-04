@@ -32,6 +32,7 @@ serveur au lieu de l'envoyer.
 | `npm run test:e2e` | Tests de bout en bout (Playwright — `npx playwright install chromium` une première fois) |
 | `npm run db:migrate` / `npm run db:seed` / `npm run db:studio` | Base de données (Prisma 7) |
 | `npm run storage:setup` | Crée le bucket MinIO local et sa politique de lecture |
+| `npm run verifications:expire` | Expire les mentions échues et envoie les relances de renouvellement (CDC §6.5.2) — à planifier en tâche cron externe, voir décision 0005 |
 
 ## Comptes de démonstration (`prisma/seed.ts`)
 
@@ -44,6 +45,9 @@ développement.
 - Agent (`/terrain/connexion`) : `+2250700000011` (Jean-Marc Assouan, une
   visite lui est affectée sur le bien « Studio cosy, Plateau »). Compte
   provisionné par le seed, pas d'auto-inscription.
+- Admin (`/admin/connexion`) : `+2250700000001`. Deux fiches déjà visitées
+  attendent une décision : « Villa meublée, Bingerville » et « Chambre
+  meublée, Yopougon ».
 
 ## Architecture
 

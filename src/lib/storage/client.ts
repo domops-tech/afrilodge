@@ -1,6 +1,7 @@
 import {
   S3Client,
   PutObjectCommand,
+  GetObjectCommand,
   HeadBucketCommand,
   CreateBucketCommand,
   PutBucketPolicyCommand,
@@ -58,6 +59,34 @@ export async function createUploadUrl(storageKey: string, contentType: string): 
     ContentType: contentType,
   });
   return getSignedUrl(client, command, { expiresIn: 300 });
+}
+
+/**
+ * URL signée de lecture, durée courte — réservée à l'admin pour consulter
+ * une pièce d'identité (préfixe `identity/`, privé) au moment de la
+ * validation d'une fiche (CDC §4.1.8). Ne jamais utiliser pour le préfixe
+ * `visits/`, déjà public : voir docs/agile/decisions/0006.
+ */
+export async function createDownloadUrl(storageKey: string): Promise<string> {
+  const client = getClient();
+  const command = new GetObjectCommand({ Bucket: getBucket(), Key: storageKey });
+  return getSignedUrl(client, command, { expiresIn: 300 });
+}
+
+/**
+ * Envoi direct depuis le serveur, credentials en main — réservé aux scripts
+ * (ex. prisma/seed.ts) qui n'ont pas de navigateur pour consommer une URL
+ * signée. Ne pas utiliser depuis une route HTTP : voir createUploadUrl.
+ */
+export async function putObjectDirect(
+  storageKey: string,
+  body: Buffer,
+  contentType: string
+): Promise<void> {
+  const client = getClient();
+  await client.send(
+    new PutObjectCommand({ Bucket: getBucket(), Key: storageKey, Body: body, ContentType: contentType })
+  );
 }
 
 /**

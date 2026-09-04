@@ -35,7 +35,7 @@
     "expiredCode": "This code has expired, request a new one.",
     "tooManyAttempts": "Too many attempts. Request a new code.",
     "rateLimited": "Too many requests for this number. Try again in a few minutes.",
-    "notRecognized": "This number isn't linked to any agent account. Contact your administrator."
+    "notRecognized": "This number isn't linked to any recognized account for this space. Contact your administrator."
   },
   "home": {
     "tagline": "A furnished home, verified on site, booked with Mobile Money.",
@@ -82,5 +82,30 @@
     "syncSuccess": "Visit synced successfully.",
     "syncErrorMsg": "Sync failed: your data is still saved locally. Try again.",
     "pendingSync": "Offline: sync will resume automatically once back online."
+  },
+  "admin": {
+    "greeting": "Hello, {name}",
+    "queueTitle": "Fiches pending review",
+    "noFiches": "No fiches pending review.",
+    "agentLabel": "visited by {name}",
+    "overdueBadge": "Overdue (> 24h)",
+    "backToQueue": "Back to queue",
+    "alreadyDecided": "This fiche has already been decided.",
+    "sectionPhotos": "Photos",
+    "sectionAmenities": "Amenities",
+    "sectionLandmarks": "Access landmarks",
+    "sectionIdentity": "Identity document",
+    "sectionAttestation": "Attestation wording",
+    "attestationNotice": "Provisional — needs legal sign-off before production (CDC §4.2, §10.1).",
+    "amenityDiscrepancy": "Discrepancy: announced but not confirmed",
+    "identityVerifiedByAgent": "Verified on site by the agent",
+    "identityNotVerifiedByAgent": "Not verified by the agent",
+    "decisionTitle": "Decision",
+    "approve": "Approve and publish",
+    "reject": "Reject",
+    "rejectReasonLabel": "Rejection reason",
+    "reasonRequired": "Provide a reason (5 characters minimum).",
+    "visitDateLabel": "Visited on {date}",
+    "expiresPreview": "Valid until {date} if approved"
   }
 }

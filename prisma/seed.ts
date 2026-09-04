@@ -1,17 +1,24 @@
 /**
- * Jeu de démonstration (S0-3) : 3 propriétaires, 5 biens, 2 agents, 1 admin,
- * un quartier avec plusieurs biens vérifiés et un en attente. Le CDC ne fixe
- * pas de ville précise au-delà de la zone BCEAO ; Abidjan est utilisée ici
- * comme ville de démonstration, à ajuster si VD Technologies vise une autre
- * place.
+ * Jeu de démonstration (S0-3, étendu en S2) : 3 propriétaires, 6 biens,
+ * 2 agents, 1 admin. Trois biens déjà vérifiés et publiés, un en attente de
+ * visite, un brouillon, et deux fiches déjà visitées en attente de décision
+ * du back-office (une pour démontrer l'approbation, une le refus). Le CDC ne
+ * fixe pas de ville précise au-delà de la zone BCEAO ; Abidjan est utilisée
+ * ici comme ville de démonstration, à ajuster si VD Technologies vise une
+ * autre place.
  *
  * Exécution : npx prisma db seed (ou `npm run db:seed`).
  */
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
+import { buildStorageKey, putObjectDirect, ensureBucketExists } from "../src/lib/storage/client";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
+
+const SAMPLE_IMAGE = readFileSync(join(__dirname, "..", "e2e", "fixtures", "sample.jpg"));
 
 function daysFromNow(days: number) {
   const d = new Date();
@@ -19,7 +26,17 @@ function daysFromNow(days: number) {
   return d;
 }
 
+/** Envoi direct au stockage objet — voir src/lib/storage/client.ts. */
+async function uploadDemoImage(kind: "visit-photo" | "identity-document", visitId: string) {
+  const storageKey = buildStorageKey(kind, visitId, "jpg");
+  await putObjectDirect(storageKey, SAMPLE_IMAGE, "image/jpeg");
+  return storageKey;
+}
+
 async function main() {
+  console.log("Préparation du stockage objet…");
+  await ensureBucketExists();
+
   console.log("Nettoyage des données existantes…");
   // Ordre inverse des dépendances.
   await prisma.auditLog.deleteMany();
@@ -89,7 +106,7 @@ async function main() {
       city: "Abidjan",
       price: 15000,
       guests: 2,
-      verified: true,
+      status: "verified" as const,
     },
     {
       owner: owner1,
@@ -98,7 +115,7 @@ async function main() {
       city: "Abidjan",
       price: 22000,
       guests: 3,
-      verified: true,
+      status: "verified" as const,
     },
     {
       owner: owner2,
@@ -107,7 +124,7 @@ async function main() {
       city: "Abidjan",
       price: 18000,
       guests: 4,
-      verified: true,
+      status: "verified" as const,
     },
     {
       owner: owner2,
@@ -116,7 +133,7 @@ async function main() {
       city: "Abidjan",
       price: 20000,
       guests: 2,
-      verified: false, // en attente de vérification
+      status: "scheduled" as const, // visite planifiée, pas encore réalisée — voir e2e/field-visit.spec.ts
     },
     {
       owner: owner3,
@@ -125,13 +142,24 @@ async function main() {
       city: "Abidjan",
       price: 35000,
       guests: 6,
-      verified: false, // brouillon, aucune demande de vérification encore
+      status: "pending_review" as const, // visitée, en attente de décision admin — démonstration de l'approbation
+    },
+    {
+      owner: owner2,
+      title: "Chambre meublée, Yopougon",
+      neighborhood: "Yopougon",
+      city: "Abidjan",
+      price: 9000,
+      guests: 1,
+      status: "pending_review_reject" as const, // visitée, en attente de décision admin — démonstration du refus
     },
   ];
 
   const amenityNames = ["Wifi", "Climatisation", "Eau chaude", "Cuisine équipée", "Générateur"];
+  const photoSlots = ["FACADE", "ENTREE", "SANITAIRES", "CUISINE", "VUE", "ACCES"] as const;
 
   for (const p of propertiesData) {
+    const alreadyPublished = p.status === "verified";
     const property = await prisma.property.create({
       data: {
         title: p.title,
@@ -141,27 +169,21 @@ async function main() {
         neighborhood: p.neighborhood,
         city: p.city,
         accessLandmarks: `Repère : à 200 m de la pharmacie principale de ${p.neighborhood}.`,
-        status: p.verified ? "PUBLISHED" : "DRAFT",
+        status: alreadyPublished ? "PUBLISHED" : "DRAFT",
         ownerId: p.owner.id,
         amenities: {
           create: amenityNames.map((name) => ({
             name,
-            confirmed: p.verified ? true : null,
+            confirmed: alreadyPublished ? true : null,
           })),
         },
       },
     });
 
-    if (p.verified) {
+    if (p.status === "verified") {
       const request = await prisma.verificationRequest.create({
-        data: {
-          propertyId: property.id,
-          ownerId: p.owner.id,
-          status: "APPROVED",
-          packPaid: true,
-        },
+        data: { propertyId: property.id, ownerId: p.owner.id, status: "APPROVED", packPaid: true },
       });
-
       const visit = await prisma.visit.create({
         data: {
           verificationRequestId: request.id,
@@ -174,7 +196,6 @@ async function main() {
           checkInLongitude: -3.996452,
         },
       });
-
       await prisma.verification.create({
         data: {
           propertyId: property.id,
@@ -186,29 +207,68 @@ async function main() {
           approvedAt: daysFromNow(-9),
         },
       });
-    } else if (p.title.includes("Plateau")) {
-      // Demande en cours, pas encore visitée.
-      await prisma.verificationRequest.create({
-        data: {
-          propertyId: property.id,
-          ownerId: p.owner.id,
-          status: "SCHEDULED",
-          packPaid: true,
-        },
+      continue;
+    }
+
+    if (p.status === "scheduled") {
+      const request = await prisma.verificationRequest.create({
+        data: { propertyId: property.id, ownerId: p.owner.id, status: "SCHEDULED", packPaid: true },
+      });
+      await prisma.visit.create({
+        data: { verificationRequestId: request.id, agentId: agent2.id, scheduledAt: daysFromNow(2) },
+      });
+      continue;
+    }
+
+    // pending_review / pending_review_reject : fiche déjà visitée, en
+    // attente de décision du back-office (épic 2). Un écart d'équipement
+    // délibéré rend la revue admin réaliste.
+    const request = await prisma.verificationRequest.create({
+      data: { propertyId: property.id, ownerId: p.owner.id, status: "VISITED", packPaid: true },
+    });
+    const visitedAt = p.status === "pending_review" ? daysFromNow(-1) : daysFromNow(-2);
+    const visit = await prisma.visit.create({
+      data: {
+        verificationRequestId: request.id,
+        agentId: agent1.id,
+        scheduledAt: visitedAt,
+        startedAt: visitedAt,
+        completedAt: visitedAt,
+        checkInAt: visitedAt,
+        checkInLatitude: 5.359952,
+        checkInLongitude: -3.996452,
+        accessLandmarks: `Repère : à 200 m de la pharmacie principale de ${p.neighborhood}.`,
+      },
+    });
+
+    for (const slot of photoSlots) {
+      const storageKey = await uploadDemoImage("visit-photo", visit.id);
+      await prisma.visitPhoto.create({
+        data: { visitId: visit.id, slot, storageKey, takenAt: visitedAt },
       });
     }
-  }
+    const roomStorageKey = await uploadDemoImage("visit-photo", visit.id);
+    await prisma.visitPhoto.create({
+      data: { visitId: visit.id, slot: "PIECE", label: "Salon", storageKey: roomStorageKey, takenAt: visitedAt },
+    });
 
-  console.log("Affectation d'une visite en attente pour l'agent 2…");
-  const draftRequest = await prisma.verificationRequest.findFirst({
-    where: { status: "SCHEDULED" },
-  });
-  if (draftRequest) {
-    await prisma.visit.create({
+    await prisma.amenityCheck.createMany({
+      data: amenityNames.map((name, i) => ({
+        visitId: visit.id,
+        amenityName: name,
+        announced: true,
+        observed: i !== 0, // le premier équipement annoncé est absent — écart visible en revue
+      })),
+    });
+
+    const identityDocKey = await uploadDemoImage("identity-document", visit.id);
+    const titleDocKey = await uploadDemoImage("identity-document", visit.id);
+    await prisma.identityCheck.create({
       data: {
-        verificationRequestId: draftRequest.id,
-        agentId: agent2.id,
-        scheduledAt: daysFromNow(2),
+        visitId: visit.id,
+        identityDocumentRef: identityDocKey,
+        titleToRentRef: titleDocKey,
+        verifiedByAgent: true,
       },
     });
   }

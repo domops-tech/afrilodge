@@ -289,6 +289,11 @@ model Verification {
   withdrawnAt  DateTime?
   withdrawnReason String?
 
+  // Relance de renouvellement (CDC §6.5.2) : posé une fois pour éviter de
+  // relancer chaque jour dans la fenêtre des 30 jours avant expiration —
+  // voir scripts/expire-verifications.ts.
+  renewalReminderSentAt DateTime?
+
   disputes Dispute[]
 
   createdAt DateTime @default(now())

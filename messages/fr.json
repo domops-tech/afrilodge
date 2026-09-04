@@ -35,7 +35,7 @@
     "expiredCode": "Ce code a expiré, demandez-en un nouveau.",
     "tooManyAttempts": "Trop de tentatives. Demandez un nouveau code.",
     "rateLimited": "Trop de demandes pour ce numéro. Réessayez dans quelques minutes.",
-    "notRecognized": "Ce numéro n'est associé à aucun compte agent. Contactez votre administrateur."
+    "notRecognized": "Ce numéro n'est associé à aucun compte reconnu pour cet espace. Contactez votre administrateur."
   },
   "home": {
     "tagline": "Un logement meublé, vérifié sur place, réservé par Mobile Money.",
@@ -82,5 +82,30 @@
     "syncSuccess": "Visite synchronisée avec succès.",
     "syncErrorMsg": "Échec de synchronisation : vos données restent sauvegardées localement. Réessayez.",
     "pendingSync": "Hors connexion : la synchronisation reprendra automatiquement au retour du réseau."
+  },
+  "admin": {
+    "greeting": "Bonjour, {name}",
+    "queueTitle": "Fiches en attente de validation",
+    "noFiches": "Aucune fiche en attente.",
+    "agentLabel": "visité par {name}",
+    "overdueBadge": "En retard (> 24h)",
+    "backToQueue": "Retour à la file",
+    "alreadyDecided": "Cette fiche a déjà été traitée.",
+    "sectionPhotos": "Photographies",
+    "sectionAmenities": "Équipements",
+    "sectionLandmarks": "Points de repère d'accès",
+    "sectionIdentity": "Pièce d'identité",
+    "sectionAttestation": "Formulation de l'attestation",
+    "attestationNotice": "Provisoire — à valider juridiquement avant mise en production (CDC §4.2, §10.1).",
+    "amenityDiscrepancy": "Écart : annoncé mais non constaté",
+    "identityVerifiedByAgent": "Vérifiée sur place par l'agent",
+    "identityNotVerifiedByAgent": "Non vérifiée par l'agent",
+    "decisionTitle": "Décision",
+    "approve": "Approuver et publier",
+    "reject": "Refuser",
+    "rejectReasonLabel": "Motif du refus",
+    "reasonRequired": "Indiquez un motif (5 caractères minimum).",
+    "visitDateLabel": "Visité le {date}",
+    "expiresPreview": "Valable jusqu'au {date} si approuvée"
   }
 }
