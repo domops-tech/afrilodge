@@ -34,16 +34,16 @@ connexion et elle remonte au serveur.*
 
 | # | Story | Pts | Statut |
 |---|---|---|---|
-| 1.1 | Connexion agent (réutilise §0.4, purpose `AGENT_LOGIN`) | 1 | ⬜ |
-| 1.2 | Liste des visites affectées à l'agent (§6.4.1) | 2 | ⬜ |
-| 1.3 | Stockage local (IndexedDB/Dexie) de la visite en cours, hors connexion | 5 | ⬜ |
-| 1.4 | Prise de vue guidée par liste imposée : façade, entrée, pièces, sanitaires, cuisine, vue, accès (§4.1.4) | 5 | ⬜ |
-| 1.5 | Horodatage + géolocalisation à l'ouverture de la visite (§4.1.3) | 2 | ⬜ |
-| 1.6 | Formulaire d'inventaire des équipements, écarts annoncé/constaté (§4.1.5) | 3 | ⬜ |
-| 1.7 | Saisie des points de repère d'accès (§4.1.6) | 1 | ⬜ |
-| 1.8 | Vérification pièce d'identité + titre à louer du propriétaire (§4.1.7) | 2 | ⬜ |
-| 1.9 | Synchronisation différée (Background Sync) vers le stockage objet + API | 5 | ⬜ |
-| 1.10 | Chronométrage automatique en test e2e : visite complète < 45 min (§11.1) | 3 | ⬜ |
+| 1.1 | Connexion agent (réutilise §0.4, purpose `AGENT_LOGIN`) | 1 | ✅ |
+| 1.2 | Liste des visites affectées à l'agent (§6.4.1) | 2 | ✅ |
+| 1.3 | Stockage local (IndexedDB/Dexie) de la visite en cours, hors connexion | 5 | ✅ |
+| 1.4 | Prise de vue guidée par liste imposée : façade, entrée, pièces, sanitaires, cuisine, vue, accès (§4.1.4) | 5 | ✅ |
+| 1.5 | Horodatage + géolocalisation à l'ouverture de la visite (§4.1.3) | 2 | ✅ |
+| 1.6 | Formulaire d'inventaire des équipements, écarts annoncé/constaté (§4.1.5) | 3 | ✅ |
+| 1.7 | Saisie des points de repère d'accès (§4.1.6) | 1 | ✅ |
+| 1.8 | Vérification pièce d'identité + titre à louer du propriétaire (§4.1.7) | 2 | ✅ |
+| 1.9 | Synchronisation différée (Background Sync) vers le stockage objet + API | 5 | ✅ |
+| 1.10 | Chronométrage automatique en test e2e : visite complète < 45 min (§11.1) | 3 | ✅ |
 
 ---
 
@@ -54,12 +54,12 @@ attribuée et expire à 12 mois.*
 
 | # | Story | Pts | Statut |
 |---|---|---|---|
-| 2.1 | Connexion admin (purpose `ADMIN_LOGIN`) | 1 | ⬜ |
-| 2.2 | File des fiches en attente de validation | 3 | ⬜ |
-| 2.3 | Validation / refus d'une fiche, attribution de la mention (§4.1.8) | 3 | ⬜ |
-| 2.4 | TODO-JURIDIQUE : formulation de l'attestation validée par un conseil (§4.2, §10.1) — **point ouvert §12, à faire trancher avec vous** | 1 | ⬜ |
-| 2.5 | Tâche planifiée d'expiration à 12 mois + relance de renouvellement (§6.5) | 3 | ⬜ |
-| 2.6 | Publication automatique de la fiche sous 24h après visite (§11.2) | 2 | ⬜ |
+| 2.1 | Connexion admin (purpose `ADMIN_LOGIN`) | 1 | 🔜 |
+| 2.2 | File des fiches en attente de validation | 3 | 🔜 |
+| 2.3 | Validation / refus d'une fiche, attribution de la mention (§4.1.8) | 3 | 🔜 |
+| 2.4 | TODO-JURIDIQUE : formulation de l'attestation validée par un conseil (§4.2, §10.1) — **point ouvert §12, à faire trancher avec vous** | 1 | 🔜 |
+| 2.5 | Tâche planifiée d'expiration à 12 mois + relance de renouvellement (§6.5) | 3 | 🔜 |
+| 2.6 | Publication automatique de la fiche sous 24h après visite (§11.2) | 2 | 🔜 |
 
 ---
 

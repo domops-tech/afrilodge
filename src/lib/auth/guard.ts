@@ -12,10 +12,17 @@ import { getSession, type UserRole } from "@/lib/auth/session";
  * protéger elle-même. C'est ce que ces fonctions font.
  */
 
+const LOGIN_PATH_BY_ROLE: Record<UserRole, string> = {
+  OWNER: "/connexion",
+  AGENT: "/terrain/connexion",
+  ADMIN: "/admin/connexion",
+};
+
 export async function requireRole(...roles: UserRole[]) {
   const session = await getSession();
   if (!session || session.kind !== "user" || !roles.includes(session.role)) {
-    return redirect({ href: "/connexion", locale: await getLocale() });
+    const loginPath = LOGIN_PATH_BY_ROLE[roles[0]] ?? "/connexion";
+    return redirect({ href: loginPath, locale: await getLocale() });
   }
   return session;
 }

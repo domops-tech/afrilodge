@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db/client";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { logoutAction } from "./actions";
+import { logoutAction } from "@/lib/auth/logout-action";
 
 // Espace propriétaire (CDC §6.3) — la vue d'ensemble ici prouve la
 // plomberie de bout en bout du Sprint 0 (auth, base, i18n). Le contenu

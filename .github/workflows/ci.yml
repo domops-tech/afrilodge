@@ -11,6 +11,12 @@ env:
   PAYMENT_WEBHOOK_SECRET: "ci-secret-not-for-production"
   SMS_PROVIDER: "console"
   PAYMENT_PROVIDER: "simulated"
+  STORAGE_ENDPOINT: "http://localhost:9000"
+  STORAGE_REGION: "us-east-1"
+  STORAGE_BUCKET: "sejours-photos"
+  STORAGE_ACCESS_KEY_ID: "sejours"
+  STORAGE_SECRET_ACCESS_KEY: "sejours-secret"
+  STORAGE_FORCE_PATH_STYLE: "true"
 
 jobs:
   checks:
@@ -65,7 +71,19 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # MinIO n'accepte pas de commande personnalisée via `services:` (pas
+      # de champ `command` dans cette syntaxe) — démarré manuellement.
+      - name: Start MinIO
+        run: |
+          docker run -d --name minio -p 9000:9000 -p 9001:9001 \
+            -e MINIO_ROOT_USER=sejours -e MINIO_ROOT_PASSWORD=sejours-secret \
+            minio/minio server /data --console-address ":9001"
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:9000/minio/health/ready && break
+            sleep 2
+          done
       - run: npx prisma migrate deploy
+      - run: npm run storage:setup
       - run: npx prisma db seed
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e

@@ -34,10 +34,53 @@
     "invalidCode": "Incorrect code. Try again.",
     "expiredCode": "This code has expired, request a new one.",
     "tooManyAttempts": "Too many attempts. Request a new code.",
-    "rateLimited": "Too many requests for this number. Try again in a few minutes."
+    "rateLimited": "Too many requests for this number. Try again in a few minutes.",
+    "notRecognized": "This number isn't linked to any agent account. Contact your administrator."
   },
   "home": {
     "tagline": "A furnished home, verified on site, booked with Mobile Money.",
     "searchCta": "Find a home"
+  },
+  "field": {
+    "greeting": "Hello, {name}",
+    "noVisits": "No pending visits.",
+    "backToList": "Back to list",
+    "alreadyCompleted": "This visit has already been synced.",
+    "start": "Start the visit",
+    "geolocationError": "Couldn't get your position. Try again or check permissions.",
+    "offlineBadge": "Offline",
+    "stepPhotos": "Photos",
+    "stepAmenities": "Amenities",
+    "stepLandmarks": "Access landmarks",
+    "stepIdentity": "Identity document",
+    "stepReview": "Review",
+    "slot": {
+      "FACADE": "Facade",
+      "ENTREE": "Entrance",
+      "PIECE": "Rooms",
+      "SANITAIRES": "Bathroom",
+      "CUISINE": "Kitchen",
+      "VUE": "View",
+      "ACCES": "Access"
+    },
+    "takePhoto": "Take photo",
+    "retakePhoto": "Retake",
+    "removePhoto": "Remove",
+    "addRoomPhoto": "+ Add a room",
+    "roomLabelLabel": "Room name",
+    "roomLabelPlaceholder": "e.g. Living room",
+    "continue": "Continue",
+    "landmarksPlaceholder": "e.g. 200m from the main pharmacy…",
+    "identityDocumentLabel": "Owner's ID document",
+    "titleToRentLabel": "Title to rent",
+    "identityVerifiedLabel": "ID document and title to rent verified on site",
+    "reviewPhotosCount": "{count} photos captured",
+    "reviewAmenitiesCount": "{count} amenities confirmed",
+    "completeVisit": "Finish and sync",
+    "syncNow": "Sync now",
+    "syncing": "Syncing…",
+    "syncSuccess": "Visit synced successfully.",
+    "syncErrorMsg": "Sync failed: your data is still saved locally. Try again.",
+    "pendingSync": "Offline: sync will resume automatically once back online."
   }
 }

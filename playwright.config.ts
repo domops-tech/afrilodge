@@ -1,9 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * Configuration Playwright (S0-1). Les scénarios de parcours voyageur/
- * propriétaire/agent (CDC §5) arrivent au fil des sprints ; ce fichier ne
- * porte pour l'instant que le socle (accueil, i18n, connexion OTP).
+ * Configuration Playwright (S0-1, étendue en S1 pour l'app terrain). Les
+ * autres parcours (CDC §5) arrivent au fil des sprints suivants.
  */
 export default defineConfig({
   testDir: "./e2e",

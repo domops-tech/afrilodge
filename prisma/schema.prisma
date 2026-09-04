@@ -196,6 +196,11 @@ model Visit {
   checkInLatitude  Float?
   checkInLongitude Float?
 
+  // Points de repère d'accès relevés par l'agent (CDC §4.1.6) — copiés sur
+  // Property.accessLandmarks à la synchronisation ; la visite reste la
+  // source de vérité datée, Property une copie de lecture.
+  accessLandmarks String?
+
   verificationRequest   VerificationRequest @relation(fields: [verificationRequestId], references: [id], onDelete: Cascade)
   verificationRequestId String              @unique
 
@@ -222,6 +227,7 @@ model VisitPhoto {
   visit     Visit     @relation(fields: [visitId], references: [id], onDelete: Cascade)
   visitId   String
   slot      PhotoSlot
+  label      String?  // ex. "Salon", "Chambre 2" — utile quand slot=PIECE, répétable
   storageKey String   // clé dans le service objet, pas l'image elle-même
   takenAt    DateTime
   latitude   Float?

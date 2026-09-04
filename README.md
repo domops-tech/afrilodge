@@ -12,6 +12,7 @@ cp .env.example .env          # ajuster si besoin
 docker compose up -d          # PostgreSQL (port 5433) + MinIO
 npm install
 npm run db:migrate            # première fois seulement
+npm run storage:setup         # idem — crée le bucket MinIO et sa politique
 npm run db:seed
 npm run dev
 ```
@@ -30,12 +31,19 @@ serveur au lieu de l'envoyer.
 | `npm test` / `npm run test:watch` | Tests unitaires (Vitest) |
 | `npm run test:e2e` | Tests de bout en bout (Playwright — `npx playwright install chromium` une première fois) |
 | `npm run db:migrate` / `npm run db:seed` / `npm run db:studio` | Base de données (Prisma 7) |
+| `npm run storage:setup` | Crée le bucket MinIO local et sa politique de lecture |
 
 ## Comptes de démonstration (`prisma/seed.ts`)
 
 Connexion par téléphone + code à usage unique (`+225…`, voir le seed pour la
 liste complète). Le code s'affiche dans les logs du serveur en
 développement.
+
+- Propriétaire (`/connexion`) : `+2250700000020` (Fatou Diabaté, biens déjà
+  vérifiés) — le compte se crée à la première connexion.
+- Agent (`/terrain/connexion`) : `+2250700000011` (Jean-Marc Assouan, une
+  visite lui est affectée sur le bien « Studio cosy, Plateau »). Compte
+  provisionné par le seed, pas d'auto-inscription.
 
 ## Architecture
 

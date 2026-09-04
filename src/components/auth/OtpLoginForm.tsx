@@ -2,12 +2,20 @@
 
 import { useActionState, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { requestOwnerOtpAction, verifyOwnerOtpAction } from "./actions";
 import { Field } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
+import type { RequestOtpState, VerifyOtpState } from "@/lib/auth/login-flow";
 
-const requestErrorKey = (message?: string) =>
-  message === "rate_limited" ? "rateLimited" : "invalidCode";
+const requestErrorKey = (message?: string) => {
+  switch (message) {
+    case "rate_limited":
+      return "rateLimited";
+    case "not_recognized":
+      return "notRecognized";
+    default:
+      return "invalidCode";
+  }
+};
 
 const verifyErrorKey = (message?: string) => {
   switch (message) {
@@ -15,30 +23,46 @@ const verifyErrorKey = (message?: string) => {
       return "expiredCode";
     case "too_many_attempts":
       return "tooManyAttempts";
+    case "not_recognized":
+      return "notRecognized";
     default:
       return "invalidCode";
   }
 };
 
-export function LoginForm() {
+/**
+ * Formulaire de connexion téléphone + OTP partagé par les quatre surfaces
+ * (CDC §3) — voir src/lib/auth/login-flow.ts pour la logique serveur
+ * commune. `showFullName` distingue le propriétaire (première connexion =
+ * création de compte, CDC §5.2.16) de l'agent/admin (compte déjà
+ * provisionné, rien à nommer).
+ */
+export function OtpLoginForm({
+  requestAction: requestActionProp,
+  verifyAction: verifyActionProp,
+  showFullName = false,
+}: {
+  requestAction: (prev: RequestOtpState, formData: FormData) => Promise<RequestOtpState>;
+  verifyAction: (prev: VerifyOtpState, formData: FormData) => Promise<VerifyOtpState>;
+  showFullName?: boolean;
+}) {
   const t = useTranslations("auth");
   const locale = useLocale();
   const [phone, setPhone] = useState("");
   const [step, setStep] = useState<"phone" | "code">("phone");
 
   const [requestState, requestAction, requestPending] = useActionState(
-    async (prev: Awaited<ReturnType<typeof requestOwnerOtpAction>>, formData: FormData) => {
-      const result = await requestOwnerOtpAction(prev, formData);
+    async (prev: RequestOtpState, formData: FormData) => {
+      const result = await requestActionProp(prev, formData);
       if (result.status === "sent") setStep("code");
       return result;
     },
     { status: "idle" as const }
   );
 
-  const [verifyState, verifyAction, verifyPending] = useActionState(
-    verifyOwnerOtpAction,
-    { status: "idle" as const }
-  );
+  const [verifyState, verifyAction, verifyPending] = useActionState(verifyActionProp, {
+    status: "idle" as const,
+  });
 
   if (step === "phone") {
     return (
@@ -69,7 +93,9 @@ export function LoginForm() {
       <input type="hidden" name="phone" value={phone} />
       <input type="hidden" name="locale" value={locale} />
       <p className="text-sm text-muted">{t("codeSent", { phone })}</p>
-      <Field id="fullName" name="fullName" label={t("fullNameLabel")} autoComplete="name" />
+      {showFullName ? (
+        <Field id="fullName" name="fullName" label={t("fullNameLabel")} autoComplete="name" />
+      ) : null}
       <Field
         id="code"
         name="code"

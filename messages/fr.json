@@ -34,10 +34,53 @@
     "invalidCode": "Code incorrect. Réessayez.",
     "expiredCode": "Ce code a expiré, demandez-en un nouveau.",
     "tooManyAttempts": "Trop de tentatives. Demandez un nouveau code.",
-    "rateLimited": "Trop de demandes pour ce numéro. Réessayez dans quelques minutes."
+    "rateLimited": "Trop de demandes pour ce numéro. Réessayez dans quelques minutes.",
+    "notRecognized": "Ce numéro n'est associé à aucun compte agent. Contactez votre administrateur."
   },
   "home": {
     "tagline": "Un logement meublé, vérifié sur place, réservé par Mobile Money.",
     "searchCta": "Trouver un logement"
+  },
+  "field": {
+    "greeting": "Bonjour, {name}",
+    "noVisits": "Aucune visite en attente.",
+    "backToList": "Retour à la liste",
+    "alreadyCompleted": "Cette visite a déjà été synchronisée.",
+    "start": "Commencer la visite",
+    "geolocationError": "Impossible d'obtenir la position. Réessayez ou vérifiez les autorisations.",
+    "offlineBadge": "Hors connexion",
+    "stepPhotos": "Photographies",
+    "stepAmenities": "Équipements",
+    "stepLandmarks": "Points de repère",
+    "stepIdentity": "Pièce d'identité",
+    "stepReview": "Récapitulatif",
+    "slot": {
+      "FACADE": "Façade",
+      "ENTREE": "Entrée",
+      "PIECE": "Pièces",
+      "SANITAIRES": "Sanitaires",
+      "CUISINE": "Cuisine",
+      "VUE": "Vue",
+      "ACCES": "Accès"
+    },
+    "takePhoto": "Prendre la photo",
+    "retakePhoto": "Reprendre",
+    "removePhoto": "Supprimer",
+    "addRoomPhoto": "+ Ajouter une pièce",
+    "roomLabelLabel": "Nom de la pièce",
+    "roomLabelPlaceholder": "ex. Salon",
+    "continue": "Continuer",
+    "landmarksPlaceholder": "ex. À 200 m de la pharmacie principale…",
+    "identityDocumentLabel": "Pièce d'identité du propriétaire",
+    "titleToRentLabel": "Titre à louer",
+    "identityVerifiedLabel": "Pièce d'identité et titre vérifiés sur place",
+    "reviewPhotosCount": "{count} photos capturées",
+    "reviewAmenitiesCount": "{count} équipements constatés",
+    "completeVisit": "Terminer et synchroniser",
+    "syncNow": "Synchroniser maintenant",
+    "syncing": "Synchronisation en cours…",
+    "syncSuccess": "Visite synchronisée avec succès.",
+    "syncErrorMsg": "Échec de synchronisation : vos données restent sauvegardées localement. Réessayez.",
+    "pendingSync": "Hors connexion : la synchronisation reprendra automatiquement au retour du réseau."
   }
 }
