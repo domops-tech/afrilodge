@@ -51,6 +51,15 @@ export default async function AdminQueuePage({
         </form>
       </header>
 
+      <nav className="flex gap-4 text-sm">
+        <Link href="/admin/commissions" className="font-medium text-accent">
+          {t("commissionsTitle")}
+        </Link>
+        <Link href="/admin/parametres" className="font-medium text-accent">
+          {t("settingsTitle")}
+        </Link>
+      </nav>
+
       <section className="flex flex-col gap-3">
         <h2 className="text-sm font-medium text-muted">{t("toScheduleTitle")}</h2>
         {toSchedule.length === 0 ? (

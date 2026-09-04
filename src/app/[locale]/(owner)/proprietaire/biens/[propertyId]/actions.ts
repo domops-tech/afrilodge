@@ -6,7 +6,8 @@ import { requireRole } from "@/lib/auth/guard";
 import { redirect } from "@/i18n/navigation";
 import { AMENITY_OPTIONS } from "@/lib/property/amenities";
 import { transitionBooking } from "@/lib/booking/state-machine";
-import { startOfUtcDay, addUtcDays } from "@/lib/booking/nights";
+import { startOfUtcDay, addUtcDays, nightsInRange } from "@/lib/booking/nights";
+import { getPaymentProvider } from "@/lib/payments/simulated";
 
 /**
  * Actions de l'espace de gestion d'un bien (CDC §6.3). Formulaires
@@ -158,26 +159,46 @@ export async function updateAvailabilityAction(formData: FormData): Promise<void
 
 /** `redirect()` interrompt le rendu par une exception : cette fonction ne retourne donc jamais quand elle redirige. */
 async function loadOwnedBooking(propertyId: string, bookingId: string, formData: FormData) {
-  const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+    include: { guestSession: true },
+  });
   if (!booking || booking.propertyId !== propertyId) {
     return backTo(propertyId, formData, "reservation-introuvable");
   }
   return booking;
 }
 
-/** Acceptation d'une demande (CDC §5.2.19, épic 5.4) — le calendrier reste HELD jusqu'au paiement (Sprint 6). */
+/**
+ * Acceptation d'une demande (CDC §5.2.19, épic 5.4) — le calendrier reste
+ * HELD jusqu'au paiement. Crée aussi l'intention de paiement (CDC §8.1,
+ * épic 6.1) : le port `PaymentProvider` ne fait que refléter l'état déclaré
+ * par le PSP, jamais détenir les fonds (voir décision 0002) — l'intention
+ * elle-même ne conserve encore rien, seul un webhook vérifié le fera.
+ */
 export async function acceptBookingAction(formData: FormData): Promise<void> {
   const session = await requireRole("OWNER");
   const propertyId = String(formData.get("propertyId"));
   const bookingId = String(formData.get("bookingId"));
-  await loadOwnedPropertyOrThrow(propertyId, session.userId);
-  await loadOwnedBooking(propertyId, bookingId, formData);
+  const property = await loadOwnedPropertyOrThrow(propertyId, session.userId);
+  const booking = await loadOwnedBooking(propertyId, bookingId, formData);
 
   try {
     await transitionBooking({ bookingId, to: "ACCEPTED", actorId: session.userId });
   } catch {
     return backTo(propertyId, formData, "transition-refusee");
   }
+
+  const nights = nightsInRange(booking.checkIn, booking.checkOut).length;
+  const amount = nights * property.pricePerNight;
+  const { providerIntentRef } = await getPaymentProvider().createIntent({
+    bookingId,
+    amount,
+    payerPhone: booking.guestSession.phone,
+  });
+  await prisma.payment.create({
+    data: { bookingId, status: "INTENT_CREATED", providerName: getPaymentProvider().name, providerIntentRef, amount },
+  });
 
   return backTo(propertyId, formData);
 }

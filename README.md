@@ -34,6 +34,7 @@ serveur au lieu de l'envoyer.
 | `npm run storage:setup` | Crée le bucket MinIO local et sa politique de lecture |
 | `npm run verifications:expire` | Expire les mentions échues et envoie les relances de renouvellement (CDC §6.5.2) — à planifier en tâche cron externe, voir décision 0005 |
 | `npm run bookings:expire-holds` | Annule les demandes de réservation dont le verrou de calendrier a expiré sans paiement, et libère les jours (CDC §7.3) — même principe, à planifier en tâche cron externe |
+| `POST /api/payments/release-overdue` (`x-cron-secret: $CRON_SECRET`) | Libère les fonds si le voyageur n'a pas confirmé son arrivée sous 24h (CDC §5.1.7, §8.6) — une route HTTP, pas un script `tsx`, voir décision 0012 ; à planifier en tâche cron externe |
 
 ## Comptes de démonstration (`prisma/seed.ts`)
 
@@ -54,7 +55,12 @@ développement.
   vérifiés listés, chacun avec sa fiche détaillée complète.
 - Voyageur (`/reserver/<id d'un bien vérifié>`), sans compte : sélection de
   dates, identification par téléphone + code à usage unique (session
-  éphémère de 6h), demande envoyée au propriétaire — voir épic 5.
+  éphémère de 6h), demande envoyée au propriétaire, paiement simulé une
+  fois acceptée, confirmation d'arrivée, annulation — voir épics 5 et 6.
+  Simulateur Mobile Money (`PAYMENT_PROVIDER=simulated`) : aucun paiement
+  réel, le bouton « Payer » sur `/reserver/paiement/[bookingId]` tient
+  lieu d'établissement de paiement agréé tant que le §12 du CDC n'est pas
+  tranché.
 
 ## Architecture
 

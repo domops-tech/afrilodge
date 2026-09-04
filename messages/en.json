@@ -112,7 +112,18 @@
     "rejectReasonLabel": "Rejection reason",
     "reasonRequired": "Provide a reason (5 characters minimum).",
     "visitDateLabel": "Visited on {date}",
-    "expiresPreview": "Valid until {date} if approved"
+    "expiresPreview": "Valid until {date} if approved",
+    "commissionsTitle": "Commissions",
+    "commissionsSettledTotal": "Settled",
+    "commissionsPendingTotal": "Pending",
+    "commissionsEmpty": "No commission yet.",
+    "commissionsSettledOn": "Settled on {date}",
+    "commissionsPending": "Pending settlement",
+    "settingsTitle": "Settings",
+    "settingsError": "Some values are invalid.",
+    "settingsSaveCta": "Save",
+    "commissionRateLabel": "Commission rate (%)",
+    "refundWindowLabel": "Full refund window (days before arrival)"
   },
   "search": {
     "title": "Search for a home",
@@ -217,7 +228,22 @@
     "guestsCount": "{count, plural, one {# guest} other {# guests}}",
     "statusRequested": "Awaiting acceptance by the property owner.",
     "statusAccepted": "Booking accepted by the property owner.",
+    "statusPaid": "Booking paid and confirmed.",
+    "statusInProgress": "Stay in progress.",
     "statusCancelled": "This request has been cancelled.",
-    "backToSearch": "Back to search"
+    "backToSearch": "Back to search",
+    "payNowCta": "Pay now",
+    "paymentTitle": "Payment",
+    "paymentAmount": "{amount} FCFA",
+    "paymentSimulatorNotice": "Mobile Money simulator — no real payment provider is connected until CDC §12 is settled.",
+    "paymentCta": "Pay via Mobile Money (simulator)",
+    "stayCodeLabel": "Stay code: {code}",
+    "confirmArrivalCta": "Confirm my arrival",
+    "cancelCta": "Cancel the booking",
+    "error": {
+      "etat-invalide": "This action is no longer possible in the booking's current state.",
+      "annulation-impossible": "This booking can no longer be cancelled.",
+      "delai-depasse": "The refundable cancellation window has passed for this booking."
+    }
   }
 }

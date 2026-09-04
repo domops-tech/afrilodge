@@ -372,6 +372,7 @@ model Booking {
 
   availabilityDays AvailabilityDay[]
   payment           Payment?
+  commissionEntry   CommissionEntry?
   dispute            Dispute?
   auditLogs          AuditLog[]
 
@@ -430,6 +431,7 @@ model PaymentEvent {
 
 model CommissionEntry {
   id        String   @id @default(cuid())
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   bookingId String   @unique
   amount    Int
   rate      Float
@@ -498,4 +500,17 @@ model AuditLog {
   bookingId String?
 
   @@index([entity, entityId])
+}
+
+// ---------------------------------------------------------------------------
+// Paramètres de plateforme (CDC §6.5.4, §8.7) — politique globale,
+// réglable en back-office, jamais par le propriétaire (Sprint 6, décision
+// prise avec vous en planification). Clé/valeur volontairement minimal :
+// pas de table dédiée par paramètre pour deux réglages en v1.
+// ---------------------------------------------------------------------------
+
+model PlatformSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
 }

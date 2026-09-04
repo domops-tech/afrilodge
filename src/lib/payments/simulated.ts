@@ -94,3 +94,47 @@ export function getPaymentProvider(): PaymentProvider {
 
   return provider;
 }
+
+function asSimulator(activeProvider: PaymentProvider): SimulatedMobileMoneyProvider {
+  if (!(activeProvider instanceof SimulatedMobileMoneyProvider)) {
+    throw new Error("Cette fonction requiert le simulateur de paiement.");
+  }
+  return activeProvider;
+}
+
+/**
+ * Simule le voyageur qui complète le paiement sur ses propres canaux
+ * Mobile Money — réservé au développement et aux tests, voir
+ * `SimulatedMobileMoneyProvider.simulatePayerCompletion`. Absent de
+ * l'interface `PaymentProvider` pour la même raison que
+ * `buildSimulatedWebhookRequest` ci-dessous : un PSP réel n'a besoin
+ * d'aucun appelant pour ça, c'est le voyageur qui interagit avec lui
+ * directement.
+ */
+export function simulateGuestPayment(providerIntentRef: string): void {
+  asSimulator(getPaymentProvider()).simulatePayerCompletion(providerIntentRef);
+}
+
+export type SimulatedWebhookEventType = "funds.held" | "funds.released" | "funds.refunded";
+
+/**
+ * Construit un webhook signé comme le ferait le PSP réel, pour que le
+ * simulateur emprunte le même chemin vérifié + idempotent que la
+ * production (voir src/lib/payments/webhook-handler.ts) plutôt que de
+ * modifier l'état d'un paiement directement. Réservé au développement : un
+ * vrai PSP signe ses propres webhooks, l'interface `PaymentProvider` ne
+ * porte donc volontairement pas cette méthode — elle fuirait une
+ * préoccupation propre au simulateur dans le port abstrait.
+ */
+export function buildSimulatedWebhookRequest(params: {
+  type: SimulatedWebhookEventType;
+  providerIntentRef: string;
+}): { rawBody: string; signature: string } {
+  const activeProvider = asSimulator(getPaymentProvider());
+  const rawBody = JSON.stringify({
+    type: params.type,
+    externalId: randomUUID(),
+    providerIntentRef: params.providerIntentRef,
+  });
+  return { rawBody, signature: activeProvider.buildWebhookSignature(rawBody) };
+}

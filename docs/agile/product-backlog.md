@@ -117,18 +117,20 @@ tient son calendrier.*
 ## Épic 6 — Paiement
 
 *Sprint S6. Objectif de démo : cycle complet payé → arrivée → libération →
-commission sur le simulateur. **Point ouvert §12 à trancher avec vous avant
-ce sprint** : déclencheur de libération, politique d'annulation, répartition
-de la commission (voir plan — table des points à trancher).*
+commission sur le simulateur. Points ouverts §12 tranchés avec vous à la
+planification de ce sprint : libération sur confirmation voyageur ou délai
+de 24h (le premier des deux), politique d'annulation globale paramétrable
+en back-office, commission prélevée sur le propriétaire à taux
+configurable.*
 
 | # | Story | Pts | Statut |
 |---|---|---|---|
-| 6.1 | Création d'intention de paiement à l'acceptation (§8.1) | 2 | 🔜 |
-| 6.2 | Redirection vers l'établissement de paiement (§6.2.3) | 2 | 🔜 |
-| 6.3 | Webhook entrant vérifié + idempotent (§8.4) | 3 | 🔜 |
-| 6.4 | Confirmation d'arrivée par le voyageur → ordre de libération (§5.1.7, §8.6) | 3 | 🔜 |
-| 6.5 | Annulation + remboursement selon conditions paramétrables (§6.2.6, §8.7) | 3 | 🔜 |
-| 6.6 | Journal des commissions et rapprochement (§6.5.4, §8.8) | 3 | 🔜 |
+| 6.1 | Création d'intention de paiement à l'acceptation (§8.1) | 2 | ✅ |
+| 6.2 | Redirection vers l'établissement de paiement (§6.2.3) | 2 | ✅ |
+| 6.3 | Webhook entrant vérifié + idempotent (§8.4) | 3 | ✅ |
+| 6.4 | Confirmation d'arrivée par le voyageur → ordre de libération (§5.1.7, §8.6) | 3 | ✅ |
+| 6.5 | Annulation + remboursement selon conditions paramétrables (§6.2.6, §8.7) | 3 | ✅ |
+| 6.6 | Journal des commissions et rapprochement (§6.5.4, §8.8) | 3 | ✅ |
 | 6.7 | Story de branchement du PSP réel (dès le §12 tranché) | 3 | ⬜ |
 
 ---

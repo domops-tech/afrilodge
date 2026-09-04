@@ -1,7 +1,15 @@
 import "dotenv/config";
-import { randomUUID } from "node:crypto";
 import { Client } from "pg";
 import { test, expect } from "@playwright/test";
+import {
+  AGENT_ID_PHONE,
+  randomPhone,
+  isoDate,
+  loginAsOwner,
+  bookAsGuest,
+  createVerifiedProperty,
+  deleteProperty,
+} from "./helpers/fixtures";
 
 // Réservation bout en bout (CDC §6.2, épic 5) : sélection de dates avec
 // disponibilité temps réel (5.1), verrouillage du calendrier (5.2),
@@ -10,123 +18,13 @@ import { test, expect } from "@playwright/test";
 // depuis un fichier de test Playwright compilé en CommonJS (voir
 // e2e/field-visit.spec.ts) : la vérification passe par `pg` brut.
 //
-// Un propriétaire et un bien sont créés directement pour ce fichier — un
-// bien vérifié et publié suppose normalement une visite terrain complète
-// (Sprint 1) puis une validation admin (Sprint 2) ; rejouer ces deux
-// parcours ici alourdirait ce test sans rien ajouter à ce qu'il vérifie
-// (la réservation), donc l'état "publié et vérifié" est posé directement en
-// base, comme le fait déjà e2e/owner-space.spec.ts pour un bien refusé.
-// Numéros de téléphone tirés au hasard (propriétaire et voyageur) : aucune
+// Un propriétaire et un bien sont créés directement pour ce fichier (voir
+// e2e/helpers/fixtures.ts) — numéros de téléphone tirés au hasard : aucune
 // collision possible avec les autres fichiers, qui utilisent des numéros
-// fixes du jeu de démonstration (voir la même précaution dans
-// e2e/owner-space.spec.ts). Le bien créé est supprimé en fin de test (voir
-// plus bas) : e2e/public-search.spec.ts compte précisément le nombre de
-// biens vérifiés publiés, et les fichiers de test tournent en parallèle sur
-// la même base — un bien laissé derrière fausserait ce compte.
-
-const AGENT_ID_PHONE = "+2250700000010"; // agent du jeu de démonstration, seulement référencé comme FK de la visite
-
-function randomPhone() {
-  return `+225070000${Math.floor(1000 + Math.random() * 8999)}`;
-}
-
-function isoDate(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
-
-async function loginAsOwner(
-  page: import("@playwright/test").Page,
-  request: import("@playwright/test").APIRequestContext,
-  phone: string,
-  fullName: string
-) {
-  await page.goto("/fr/connexion");
-  await page.getByLabel(/numéro de téléphone/i).fill(phone);
-  await page.getByRole("button", { name: /envoyer le code/i }).click();
-  await expect(page.getByText(new RegExp(phone.replace("+", "\\+")))).toBeVisible();
-
-  const otpResponse = await request.get(`/api/dev/last-otp?phone=${encodeURIComponent(phone)}`);
-  const { code } = await otpResponse.json();
-  expect(code).toMatch(/^\d{6}$/);
-
-  await page.getByLabel(/nom complet/i).fill(fullName);
-  await page.getByLabel(/code reçu par sms/i).fill(code);
-  await page.getByRole("button", { name: /vérifier/i }).click();
-  await expect(page).toHaveURL(/\/fr\/proprietaire$/);
-}
-
-async function bookAsGuest(
-  page: import("@playwright/test").Page,
-  request: import("@playwright/test").APIRequestContext,
-  params: { propertyId: string; checkIn: string; checkOut: string; guestPhone: string; guestName: string }
-) {
-  const { propertyId, checkIn, checkOut, guestPhone, guestName } = params;
-
-  await page.goto(`/fr/reserver/${propertyId}`);
-  await page.getByLabel(/date d'arrivée/i).fill(checkIn);
-  await page.getByLabel(/date de départ/i).fill(checkOut);
-  await page.getByRole("button", { name: /continuer/i }).click();
-
-  await page.getByLabel(/nom complet/i).fill(guestName);
-  await page.getByLabel(/numéro de téléphone/i).fill(guestPhone);
-  await page.getByRole("button", { name: /envoyer le code/i }).click();
-  await expect(page.getByText(new RegExp(guestPhone.replace("+", "\\+")))).toBeVisible();
-
-  const otpResponse = await request.get(`/api/dev/last-otp?phone=${encodeURIComponent(guestPhone)}`);
-  const { code } = await otpResponse.json();
-  expect(code).toMatch(/^\d{6}$/);
-
-  await page.getByLabel(/code reçu par sms/i).fill(code);
-  await page.getByRole("button", { name: /confirmer la demande/i }).click();
-  await expect(page).toHaveURL(/\/fr\/reserver\/confirmation\/.+/);
-
-  return page.url().match(/\/confirmation\/([^/]+)/)?.[1];
-}
-
-/** Bien publié et vérifié créé directement en base pour ce test — voir l'entête du fichier. */
-async function createVerifiedProperty(db: Client, ownerId: string, agentId: string): Promise<string> {
-  const propertyId = randomUUID();
-  const requestId = randomUUID();
-  const visitId = randomUUID();
-  const verificationId = randomUUID();
-  const tenDaysAgo = new Date();
-  tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
-  const inOneYear = new Date();
-  inOneYear.setDate(inOneYear.getDate() + 300);
-
-  // Prix délibérément élevé et hors du quartier "Angré" : ce bien ne doit
-  // jamais entrer dans les résultats filtrés d'e2e/public-search.spec.ts,
-  // qui tourne en parallèle sur la même base (voir sa note d'en-tête sur le
-  // total non filtré).
-  await db.query(
-    `INSERT INTO "Property" (id, title, description, "pricePerNight", "maxGuests", neighborhood, city, status, "ownerId", "createdAt", "updatedAt")
-     VALUES ($1, 'Bien vérifié de test Sprint 5', 'Logement meublé pour le test de réservation.', 500000, 4, 'Cocody', 'Abidjan', 'PUBLISHED', $2, now(), now())`,
-    [propertyId, ownerId]
-  );
-  await db.query(
-    `INSERT INTO "VerificationRequest" (id, status, "propertyId", "ownerId", "packPaid", "createdAt", "updatedAt")
-     VALUES ($1, 'APPROVED', $2, $3, true, now(), now())`,
-    [requestId, propertyId, ownerId]
-  );
-  await db.query(
-    `INSERT INTO "Visit" (id, "scheduledAt", "startedAt", "completedAt", "checkInAt", "verificationRequestId", "agentId", "createdAt", "updatedAt")
-     VALUES ($1, $2, $2, $2, $2, $3, $4, now(), now())`,
-    [visitId, tenDaysAgo, requestId, agentId]
-  );
-  await db.query(
-    `INSERT INTO "Verification" (id, status, "visitDate", "expiresAt", "propertyId", "visitId", "createdAt", "updatedAt")
-     VALUES ($1, 'ACTIVE', $2, $3, $4, $5, now(), now())`,
-    [verificationId, tenDaysAgo, inOneYear, propertyId, visitId]
-  );
-
-  return propertyId;
-}
-
-/** `Booking.property` n'a pas de cascade (contrairement à VerificationRequest/Verification/AvailabilityDay) : les réservations doivent être supprimées avant le bien. */
-async function deleteProperty(db: Client, propertyId: string) {
-  await db.query(`DELETE FROM "Booking" WHERE "propertyId" = $1`, [propertyId]);
-  await db.query(`DELETE FROM "Property" WHERE id = $1`, [propertyId]);
-}
+// fixes du jeu de démonstration (même précaution dans
+// e2e/owner-space.spec.ts). Le bien créé est supprimé en fin de test :
+// e2e/public-search.spec.ts compte les biens vérifiés publiés, et les
+// fichiers de test tournent en parallèle sur la même base.
 
 test("un voyageur réserve sans compte, le propriétaire accepte puis refuse une autre demande", async ({
   page,
@@ -238,7 +136,7 @@ test("un voyageur réserve sans compte, le propriétaire accepte puis refuse une
       }).toPass({ timeout: 20_000 });
 
       // Le calendrier reste verrouillé (HELD) après acceptation : il ne
-      // deviendra BOOKED qu'au paiement (Sprint 6, épic 5.2/6).
+      // deviendra BOOKED qu'au paiement (Sprint 6).
       const stillHeld = await dbAfterAccept.query(
         `SELECT status FROM "AvailabilityDay" WHERE "propertyId" = $1 AND date >= $2 AND date < $3`,
         [propertyId, isoDate(acceptCheckIn), isoDate(acceptCheckOut)]
@@ -255,19 +153,23 @@ test("un voyageur réserve sans compte, le propriétaire accepte puis refuse une
     const dbAfterRefuse = new Client({ connectionString: process.env.DATABASE_URL });
     await dbAfterRefuse.connect();
     try {
+      // Le refus libère immédiatement le calendrier — absence de ligne =
+      // OPEN (convention établie au Sprint 3), sans attendre l'expiration
+      // du verrou (scripts/expire-booking-holds.ts). Les deux vérifications
+      // sont regroupées dans la même re-tentative : `transitionBooking` et
+      // la libération du calendrier sont deux écritures séquentielles de la
+      // même action serveur, un retry qui ne couvrirait que la première
+      // peut retomber dans l'intervalle entre les deux sous charge.
       await expect(async () => {
         const result = await dbAfterRefuse.query(`SELECT status FROM "Booking" WHERE id = $1`, [refusedBookingId]);
         expect(result.rows[0].status).toBe("CANCELLED");
-      }).toPass({ timeout: 20_000 });
 
-      // Le refus libère immédiatement le calendrier — absence de ligne =
-      // OPEN (convention établie au Sprint 3), sans attendre l'expiration
-      // du verrou (scripts/expire-booking-holds.ts).
-      const released = await dbAfterRefuse.query(
-        `SELECT status FROM "AvailabilityDay" WHERE "propertyId" = $1 AND date >= $2 AND date < $3`,
-        [propertyId, isoDate(refuseCheckIn), isoDate(refuseCheckOut)]
-      );
-      expect(released.rows).toHaveLength(0);
+        const released = await dbAfterRefuse.query(
+          `SELECT status FROM "AvailabilityDay" WHERE "propertyId" = $1 AND date >= $2 AND date < $3`,
+          [propertyId, isoDate(refuseCheckIn), isoDate(refuseCheckOut)]
+        );
+        expect(released.rows).toHaveLength(0);
+      }).toPass({ timeout: 20_000 });
     } finally {
       await dbAfterRefuse.end();
     }
