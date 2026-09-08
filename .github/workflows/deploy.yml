@@ -1,0 +1,99 @@
+# Déploiement en production — dérivé du gabarit vd-platform
+# (templates/ci/deploy.yml). Se déclenche après le succès du workflow CI
+# existant (ci.yml, name: CI), construit l'image en CI (jamais sur le
+# serveur — un `next build` peut dépasser 2 Go de pic sur une machine de
+# 3,7 Go qui sert déjà d'autres projets), la pousse sur GHCR, puis demande
+# au serveur de la tirer et de l'appliquer.
+#
+# Secrets de dépôt à créer avant le premier déclenchement (Settings →
+# Secrets and variables → Actions) :
+#   DEPLOY_SSH_KEY   clé privée dédiée au déploiement (pas une clé
+#                    personnelle), dont la publique est ajoutée à
+#                    authorized_keys du compte de déploiement sur le
+#                    serveur.
+#   DEPLOY_HOST      62.238.36.27
+#   DEPLOY_USER      vincent
+#
+# Le serveur doit pouvoir tirer l'image une fois avant le premier
+# déploiement :
+#   echo "$TOKEN" | docker login ghcr.io -u <compte GitHub> --password-stdin
+# avec un token à portée `read:packages` seulement.
+#
+# Tant que ces secrets ne sont pas configurés, ce workflow échoue à l'étape
+# SSH sans effet sur le site (rien n'est encore déployé) — la construction
+# et la publication sur GHCR, elles, réussissent indépendamment.
+
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    branches: [main]
+    types: [completed]
+
+jobs:
+  build-and-push:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      sha: ${{ steps.sha.outputs.short }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: sha
+        run: echo "short=${GITHUB_SHA::12}" >> "$GITHUB_OUTPUT"
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:${{ steps.sha.outputs.short }}
+            ghcr.io/${{ github.repository }}:main
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_IMAGES_CDN_URL=https://afrilodge.vd-technologies.com/media
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+      - run: |
+          ssh -o StrictHostKeyChecking=accept-new \
+            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" '
+            set -euo pipefail
+            cd /srv/apps/afrilodge
+            # IMAGE_TAG doit vivre DANS .env, pas dans un fichier à part :
+            # docker compose ne lit que .env (nom exact) pour interpoler
+            # ${IMAGE_TAG} du compose.yml.
+            grep -v "^IMAGE_TAG=" .env > .env.tmp || true
+            echo "IMAGE_TAG=${{ needs.build-and-push.outputs.sha }}" >> .env.tmp
+            mv .env.tmp .env
+            docker compose pull
+            docker compose run --rm migrate
+            docker compose up -d app
+            for i in $(seq 1 20); do
+              status=$(docker inspect -f "{{.State.Health.Status}}" afrilodge-app 2>/dev/null || echo starting)
+              [ "$status" = "healthy" ] && exit 0
+              sleep 3
+            done
+            echo "le conteneur n'\''est jamais devenu healthy — voir docker compose logs app" >&2
+            exit 1
+          '
+
+# Retour arrière (aucun rebuild, quelques secondes) :
+#   ssh vincent@62.238.36.27 'cd /srv/apps/afrilodge && \
+#     grep -v "^IMAGE_TAG=" .env > .env.tmp && \
+#     echo "IMAGE_TAG=<sha précédent>" >> .env.tmp && mv .env.tmp .env && \
+#     docker compose up -d app'

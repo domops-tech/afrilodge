@@ -1,0 +1,32 @@
+# dépendances et artefacts reconstruits dans l'image
+node_modules
+.next
+out
+build
+coverage
+
+# généré par `prisma generate` — regénéré à chaque build image, jamais copié
+# depuis l'hôte (dépendrait de la plateforme de la machine qui a lancé
+# `npm install` en local)
+src/generated/prisma
+
+# secrets et environnement — ne doivent jamais entrer dans une image
+.env
+.env.*
+!.env.example
+
+# tests et rapports, inutiles à l'image de production
+playwright-report
+test-results
+blob-report
+e2e
+
+# outils de dev locaux, non nécessaires dans l'image
+.git
+.github
+.claude
+.windsurf
+.agents
+docs
+*.md
+*.tsbuildinfo
