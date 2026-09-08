@@ -42,6 +42,12 @@ FROM node:${NODE_VERSION} AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# public/ est vide dans ce dépôt : Git ne suit pas les dossiers vides, donc
+# absent d'un clone frais malgré sa présence locale (constaté : build
+# serveur en échec, marchait en local où le dossier existait sur disque
+# sans être tracké). Garanti ici plutôt que dépendant d'un .gitkeep que
+# quelqu'un peut supprimer sans s'en rendre compte.
+RUN mkdir -p public
 
 ARG NEXT_PUBLIC_IMAGES_CDN_URL
 ENV NEXT_PUBLIC_IMAGES_CDN_URL=${NEXT_PUBLIC_IMAGES_CDN_URL}
