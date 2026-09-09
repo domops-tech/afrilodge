@@ -44,8 +44,20 @@ export function getSmsProvider(): SmsProvider {
 
   switch (process.env.SMS_PROVIDER) {
     case "console":
-    default:
       provider = new ConsoleSmsProvider();
+      break;
+    default:
+      // Pas de repli silencieux sur ConsoleSmsProvider : une valeur absente
+      // ou mal orthographiée de SMS_PROVIDER en production ferait sinon
+      // disparaître tous les codes sans que personne ne le remarque (aucune
+      // erreur, aucune alerte — juste des utilisateurs qui n'arrivent
+      // jamais à se connecter). Voir docs/agile/decisions/0013-sms-provider.md :
+      // "console" reste la seule valeur reconnue tant qu'aucun fournisseur
+      // réel n'est branché ; en ajouter un revient à ajouter un `case` ici,
+      // jamais à élargir ce qui tombe dans `default`.
+      throw new Error(
+        `SMS_PROVIDER="${process.env.SMS_PROVIDER ?? ""}" inconnu — voir .env.example`
+      );
   }
 
   return provider;
