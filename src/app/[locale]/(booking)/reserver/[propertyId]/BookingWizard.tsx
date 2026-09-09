@@ -64,6 +64,7 @@ export function BookingWizard({
   const [guests, setGuests] = useState("1");
   const [phone, setPhone] = useState("");
   const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
 
   const clientConflict = useMemo(() => {
     if (!checkIn || !checkOut) return false;
@@ -168,6 +169,16 @@ export function BookingWizard({
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
+        <Field
+          id="email"
+          name="email"
+          label={t("emailLabel")}
+          placeholder={t("emailPlaceholder")}
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
         {identityState.status === "error" ? (
           <p className="text-sm text-danger">{t(errorKey(identityState.message))}</p>
         ) : null}
@@ -186,6 +197,7 @@ export function BookingWizard({
       <input type="hidden" name="guests" value={guests} />
       <input type="hidden" name="phone" value={phone} />
       <input type="hidden" name="fullName" value={fullName} />
+      <input type="hidden" name="email" value={email} />
       <input type="hidden" name="locale" value={locale} />
       <p className="text-sm text-muted">{t("codeSent", { phone })}</p>
       <Field

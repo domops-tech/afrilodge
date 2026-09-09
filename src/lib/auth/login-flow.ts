@@ -9,12 +9,28 @@ import { redirect } from "@/i18n/navigation";
  * Propriétaire : première connexion crée le compte (§5.2.16). Agent et
  * administrateur : comptes provisionnés par VD Technologies, jamais créés
  * depuis cette page — voir `requireExistingRole`/`allowSelfSignup`.
+ *
+ * L'email est un canal de secours optionnel pour le code (décision 0014) :
+ * jamais requis, jamais un substitut au téléphone.
  */
 
 export const phoneSchema = z
   .string()
   .trim()
   .regex(/^\+?[0-9 ]{8,15}$/, "Numéro de téléphone invalide");
+
+export const emailSchema = z
+  .preprocess(
+    // FormData.get("email") renvoie `null` quand le champ n'existe même pas
+    // dans le formulaire (agent/admin : pas de champ email, voir
+    // OtpLoginForm — showEmailField) — pas `""`. z.string().optional() ne
+    // couvre pas `null`, seulement `undefined` ; sans ce prétraitement,
+    // toute connexion sans champ email visible échouait silencieusement en
+    // "invalid_email" avant même l'envoi du code (constaté en e2e).
+    (value) => (typeof value === "string" ? value.trim().toLowerCase() : ""),
+    z.literal("").or(z.string().email("Email invalide"))
+  )
+  .transform((value) => (value ? value : undefined));
 
 export type RequestOtpState = { status: "idle" | "sent" | "error"; message?: string };
 
@@ -23,21 +39,33 @@ export async function requestLoginOtp(
   purpose: OtpPurpose,
   options?: { requireExistingRole?: UserRole }
 ): Promise<RequestOtpState> {
-  const parsed = phoneSchema.safeParse(formData.get("phone"));
-  if (!parsed.success) {
+  const parsedPhone = phoneSchema.safeParse(formData.get("phone"));
+  if (!parsedPhone.success) {
     return { status: "error", message: "invalid_phone" };
   }
-  const phone = parsed.data.replace(/\s+/g, "");
+  const phone = parsedPhone.data.replace(/\s+/g, "");
+
+  const parsedEmail = emailSchema.safeParse(formData.get("email"));
+  if (!parsedEmail.success) {
+    return { status: "error", message: "invalid_email" };
+  }
+
+  // Cherché même hors `requireExistingRole` (le propriétaire peut déjà
+  // exister sans que cette connexion l'exige) : un compte déjà enregistré
+  // garde son email de secours d'une connexion à l'autre, sans avoir à le
+  // ressaisir — voir décision 0014.
+  const existingUser = await prisma.user.findUnique({ where: { phone } });
 
   if (options?.requireExistingRole) {
-    const user = await prisma.user.findUnique({ where: { phone } });
-    if (!user || user.role !== options.requireExistingRole) {
+    if (!existingUser || existingUser.role !== options.requireExistingRole) {
       return { status: "error", message: "not_recognized" };
     }
   }
 
+  const email = existingUser?.email ?? parsedEmail.data;
+
   try {
-    await requestOtp({ phone, purpose });
+    await requestOtp({ phone, purpose, email });
   } catch (err) {
     if (err instanceof OtpRateLimitError) {
       return { status: "error", message: "rate_limited" };
@@ -58,6 +86,11 @@ export async function verifyLoginOtp(
   const phone = String(formData.get("phone") ?? "").replace(/\s+/g, "");
   const code = String(formData.get("code") ?? "").trim();
   const fullName = String(formData.get("fullName") ?? "").trim();
+  // Simple validation ici : déjà vérifié (ou laissé vide) à l'étape de
+  // demande du code — voir requestLoginOtp. Un email invalide à ce stade
+  // est ignoré plutôt que bloquant, la connexion ne doit jamais dépendre
+  // de ce champ optionnel.
+  const email = emailSchema.safeParse(formData.get("email")).data || undefined;
 
   const result = await verifyOtp({ phone, purpose, code });
   if (!result.ok) {
@@ -72,7 +105,7 @@ export async function verifyLoginOtp(
       return { status: "error", message: "not_recognized" };
     }
     user = await prisma.user.create({
-      data: { phone, role: options.role, fullName: fullName || phone },
+      data: { phone, role: options.role, fullName: fullName || phone, email },
     });
   }
 

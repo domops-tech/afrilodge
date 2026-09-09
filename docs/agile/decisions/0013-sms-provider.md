@@ -1,6 +1,8 @@
 # 0013 — Fournisseur SMS (OTP et relances)
 
 **Statut** : bloqué — analyse faite avec vous, choix du fournisseur reporté.
+Voir aussi la décision 0014 : l'email est devenu un canal de secours optionnel
+en complément de ce qui suit, jamais un remplacement.
 
 ## Contexte
 

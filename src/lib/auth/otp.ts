@@ -1,6 +1,7 @@
 import { createHmac, randomInt, timingSafeEqual } from "node:crypto";
 import { prisma } from "@/lib/db/client";
 import { getSmsProvider } from "@/lib/sms/provider";
+import { getEmailProvider } from "@/lib/email/provider";
 import type { $Enums } from "@/generated/prisma/client";
 
 /**
@@ -8,6 +9,12 @@ import type { $Enums } from "@/generated/prisma/client";
  * quatre surfaces (CDC §3) : le voyageur (session éphémère, pas de compte),
  * le propriétaire, l'agent et l'administrateur (compte). C'est la seule
  * implémentation : ne pas dupliquer cette logique ailleurs dans le code.
+ *
+ * Le téléphone reste le canal obligatoire dans tous les cas — voir décision
+ * 0014. Quand un email est connu (fourni au moment de la demande, ou déjà
+ * enregistré sur le compte), le même code lui est envoyé EN PLUS, jamais à
+ * sa place : un échec d'envoi d'email ne doit jamais empêcher la connexion
+ * ou la réservation, qui restent entièrement portées par le SMS.
  */
 
 export type OtpPurpose = $Enums.OtpPurpose;
@@ -41,7 +48,8 @@ function generateCode(): string {
 
 /**
  * Démarre une demande de code. Envoie le SMS via le fournisseur configuré
- * (console en développement — voir src/lib/sms/provider.ts).
+ * (console en développement — voir src/lib/sms/provider.ts), et le même
+ * code par email si `email` est fourni (canal de secours, décision 0014).
  * Lève OtpRateLimitError au-delà de 5 demandes en 15 minutes pour un même
  * numéro et un même usage (anti-énumération, anti-flood — voir plan S0-4).
  */
@@ -49,8 +57,9 @@ export async function requestOtp(params: {
   phone: string;
   purpose: OtpPurpose;
   userId?: string;
+  email?: string;
 }): Promise<void> {
-  const { phone, purpose, userId } = params;
+  const { phone, purpose, userId, email } = params;
 
   const windowStart = new Date(Date.now() - REQUEST_WINDOW_MS);
   const recentCount = await prisma.otpCode.count({
@@ -77,6 +86,21 @@ export async function requestOtp(params: {
     to: phone,
     body: `Votre code Séjours est ${code}. Il expire dans 5 minutes.`,
   });
+
+  if (email) {
+    try {
+      await getEmailProvider().send({
+        to: email,
+        subject: "Votre code Séjours",
+        body: `Votre code Séjours est ${code}. Il expire dans 5 minutes.`,
+      });
+    } catch (err) {
+      // Best-effort : le SMS ci-dessus a déjà été envoyé, c'est lui qui
+      // garantit la connexion/réservation. Un email en échec ne doit
+      // jamais faire échouer requestOtp — voir décision 0014.
+      console.error(`[otp] échec de l'envoi du code de secours par email à ${email}`, err);
+    }
+  }
 }
 
 export type VerifyOtpResult =

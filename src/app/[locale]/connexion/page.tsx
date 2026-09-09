@@ -19,6 +19,7 @@ export default async function LoginPage({
         requestAction={requestOwnerOtpAction}
         verifyAction={verifyOwnerOtpAction}
         showFullName
+        showEmailField
       />
     </div>
   );

@@ -35,20 +35,29 @@ const verifyErrorKey = (message?: string) => {
  * (CDC §3) — voir src/lib/auth/login-flow.ts pour la logique serveur
  * commune. `showFullName` distingue le propriétaire (première connexion =
  * création de compte, CDC §5.2.16) de l'agent/admin (compte déjà
- * provisionné, rien à nommer).
+ * provisionné, rien à nommer). `showEmailField` (décision 0014, canal de
+ * secours optionnel) suit la même distinction : seul le propriétaire peut
+ * en saisir un ici — agent et admin ont déjà le leur sur un compte
+ * provisionné par VD Technologies, rien à demander à la connexion.
+ * L'email est collecté AVANT l'envoi du code (étape "phone"), pas après :
+ * un email saisi seulement à l'étape "code" arriverait trop tard pour
+ * servir de canal à CE code-là.
  */
 export function OtpLoginForm({
   requestAction: requestActionProp,
   verifyAction: verifyActionProp,
   showFullName = false,
+  showEmailField = false,
 }: {
   requestAction: (prev: RequestOtpState, formData: FormData) => Promise<RequestOtpState>;
   verifyAction: (prev: VerifyOtpState, formData: FormData) => Promise<VerifyOtpState>;
   showFullName?: boolean;
+  showEmailField?: boolean;
 }) {
   const t = useTranslations("auth");
   const locale = useLocale();
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [step, setStep] = useState<"phone" | "code">("phone");
 
   const [requestState, requestAction, requestPending] = useActionState(
@@ -78,6 +87,18 @@ export function OtpLoginForm({
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
+        {showEmailField ? (
+          <Field
+            id="email"
+            name="email"
+            label={t("emailLabel")}
+            placeholder={t("emailPlaceholder")}
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        ) : null}
         {requestState.status === "error" ? (
           <p className="text-sm text-danger">{t(requestErrorKey(requestState.message))}</p>
         ) : null}
@@ -91,6 +112,7 @@ export function OtpLoginForm({
   return (
     <form action={verifyAction} className="flex w-full max-w-sm flex-col gap-4">
       <input type="hidden" name="phone" value={phone} />
+      <input type="hidden" name="email" value={email} />
       <input type="hidden" name="locale" value={locale} />
       <p className="text-sm text-muted">{t("codeSent", { phone })}</p>
       {showFullName ? (

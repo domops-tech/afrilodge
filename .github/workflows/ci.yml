@@ -10,6 +10,7 @@ env:
   AUTH_SECRET: "ci-secret-not-for-production"
   PAYMENT_WEBHOOK_SECRET: "ci-secret-not-for-production"
   SMS_PROVIDER: "console"
+  EMAIL_PROVIDER: "console"
   PAYMENT_PROVIDER: "simulated"
   STORAGE_ENDPOINT: "http://localhost:9000"
   STORAGE_REGION: "us-east-1"

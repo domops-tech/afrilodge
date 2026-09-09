@@ -6,7 +6,7 @@ import { prisma } from "@/lib/db/client";
 import { isRangeAvailable } from "@/lib/booking/availability";
 import { nightsInRange } from "@/lib/booking/nights";
 import { BOOKING_HOLD_DURATION_MS } from "@/lib/booking/hold";
-import { phoneSchema } from "@/lib/auth/login-flow";
+import { phoneSchema, emailSchema } from "@/lib/auth/login-flow";
 import { requestOtp, verifyOtp, OtpRateLimitError } from "@/lib/auth/otp";
 import { createGuestSession } from "@/lib/auth/session";
 import { redirect } from "@/i18n/navigation";
@@ -75,6 +75,9 @@ export async function checkAvailabilityAction(_prev: DatesState, formData: FormD
 const identitySchema = datesSchema.extend({
   phone: phoneSchema,
   fullName: z.string().trim().min(2),
+  // Canal de secours optionnel pour le code (décision 0014) — jamais requis,
+  // le téléphone reste le seul canal obligatoire (CDC §2, §6.2).
+  email: emailSchema,
 });
 
 export type IdentityState = { status: "idle" | "sent" | "error"; message?: string };
@@ -88,16 +91,17 @@ export async function requestGuestOtpAction(_prev: IdentityState, formData: Form
     guests: formData.get("guests"),
     phone: formData.get("phone"),
     fullName: formData.get("fullName"),
+    email: formData.get("email"),
   });
   if (!parsed.success) return { status: "error", message: "invalid" };
-  const { propertyId, checkIn, checkOut, guests, phone: rawPhone } = parsed.data;
+  const { propertyId, checkIn, checkOut, guests, phone: rawPhone, email } = parsed.data;
   const phone = rawPhone.replace(/\s+/g, "");
 
   const error = await checkPropertyAndRange(propertyId, checkIn, checkOut, guests);
   if (error) return { status: "error", message: error };
 
   try {
-    await requestOtp({ phone, purpose: "GUEST_BOOKING" });
+    await requestOtp({ phone, purpose: "GUEST_BOOKING", email });
   } catch (err) {
     if (err instanceof OtpRateLimitError) return { status: "error", message: "rate_limited" };
     throw err;
@@ -127,10 +131,11 @@ export async function confirmBookingAction(_prev: ConfirmState, formData: FormDa
     guests: formData.get("guests"),
     phone: formData.get("phone"),
     fullName: formData.get("fullName"),
+    email: formData.get("email"),
     code: formData.get("code"),
   });
   if (!parsed.success) return { status: "error", message: "invalid" };
-  const { propertyId, checkIn, checkOut, guests, phone: rawPhone, fullName, code } = parsed.data;
+  const { propertyId, checkIn, checkOut, guests, phone: rawPhone, fullName, email, code } = parsed.data;
   const phone = rawPhone.replace(/\s+/g, "");
 
   const result = await verifyOtp({ phone, purpose: "GUEST_BOOKING", code });
@@ -148,7 +153,7 @@ export async function confirmBookingAction(_prev: ConfirmState, formData: FormDa
       }
 
       const guestSession = await tx.guestSession.create({
-        data: { phone, fullName, expiresAt: holdExpiresAt },
+        data: { phone, email, fullName, expiresAt: holdExpiresAt },
       });
 
       const booking = await tx.booking.create({
