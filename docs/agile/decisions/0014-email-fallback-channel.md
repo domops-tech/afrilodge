@@ -55,13 +55,24 @@ plutôt qu'un remplacement respecte le CDC à la lettre (téléphone + mail + co
 tous les trois) sans reproduire, côté email, le même échec silencieux qu'on
 vient de corriger côté SMS (décision 0013).
 
-## Ce qui reste bloquant
+## Fournisseur réel — Migadu (SMTP)
 
-Comme pour le SMS (décision 0013), aucun fournisseur d'email réel n'est choisi :
-`EMAIL_PROVIDER="console"` journalise au lieu d'envoyer, seule valeur reconnue
-pour l'instant. Le choix d'un expéditeur transactionnel réel (Postmark, Resend,
-AWS SES…) reste à faire avant toute mise en production du canal email — sans
-urgence, puisque le SMS continue de porter seul l'obligation fonctionnelle.
+Contrairement au SMS (décision 0013, toujours bloquée), le fournisseur d'email
+est choisi : `noreply@vd-technologies.com`, hébergée chez Migadu. Migadu n'offre
+pas d'API HTTP d'envoi transactionnel (son API ne gère que l'administration des
+boîtes) — seulement du SMTP standard, avec le mot de passe de la boîte. D'où
+`SmtpEmailProvider` (`src/lib/email/provider.ts`, via `nodemailer`) plutôt qu'un
+client d'API dédié : `EMAIL_PROVIDER="smtp"` plus `SMTP_HOST`/`SMTP_PORT`/
+`SMTP_USER`/`SMTP_PASSWORD`/`EMAIL_FROM` (voir `.env.example`). L'implémentation
+ne dépend d'aucune spécificité Migadu — n'importe quel hébergeur SMTP
+conviendrait en changeant seulement l'hôte/port.
+
+**Point à vérifier avant de compter dessus pour de vrais utilisateurs** : la
+fiabilité du canal email dépend entièrement de SPF/DKIM/DMARC correctement
+configurés pour `vd-technologies.com` (diagnostics disponibles dans l'espace
+d'administration Migadu). Sans ça, les emails partent couramment en spam dès le
+premier envoi depuis un nouveau domaine — exactement le risque de latence/
+silence déjà signalé plus haut dans cette fiche.
 
 ## Note technique
 
