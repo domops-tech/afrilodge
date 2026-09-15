@@ -113,3 +113,13 @@ serveur — au lieu d'un formulaire dédié par canal. Voir
 documente aussi un bug corrigé au passage : un compte agent pouvait
 obtenir une session propriétaire en se connectant sur `/connexion` avec
 son propre téléphone, faute de vérification du rôle dans ce cas précis.
+
+## Synchronisation terrain en production (15 septembre 2026)
+
+Les envois de photos par l'agent échouaient en production
+(`STORAGE_ENDPOINT` interne au réseau Docker, injoignable depuis un
+navigateur). Nouvelle variable `STORAGE_PUBLIC_ENDPOINT`, distincte de
+`STORAGE_ENDPOINT`, pour signer les URLs remises à un navigateur — voir
+`docs/agile/decisions/0017-endpoint-public-urls-signees.md` et
+`.env.example`. Contrepartie infra : `vd-platform`,
+`caddy/sites.d/*.caddy`.

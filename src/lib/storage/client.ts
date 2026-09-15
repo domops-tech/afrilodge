@@ -46,9 +46,13 @@ function internalEndpoint(): string {
  * faisait échouer la synchronisation terrain avant ce correctif : le
  * serveur répondait normalement (rien à journaliser côté app), seul le
  * PUT direct du navigateur vers MinIO échouait, invisible en dehors du
- * navigateur de l'agent. Voir vd-platform, caddy/sites.d/*.caddy (route
- * `/s3/*`, proxy MinIO transparent — sans réécriture de chemin comme
- * `/media/*`, pour que la signature reste valide).
+ * navigateur de l'agent. Voir vd-platform, caddy/sites.d/*.caddy (bloc
+ * `@storagebucket`, routé sur le nom du bucket lui-même, transmis
+ * identique — sans réécriture de chemin comme `/media/*`). AUCUN chemin
+ * supplémentaire dans cette valeur (juste la racine du domaine) : la
+ * signature AWS SigV4 couvre le chemin entier de l'endpoint utilisé pour
+ * signer, un préfixe retiré côté proxy avant MinIO invaliderait la
+ * signature — constaté en production avant de converger sur ce schéma.
  *
  * Optionnelle : absente, on retombe sur `STORAGE_ENDPOINT` — le cas du
  * développement local, où MinIO est déjà public sur `localhost`.
