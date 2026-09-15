@@ -1,6 +1,7 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { OtpLoginForm } from "@/components/auth/OtpLoginForm";
-import { requestAdminOtpAction, verifyAdminOtpAction } from "./actions";
+import { EmailOtpLoginForm } from "@/components/auth/EmailOtpLoginForm";
+import { requestAdminEmailOtpAction, verifyAdminEmailOtpAction, requestAdminOtpAction, verifyAdminOtpAction } from "./actions";
 
 // Connexion administrateur (CDC §3) — compte provisionné, pas d'auto-inscription.
 export default async function AdminLoginPage({
@@ -13,6 +14,8 @@ export default async function AdminLoginPage({
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4 py-16">
       <h1 className="text-2xl font-semibold">{t("admin")}</h1>
+      <EmailOtpLoginForm requestAction={requestAdminEmailOtpAction} verifyAction={verifyAdminEmailOtpAction} />
+      <p className="text-sm text-muted">Connexion historique par téléphone</p>
       <OtpLoginForm requestAction={requestAdminOtpAction} verifyAction={verifyAdminOtpAction} />
     </div>
   );

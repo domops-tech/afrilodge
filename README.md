@@ -85,4 +85,6 @@ Les voyageurs retrouvent leurs réservations via `/reserver` et un nouveau code 
 
 Avant de lancer cette version sur une base existante : `npx prisma migrate deploy`, puis `npx prisma generate`. La migration ajoute un usage OTP de récupération, sans réinitialisation de données.
 
+La connexion administrateur accepte aussi l’email du compte admin enregistré en base. Configurer `EMAIL_PROVIDER=smtp`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` et `EMAIL_FROM`, puis appliquer les migrations. L’adresse doit être affectée à un utilisateur dont `role = 'ADMIN'` ; aucune auto-inscription par email n’est possible.
+
 `npm run start` utilise désormais le build standalone et prépare ses fichiers statiques. Les tests terrain et validation administrative préparent leurs propres fiches et les nettoient, sans rejouer le seed destructif. Les autres prérequis de recette (PostgreSQL, MinIO, comptes de démonstration pour les suites historiques) restent ceux du démarrage ci-dessus.

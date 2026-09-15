@@ -11,6 +11,8 @@ produit construit jusqu'ici (décision 0001, §3, §6.2.2) n'implémente que
 téléphone + SMS ; aucun email n'était collecté nulle part.
 
 > Mise à jour du 14 septembre 2026 : pour le voyageur, voir [0015](0015-recuperation-reservations-et-integrite.md). L’accès à plusieurs réservations exige une preuve SMS ; l’email librement saisi reste une adresse de contact.
+>
+> Mise à jour du 15 septembre 2026 : l’administrateur dispose maintenant d’un parcours dédié **email + OTP**. L’adresse doit déjà être enregistrée sur un compte `ADMIN` ; le code est envoyé uniquement par SMTP. Le téléphone reste disponible comme parcours historique.
 
 ## Décision
 

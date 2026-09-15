@@ -103,6 +103,39 @@ export async function requestOtp(params: {
   }
 }
 
+/** Envoie un OTP par email pour un compte déjà provisionné.
+ * L'adresse est utilisée comme identifiant technique du code, mais n'est
+ * jamais acceptée comme preuve d'un compte qui n'existe pas.
+ */
+export async function requestEmailOtp(params: {
+  email: string;
+  purpose: OtpPurpose;
+  userId: string;
+}): Promise<void> {
+  const email = params.email.trim().toLowerCase();
+  const windowStart = new Date(Date.now() - REQUEST_WINDOW_MS);
+  const recentCount = await prisma.otpCode.count({
+    where: { phone: email, purpose: params.purpose, createdAt: { gte: windowStart } },
+  });
+  if (recentCount >= MAX_REQUESTS_PER_WINDOW) throw new OtpRateLimitError();
+
+  const code = generateCode();
+  await prisma.otpCode.create({
+    data: {
+      phone: email,
+      purpose: params.purpose,
+      userId: params.userId,
+      codeHash: hashCode(email, params.purpose, code),
+      expiresAt: new Date(Date.now() + CODE_TTL_MS),
+    },
+  });
+  await getEmailProvider().send({
+    to: email,
+    subject: "Votre code de connexion administrateur",
+    body: `Votre code Séjours est ${code}. Il expire dans 5 minutes.`,
+  });
+}
+
 export type VerifyOtpResult =
   | { ok: true; otpCodeId: string; userId: string | null }
   | { ok: false; reason: "not_found" | "expired" | "too_many_attempts" | "mismatch" };
