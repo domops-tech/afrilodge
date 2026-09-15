@@ -61,10 +61,25 @@ attribuée et expire à 12 mois.*
 | 2.5 | Tâche planifiée d'expiration à 12 mois + relance de renouvellement (§6.5) | 3 | ✅ |
 | 2.6 | Publication automatique de la fiche sous 24h après visite (§11.2) | 2 | ✅ |
 | 2.7 | Planification d'une visite : affectation d'un agent à une demande (§4.1.2) | 2 | ✅ |
+| 2.8 | Création d'un compte agent depuis le back-office (§3) | 2 | ✅ |
 
 *Story 2.7 ajoutée au Sprint 4 : trou du backlog original — sans elle, une
 demande de vérification (épic 4) n'avait jamais de suite. Voir
 `docs/agile/sprints/sprint-04.md`.*
+
+*Story 2.8 ajoutée après le Sprint 7 : jusqu'ici, la seule voie de
+provisionnement d'un agent était une insertion manuelle en base
+(`prisma/seed.ts` ou SQL direct), symétrique du constat déjà fait sur
+l'admin (connexion email, décision du 15/09). `/admin/agents` — email
+volontairement obligatoire à la création (contrairement à la contrainte
+générale du schéma) tant que `SMS_PROVIDER="console"` reste actif en
+production, seul canal par lequel l'agent recevra réellement son code. En
+la construisant, une régression e2e préexistante a été trouvée et
+corrigée : la page `/admin/connexion` porte deux formulaires d'envoi de
+code depuis l'ajout de la connexion email admin, et le sélecteur générique
+`/envoyer le code/i` des tests matchait les deux — voir
+`e2e/helpers/fixtures.ts`, `e2e/admin-review.spec.ts`,
+`e2e/owner-space.spec.ts`.*
 
 ---
 

@@ -53,6 +53,9 @@ export default async function AdminQueuePage({
       </header>
 
       <nav className="flex gap-4 text-sm">
+        <Link href="/admin/agents" className="font-medium text-accent">
+          {t("agentsTitle")}
+        </Link>
         <Link href="/admin/commissions" className="font-medium text-accent">
           {t("commissionsTitle")}
         </Link>

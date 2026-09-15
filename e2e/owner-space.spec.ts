@@ -20,7 +20,10 @@ async function requestAndReadOtp(
   fullName?: string
 ) {
   await page.getByLabel(/numéro de téléphone/i).fill(phone);
-  await page.getByRole("button", { name: /envoyer le code/i }).click();
+  // Match exact : réutilisé pour la connexion admin plus bas dans ce
+  // fichier, où /admin/connexion porte aussi le formulaire de connexion
+  // par email (voir e2e/helpers/fixtures.ts, loginAsAdmin).
+  await page.getByRole("button", { name: "Envoyer le code", exact: true }).click();
   await expect(page.getByText(new RegExp(phone.replace("+", "\\+")))).toBeVisible();
 
   const otpResponse = await request.get(`/api/dev/last-otp?phone=${encodeURIComponent(phone)}`);

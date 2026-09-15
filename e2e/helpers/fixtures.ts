@@ -43,7 +43,10 @@ export async function loginAsOwner(
 export async function loginAsAdmin(page: Page, request: APIRequestContext, phone: string) {
   await page.goto("/fr/admin/connexion");
   await page.getByLabel(/numéro de téléphone/i).fill(phone);
-  await page.getByRole("button", { name: /envoyer le code/i }).click();
+  // Match exact : la page porte aussi le formulaire de connexion par email
+  // de l'admin (décision du 15/09), dont le bouton « Envoyer le code par
+  // email » matcherait aussi une regex /envoyer le code/i.
+  await page.getByRole("button", { name: "Envoyer le code", exact: true }).click();
   await expect(page.getByText(new RegExp(phone.replace("+", "\\+")))).toBeVisible();
 
   const otpResponse = await request.get(`/api/dev/last-otp?phone=${encodeURIComponent(phone)}`);

@@ -88,3 +88,18 @@ Avant de lancer cette version sur une base existante : `npx prisma migrate deplo
 La connexion administrateur accepte aussi l’email du compte admin enregistré en base. Configurer `EMAIL_PROVIDER=smtp`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` et `EMAIL_FROM`, puis appliquer les migrations. L’adresse doit être affectée à un utilisateur dont `role = 'ADMIN'` ; aucune auto-inscription par email n’est possible.
 
 `npm run start` utilise désormais le build standalone et prépare ses fichiers statiques. Les tests terrain et validation administrative préparent leurs propres fiches et les nettoient, sans rejouer le seed destructif. Les autres prérequis de recette (PostgreSQL, MinIO, comptes de démonstration pour les suites historiques) restent ceux du démarrage ci-dessus.
+
+## Création de comptes agents (15 septembre 2026)
+
+L'admin peut désormais créer un compte agent depuis `/admin/agents` (nom,
+téléphone, email) — jusqu'ici la seule voie était une insertion manuelle en
+base. L'email y est volontairement obligatoire, contrairement à la règle
+générale du schéma : tant que `SMS_PROVIDER="console"` reste actif en
+production, c'est le seul canal par lequel l'agent créé recevra réellement
+son code de connexion (le formulaire `/terrain/connexion` n'a pas d'onglet
+email dédié, mais `requestLoginOtp` envoie déjà le code au canal de secours
+enregistré sur le compte). Voir `docs/agile/product-backlog.md`, story 2.8.
+
+Créer un second compte admin reste une opération manuelle en base (pas
+d'interface dédiée, volontairement — élever un compte au rôle admin depuis
+une UI mériterait sa propre protection, hors périmètre de cette story).
