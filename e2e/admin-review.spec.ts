@@ -14,9 +14,7 @@ test.afterEach(async () => { await fixture?.cleanup(); });
 
 async function loginAsAdmin(page: import("@playwright/test").Page, request: import("@playwright/test").APIRequestContext) {
   await page.goto("/fr/admin/connexion");
-  await page.getByLabel(/numéro de téléphone/i).fill(ADMIN_PHONE);
-  // Match exact : voir e2e/helpers/fixtures.ts, loginAsAdmin, pour la même
-  // ambiguïté depuis l'ajout de la connexion email admin.
+  await page.getByLabel(/téléphone ou email/i).fill(ADMIN_PHONE);
   await page.getByRole("button", { name: "Envoyer le code", exact: true }).click();
   await expect(page.getByText(new RegExp(ADMIN_PHONE.replace("+", "\\+")))).toBeVisible();
 

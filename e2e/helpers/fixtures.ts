@@ -25,7 +25,7 @@ export async function loginAsOwner(
   fullName: string
 ) {
   await page.goto("/fr/connexion");
-  await page.getByLabel(/numéro de téléphone/i).fill(phone);
+  await page.getByLabel(/téléphone ou email/i).fill(phone);
   await page.getByRole("button", { name: /envoyer le code/i }).click();
   await expect(page.getByText(new RegExp(phone.replace("+", "\\+")))).toBeVisible();
 
@@ -42,10 +42,7 @@ export async function loginAsOwner(
 /** Connexion admin — le compte doit déjà exister (pas d'auto-inscription, contrairement au propriétaire), voir e2e/admin-review.spec.ts. */
 export async function loginAsAdmin(page: Page, request: APIRequestContext, phone: string) {
   await page.goto("/fr/admin/connexion");
-  await page.getByLabel(/numéro de téléphone/i).fill(phone);
-  // Match exact : la page porte aussi le formulaire de connexion par email
-  // de l'admin (décision du 15/09), dont le bouton « Envoyer le code par
-  // email » matcherait aussi une regex /envoyer le code/i.
+  await page.getByLabel(/téléphone ou email/i).fill(phone);
   await page.getByRole("button", { name: "Envoyer le code", exact: true }).click();
   await expect(page.getByText(new RegExp(phone.replace("+", "\\+")))).toBeVisible();
 

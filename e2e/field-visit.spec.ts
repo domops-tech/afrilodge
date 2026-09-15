@@ -36,7 +36,7 @@ test.describe("visite terrain hors connexion (CDC §4, §6.4, §11.1)", () => {
 
     // Connexion agent (compte provisionné par le seed, pas d'auto-inscription).
     await page.goto("/fr/terrain/connexion");
-    await page.getByLabel(/numéro de téléphone/i).fill(AGENT_PHONE);
+    await page.getByLabel(/téléphone ou email/i).fill(AGENT_PHONE);
     await page.getByRole("button", { name: /envoyer le code/i }).click();
 
     // Attend que la Server Action ait terminé (transition vers l'étape du

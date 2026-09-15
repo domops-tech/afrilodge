@@ -13,7 +13,7 @@ import { getSession, type UserRole } from "@/lib/auth/session";
  * protéger elle-même. C'est ce que ces fonctions font.
  */
 
-const LOGIN_PATH_BY_ROLE: Record<UserRole, string> = {
+export const LOGIN_PATH_BY_ROLE: Record<UserRole, string> = {
   OWNER: "/connexion",
   AGENT: "/terrain/connexion",
   ADMIN: "/admin/connexion",

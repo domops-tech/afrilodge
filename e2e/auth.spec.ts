@@ -10,7 +10,7 @@ test("un nouveau propriétaire se connecte par téléphone + code à usage uniqu
   const phone = `+225070000${Math.floor(1000 + Math.random() * 8999)}`;
 
   await page.goto("/fr/connexion");
-  await page.getByLabel(/numéro de téléphone/i).fill(phone);
+  await page.getByLabel(/téléphone ou email/i).fill(phone);
   await page.getByRole("button", { name: /envoyer le code/i }).click();
 
   await expect(page.getByText(new RegExp(phone.replace("+", "\\+")))).toBeVisible();

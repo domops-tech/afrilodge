@@ -103,3 +103,13 @@ enregistré sur le compte). Voir `docs/agile/product-backlog.md`, story 2.8.
 Créer un second compte admin reste une opération manuelle en base (pas
 d'interface dédiée, volontairement — élever un compte au rôle admin depuis
 une UI mériterait sa propre protection, hors périmètre de cette story).
+
+## Connexion unifiée téléphone/email (15 septembre 2026)
+
+Les trois surfaces à compte (propriétaire, agent, admin) partagent
+désormais un seul champ de connexion — téléphone ou email, détecté côté
+serveur — au lieu d'un formulaire dédié par canal. Voir
+`docs/agile/decisions/0016-connexion-unifiee-et-correction-role.md`, qui
+documente aussi un bug corrigé au passage : un compte agent pouvait
+obtenir une session propriétaire en se connectant sur `/connexion` avec
+son propre téléphone, faute de vérification du rôle dans ce cas précis.

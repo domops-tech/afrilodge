@@ -19,10 +19,7 @@ async function requestAndReadOtp(
   phone: string,
   fullName?: string
 ) {
-  await page.getByLabel(/numéro de téléphone/i).fill(phone);
-  // Match exact : réutilisé pour la connexion admin plus bas dans ce
-  // fichier, où /admin/connexion porte aussi le formulaire de connexion
-  // par email (voir e2e/helpers/fixtures.ts, loginAsAdmin).
+  await page.getByLabel(/téléphone ou email/i).fill(phone);
   await page.getByRole("button", { name: "Envoyer le code", exact: true }).click();
   await expect(page.getByText(new RegExp(phone.replace("+", "\\+")))).toBeVisible();
 
