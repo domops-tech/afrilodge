@@ -14,12 +14,12 @@ import { processPaymentWebhook } from "@/lib/payments/webhook-handler";
  * enverrait — voir src/lib/payments/webhook-handler.ts.
  */
 export async function simulatePaymentAction(formData: FormData): Promise<void> {
-  const session = await requireGuestSession();
   const bookingId = String(formData.get("bookingId"));
+  const session = await requireGuestSession(`/reserver/confirmation/${bookingId}`);
   const locale = (formData.get("locale") as string) || "fr";
 
-  const booking = await prisma.booking.findUnique({ where: { id: bookingId }, include: { payment: true } });
-  if (!booking || booking.guestSessionId !== session.guestSessionId || !booking.payment) {
+  const booking = await prisma.booking.findUnique({ where: { id: bookingId }, include: { payment: true, guestSession: { select: { phone: true } } } });
+  if (!booking || booking.guestSession.phone !== session.phone || !booking.payment) {
     return redirect({ href: `/reserver/confirmation/${bookingId}?erreur=etat-invalide`, locale });
   }
 

@@ -1,7 +1,7 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { Button } from "@/components/ui/Button";
+import { buttonClassName } from "@/components/ui/Button";
 
 export default async function HomePage({
   params,
@@ -11,6 +11,7 @@ export default async function HomePage({
   const t = await getTranslations("home");
   const tNav = await getTranslations("nav");
   const tCommon = await getTranslations("common");
+  const tBooking = await getTranslations("booking");
 
   return (
     <div className="flex flex-1 flex-col">
@@ -24,12 +25,11 @@ export default async function HomePage({
         </div>
       </header>
 
-      <main className="flex flex-1 flex-col items-center justify-center gap-6 px-4 py-16 text-center">
+      <section className="flex flex-1 flex-col items-center justify-center gap-6 px-4 py-16 text-center">
         <h1 className="max-w-sm text-3xl font-semibold leading-tight">{t("tagline")}</h1>
-        <Link href="/recherche">
-          <Button>{t("searchCta")}</Button>
-        </Link>
-      </main>
+        <Link href="/reserver" className="text-sm text-accent">{tBooking("myBookings")}</Link>
+        <Link href="/recherche" className={buttonClassName("primary", "")}>{t("searchCta")}</Link>
+      </section>
     </div>
   );
 }

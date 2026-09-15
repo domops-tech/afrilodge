@@ -6,7 +6,11 @@ import { test, expect } from "@playwright/test";
 // Prisma généré (ESM pur) ne s'importe pas depuis un fichier de test
 // Playwright compilé en CommonJS, la vérification finale passe par `pg`.
 
-const ADMIN_PHONE = "+2250700000001";
+import { visitFixture } from "./helpers/visit-fixture";
+let fixture: Awaited<ReturnType<typeof visitFixture>>;
+let ADMIN_PHONE: string;
+test.beforeEach(async () => { fixture = await visitFixture(true); ADMIN_PHONE = fixture.adminPhone; });
+test.afterEach(async () => { await fixture?.cleanup(); });
 
 async function loginAsAdmin(page: import("@playwright/test").Page, request: import("@playwright/test").APIRequestContext) {
   await page.goto("/fr/admin/connexion");
@@ -33,7 +37,7 @@ test.describe("validation d'une fiche par le back-office (CDC §4.1.8)", () => {
   test("approuve une fiche visitée : la mention est attribuée et le bien publié", async ({ page, request }) => {
     await loginAsAdmin(page, request);
 
-    await page.getByRole("link", { name: /villa meublée, bingerville/i }).click();
+    await page.getByRole("link", { name: new RegExp(fixture.title) }).click();
     await expect(page).toHaveURL(/\/fr\/admin\/fiches\/.+/);
     const requestId = page.url().match(/\/fiches\/([^/]+)/)?.[1];
     expect(requestId).toBeTruthy();
@@ -51,7 +55,7 @@ test.describe("validation d'une fiche par le back-office (CDC §4.1.8)", () => {
 
     await page.getByRole("button", { name: /approuver et publier/i }).click();
     await expect(page).toHaveURL(/\/fr\/admin$/);
-    await expect(page.getByRole("link", { name: /villa meublée, bingerville/i })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: new RegExp(fixture.title) })).toHaveCount(0);
 
     const db = new Client({ connectionString: process.env.DATABASE_URL });
     await db.connect();
@@ -84,7 +88,7 @@ test.describe("validation d'une fiche par le back-office (CDC §4.1.8)", () => {
   test("refuse une fiche visitée avec motif : le bien reste non publié", async ({ page, request }) => {
     await loginAsAdmin(page, request);
 
-    await page.getByRole("link", { name: /chambre meublée, yopougon/i }).click();
+    await page.getByRole("link", { name: new RegExp(fixture.title) }).click();
     await expect(page).toHaveURL(/\/fr\/admin\/fiches\/.+/);
     const requestId = page.url().match(/\/fiches\/([^/]+)/)?.[1];
 

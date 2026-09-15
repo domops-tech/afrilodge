@@ -1,3 +1,4 @@
+import { ZodError } from "zod";
 import { NextRequest, NextResponse } from "next/server";
 import { processPaymentWebhook, WebhookVerificationError } from "@/lib/payments/webhook-handler";
 
@@ -20,7 +21,7 @@ export async function POST(request: NextRequest) {
     if (err instanceof WebhookVerificationError) {
       return NextResponse.json({ error: "invalid_signature" }, { status: 401 });
     }
-    if (err instanceof SyntaxError) {
+    if (err instanceof SyntaxError || err instanceof ZodError) {
       return NextResponse.json({ error: "invalid_body" }, { status: 400 });
     }
     throw err;

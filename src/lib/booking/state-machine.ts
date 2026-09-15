@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db/client";
-import type { $Enums } from "@/generated/prisma/client";
+import type { $Enums, Prisma } from "@/generated/prisma/client";
 
 /**
  * Machine à états d'une réservation (CDC §7.2). Table de référence unique :
@@ -44,10 +44,10 @@ export async function transitionBooking(params: {
   to: BookingStatus;
   actorId?: string | null;
   metadata?: Record<string, unknown>;
-}) {
+}, transaction?: Prisma.TransactionClient) {
   const { bookingId, to, actorId = null, metadata } = params;
 
-  return prisma.$transaction(async (tx) => {
+  const apply = async (tx: Prisma.TransactionClient) => {
     const booking = await tx.booking.findUniqueOrThrow({ where: { id: bookingId } });
 
     if (!isTransitionAllowed(booking.status, to)) {
@@ -55,7 +55,7 @@ export async function transitionBooking(params: {
     }
 
     const updated = await tx.booking.update({
-      where: { id: bookingId },
+      where: { id: bookingId, status: booking.status },
       data: { status: to },
     });
 
@@ -71,5 +71,6 @@ export async function transitionBooking(params: {
     });
 
     return updated;
-  });
+  };
+  return transaction ? apply(transaction) : prisma.$transaction(apply);
 }

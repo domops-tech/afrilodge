@@ -11,11 +11,15 @@ const variants: Record<Variant, string> = {
   ghost: "text-foreground hover:bg-surface",
 };
 
+export function buttonClassName(variant: Variant = "primary", className = "") {
+  return `${base} ${variants[variant]} ${className}`;
+}
+
 export const Button = forwardRef<
   HTMLButtonElement,
   ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant }
 >(function Button({ className = "", variant = "primary", ...props }, ref) {
   return (
-    <button ref={ref} className={`${base} ${variants[variant]} ${className}`} {...props} />
+    <button ref={ref} className={buttonClassName(variant, className)} {...props} />
   );
 });

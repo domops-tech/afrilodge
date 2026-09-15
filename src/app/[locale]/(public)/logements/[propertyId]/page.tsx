@@ -1,3 +1,4 @@
+import { selectionQuery } from "@/lib/booking/selection";
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations, getFormatter } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -5,7 +6,7 @@ import { prisma } from "@/lib/db/client";
 import { PropertyImage } from "@/components/PropertyImage";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import { ApproximateMap } from "@/components/ApproximateMap";
-import { Button } from "@/components/ui/Button";
+import { buttonClassName } from "@/components/ui/Button";
 import { isVerificationValid } from "@/lib/verification/badge";
 
 /**
@@ -15,8 +16,10 @@ import { isVerificationValid } from "@/lib/verification/badge";
  */
 export default async function PropertyDetailPage({
   params,
+  searchParams,
 }: PageProps<"/[locale]/logements/[propertyId]">) {
   const { locale, propertyId } = await params;
+  const query = selectionQuery(await searchParams);
   setRequestLocale(locale);
   const t = await getTranslations("property");
   const tVerif = await getTranslations("verification");
@@ -69,27 +72,10 @@ export default async function PropertyDetailPage({
   const confirmedAmenities = property.amenities.filter((a) => a.confirmed);
 
   return (
-    <div className="flex flex-1 flex-col gap-6 px-4 py-8">
-      <Link href="/recherche" className="text-xs text-muted">
+    <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8">
+      <Link href={`/recherche${query}`} className="text-xs text-muted">
         ← {t("backToSearch")}
       </Link>
-
-      {photos.length > 0 ? (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {photos.map((photo, i) => (
-            <PropertyImage
-              key={photo.id}
-              storageKey={photo.storageKey}
-              alt={photo.label ?? photo.slot}
-              width={i === 0 ? 640 : 240}
-              height={i === 0 ? 400 : 160}
-              priority={i === 0}
-              sizes={i === 0 ? "(max-width: 640px) 100vw, 640px" : "(max-width: 640px) 33vw, 240px"}
-              className={`h-auto w-full rounded-[var(--radius-default)] object-cover ${i === 0 ? "col-span-2 row-span-2 sm:col-span-1" : ""}`}
-            />
-          ))}
-        </div>
-      ) : null}
 
       <header className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
@@ -106,6 +92,27 @@ export default async function PropertyDetailPage({
         </span>
         <span className="text-lg font-semibold">{t("pricePerNight", { price: property.pricePerNight })}</span>
       </header>
+
+      <Link href={`/reserver/${property.id}${query}`} className={buttonClassName("primary", "self-start")}>{t("bookCta")}</Link>
+
+      {photos.length > 0 ? (
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {photos.map((photo, i) => (
+            <PropertyImage
+              key={photo.id}
+              storageKey={photo.storageKey}
+              alt={photo.label ?? photo.slot}
+              width={i === 0 ? 640 : 240}
+              height={i === 0 ? 400 : 160}
+              priority={i === 0}
+              sizes="(max-width: 640px) 50vw, (max-width: 1152px) 33vw, 373px"
+              className="aspect-[3/2] h-full w-full rounded-[var(--radius-default)] object-cover"
+            />
+          ))}
+        </div>
+      ) : null}
+
+
 
       <p className="text-sm">{property.description}</p>
 
@@ -137,9 +144,7 @@ export default async function PropertyDetailPage({
         </section>
       ) : null}
 
-      <Link href={`/reserver/${property.id}`}>
-        <Button className="w-full">{t("bookCta")}</Button>
-      </Link>
+
     </div>
   );
 }

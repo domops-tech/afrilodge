@@ -78,3 +78,11 @@ décision) : `src/proxy.ts` (renommage `middleware` → `proxy` de Next 16),
 Prisma 7 (driver adapter explicite, client généré hors `node_modules`), et
 l'état en mémoire partagé entre Server Actions et Route Handlers, qui doit
 vivre sur `globalThis` et non sur une variable de module.
+
+## Corrections qualité du 14 septembre 2026
+
+Les voyageurs retrouvent leurs réservations via `/reserver` et un nouveau code SMS après expiration de session. Le formulaire conserve l’email comme contact facultatif ; les codes voyageur sont envoyés au téléphone uniquement. Voir [la décision 0015](docs/agile/decisions/0015-recuperation-reservations-et-integrite.md).
+
+Avant de lancer cette version sur une base existante : `npx prisma migrate deploy`, puis `npx prisma generate`. La migration ajoute un usage OTP de récupération, sans réinitialisation de données.
+
+`npm run start` utilise désormais le build standalone et prépare ses fichiers statiques. Les tests terrain et validation administrative préparent leurs propres fiches et les nettoient, sans rejouer le seed destructif. Les autres prérequis de recette (PostgreSQL, MinIO, comptes de démonstration pour les suites historiques) restent ceux du démarrage ci-dessus.

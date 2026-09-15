@@ -18,15 +18,15 @@ export default async function PaymentPage({
 }: PageProps<"/[locale]/reserver/paiement/[bookingId]">) {
   const { locale, bookingId } = await params;
   setRequestLocale(locale);
-  const session = await requireGuestSession();
+  const session = await requireGuestSession(`/reserver/confirmation/${bookingId}`);
   const t = await getTranslations("booking");
 
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
-    include: { property: { select: { title: true } }, payment: true },
+    include: { guestSession: { select: { phone: true } }, property: { select: { title: true } }, payment: true },
   });
 
-  if (!booking || booking.guestSessionId !== session.guestSessionId) notFound();
+  if (!booking || booking.guestSession.phone !== session.phone) notFound();
   if (booking.status !== "ACCEPTED" || !booking.payment || booking.payment.status !== "INTENT_CREATED") {
     notFound();
   }

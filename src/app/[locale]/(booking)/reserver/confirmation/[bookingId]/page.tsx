@@ -1,19 +1,19 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations, getFormatter } from "next-intl/server";
 import { requireGuestSession } from "@/lib/auth/guard";
+import { hasArrivalDateStarted } from "@/lib/booking/arrival";
 import { prisma } from "@/lib/db/client";
 import { Link } from "@/i18n/navigation";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Button, buttonClassName } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { confirmArrivalAction, cancelBookingAction, reportDisputeAction } from "./actions";
 
 /**
  * Écran de suivi de la demande (CDC §6.2, épics 5.4, 6.1-6.5) : accessible
  * tant que la session voyageur éphémère est valide (src/lib/auth/guard.ts).
- * Ne montre jamais le bien d'une autre session — `guestSessionId` n'est pas
- * un secret fort, mais la comparaison ci-dessous empêche de parcourir des
- * réservations en devinant des identifiants.
+ * L’accès est limité au téléphone prouvé par OTP, y compris après une
+ * récupération de session ou une seconde réservation.
  */
 export default async function BookingConfirmationPage({
   params,
@@ -22,20 +22,20 @@ export default async function BookingConfirmationPage({
   const { locale, bookingId } = await params;
   const { erreur } = await searchParams;
   setRequestLocale(locale);
-  const session = await requireGuestSession();
+  const session = await requireGuestSession(`/reserver/confirmation/${bookingId}`);
   const t = await getTranslations("booking");
   const format = await getFormatter();
 
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
-    include: {
+    include: { guestSession: { select: { phone: true } },
       property: { select: { title: true, neighborhood: true, city: true } },
       payment: true,
       dispute: true,
     },
   });
 
-  if (!booking || booking.guestSessionId !== session.guestSessionId) {
+  if (!booking || booking.guestSession.phone !== session.phone) {
     notFound();
   }
 
@@ -69,9 +69,7 @@ export default async function BookingConfirmationPage({
       {booking.status === "ACCEPTED" ? (
         <div className="flex flex-col gap-3">
           <p className="text-sm text-verified">{t("statusAccepted")}</p>
-          <Link href={`/reserver/paiement/${booking.id}`}>
-            <Button className="w-full">{t("payNowCta")}</Button>
-          </Link>
+          <Link href={`/reserver/paiement/${booking.id}`} className={buttonClassName("primary", "w-full")}>{t("payNowCta")}</Link>
         </div>
       ) : null}
 
@@ -85,7 +83,9 @@ export default async function BookingConfirmationPage({
         </Card>
       ) : null}
 
-      {booking.status === "PAID" ? (
+      {booking.status === "PAID" && !hasArrivalDateStarted(booking.checkIn) ? <p className="text-sm text-muted">{t("arrivalAvailableOn", { date: format.dateTime(booking.checkIn, { dateStyle: "long" }) })}</p> : null}
+
+      {booking.status === "PAID" && hasArrivalDateStarted(booking.checkIn) ? (
         <form action={confirmArrivalAction}>
           <input type="hidden" name="bookingId" value={booking.id} />
           <input type="hidden" name="locale" value={locale} />
@@ -126,6 +126,7 @@ export default async function BookingConfirmationPage({
         </form>
       ) : null}
 
+      <Link href="/reserver" className="text-sm text-accent">{t("myBookings")}</Link>
       <Link href="/recherche" className="text-sm font-medium text-accent">
         {t("backToSearch")}
       </Link>

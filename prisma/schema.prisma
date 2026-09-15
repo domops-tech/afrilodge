@@ -54,6 +54,7 @@ enum OtpPurpose {
   AGENT_LOGIN
   ADMIN_LOGIN
   GUEST_BOOKING
+  GUEST_ACCESS
 }
 
 model OtpCode {

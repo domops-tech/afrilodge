@@ -6,7 +6,8 @@
     "confirm": "Confirmer",
     "back": "Retour",
     "language": "Langue",
-    "comingSoon": "Cette page arrive dans un prochain sprint."
+    "comingSoon": "Cette page arrive dans un prochain sprint.",
+    "skipToContent": "Aller au contenu"
   },
   "nav": {
     "search": "Rechercher",
@@ -163,7 +164,8 @@
     "submit": "Rechercher",
     "resultsCount": "{count, plural, =0 {Aucun logement trouvé} one {# logement vérifié trouvé} other {# logements vérifiés trouvés}}",
     "noResults": "Aucun logement ne correspond à votre recherche.",
-    "perNight": "FCFA / nuit"
+    "perNight": "FCFA / nuit",
+    "invalidFilters": "Vérifiez les filtres : dates valides à partir d’aujourd’hui, départ après l’arrivée, voyageurs entiers et budget positif ou nul."
   },
   "property": {
     "backToSearch": "Retour à la recherche",
@@ -239,7 +241,7 @@
     "fullNameLabel": "Nom complet",
     "phoneLabel": "Numéro de téléphone",
     "phonePlaceholder": "+225 07 00 00 00 00",
-    "emailLabel": "Email (facultatif — canal de secours pour le code)",
+    "emailLabel": "Email de contact (facultatif)",
     "emailPlaceholder": "vous@exemple.com",
     "sendCode": "Envoyer le code",
     "codeSent": "Un code a été envoyé au {phone}.",
@@ -283,7 +285,15 @@
       "annulation-impossible": "Cette réservation ne peut plus être annulée.",
       "delai-depasse": "Le délai d'annulation remboursée est dépassé pour cette réservation.",
       "signalement-impossible": "Un signalement ne peut être fait qu'une fois, pendant le séjour.",
-      "motif-requis": "Décrivez l'écart constaté (10 caractères minimum)."
-    }
+      "motif-requis": "Décrivez l'écart constaté (10 caractères minimum).",
+      "arrivee-prematuree": "Vous pourrez confirmer votre arrivée à partir de la date prévue."
+    },
+    "arrivalAvailableOn": "La confirmation d’arrivée sera disponible le {date}.",
+    "myBookings": "Mes réservations",
+    "recoveryHint": "Retrouvez vos réservations avec le numéro de téléphone utilisé lors de la demande. Si votre session a expiré, un nouveau code vous permet de reprendre le suivi.",
+    "recoverCta": "Retrouver mes réservations",
+    "noBookings": "Aucune réservation associée à ce numéro.",
+    "requestAnotherCode": "Modifier le numéro ou renvoyer un code",
+    "backToDates": "Modifier les dates et recommencer"
   }
 }

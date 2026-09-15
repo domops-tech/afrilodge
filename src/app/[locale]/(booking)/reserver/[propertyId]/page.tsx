@@ -1,3 +1,4 @@
+import { dateOnlySchema, selectionQuery } from "@/lib/booking/selection";
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -16,8 +17,10 @@ const AVAILABILITY_WINDOW_DAYS = 120;
  * l'acceptation par le propriétaire (5.4) se joue ensuite dans son espace
  * de gestion (voir (owner)/proprietaire/biens/[propertyId]).
  */
-export default async function BookingPage({ params }: PageProps<"/[locale]/reserver/[propertyId]">) {
+export default async function BookingPage({ params, searchParams }: PageProps<"/[locale]/reserver/[propertyId]">) {
   const { locale, propertyId } = await params;
+  const sp = await searchParams;
+  const query = selectionQuery(sp);
   setRequestLocale(locale);
   const t = await getTranslations("booking");
 
@@ -51,11 +54,14 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
 
   return (
     <div className="flex flex-1 flex-col gap-6 px-4 py-8">
-      <Link href={`/logements/${property.id}`} className="text-xs text-muted">
+      <Link href={`/logements/${property.id}${query}`} className="text-xs text-muted">
         ← {t("backToProperty")}
       </Link>
       <h1 className="text-xl font-semibold">{t("bookHeading", { title: property.title })}</h1>
       <BookingWizard
+        initialCheckIn={dateOnlySchema.safeParse(sp.arrivee).data ?? ""}
+        initialCheckOut={dateOnlySchema.safeParse(sp.depart).data ?? ""}
+        initialGuests={typeof sp.voyageurs === "string" && /^[1-9][0-9]*$/.test(sp.voyageurs) ? sp.voyageurs : "1"}
         propertyId={property.id}
         locale={locale}
         maxGuests={property.maxGuests}

@@ -178,7 +178,7 @@ test("paiement via l'interface, confirmation d'arrivée et libération des fonds
       request,
       ownerFullName: "Propriétaire Arrivée",
       price: 250000,
-      checkInOffsetDays: 8,
+      checkInOffsetDays: 0,
       nights: 1,
     });
     propertyId = setup.propertyId;

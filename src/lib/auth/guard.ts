@@ -1,3 +1,4 @@
+import { prisma } from "@/lib/db/client";
 import { getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import { getSession, type UserRole } from "@/lib/auth/session";
@@ -27,12 +28,16 @@ export async function requireRole(...roles: UserRole[]) {
   return session;
 }
 
-export async function requireGuestSession() {
+export async function requireGuestSession(returnTo?: string) {
   const session = await getSession();
-  if (!session || session.kind !== "guest") {
-    return redirect({ href: "/reserver", locale: await getLocale() });
+  const guest = session?.kind === "guest" && session.phoneVerified
+    ? await prisma.guestSession.findUnique({ where: { id: session.guestSessionId } })
+    : null;
+  if (!session || session.kind !== "guest" || !guest) {
+    const query = returnTo ? `?retour=${encodeURIComponent(returnTo)}` : "";
+    return redirect({ href: `/reserver${query}`, locale: await getLocale() });
   }
-  return session;
+  return { ...session, phone: guest.phone };
 }
 
 export async function getOptionalSession() {

@@ -126,32 +126,25 @@ export async function updateAvailabilityAction(formData: FormData): Promise<void
   const today = startOfUtcDay();
   const window: Date[] = Array.from({ length: WINDOW_DAYS }, (_, i) => addUtcDays(today, i));
 
-  const existing = await prisma.availabilityDay.findMany({
-    where: { propertyId, date: { gte: today, lt: window[window.length - 1] } },
-  });
-  const existingByDate = new Map(existing.map((row) => [row.date.toISOString().slice(0, 10), row]));
-
   await prisma.$transaction(async (tx) => {
-    for (const date of window) {
-      const key = date.toISOString().slice(0, 10);
-      const current = existingByDate.get(key);
-      const wantsBlocked = blockedDates.has(key);
-
-      // Piloté par une réservation en cours (épic 5) — le propriétaire ne
-      // peut jamais l'écraser depuis ce calendrier.
-      if (current && (current.status === "HELD" || current.status === "BOOKED")) continue;
-
-      if (wantsBlocked) {
-        await tx.availabilityDay.upsert({
-          where: { propertyId_date: { propertyId, date } },
-          update: { status: "BLOCKED" },
-          create: { propertyId, date, status: "BLOCKED" },
-        });
-      } else if (current) {
-        // Absence de ligne = OPEN (convention établie au Sprint 3).
-        await tx.availabilityDay.delete({ where: { id: current.id } });
-      }
-    }
+    const datesToBlock = window.filter(date => blockedDates.has(date.toISOString().slice(0, 10)));
+    // Unique property/date absorbs concurrent reservations. Only OPEN/BLOCKED
+    // rows can be changed, checked by PostgreSQL at the time of the write.
+    await tx.availabilityDay.createMany({
+      data: datesToBlock.map(date => ({ propertyId, date, status: "BLOCKED" as const })),
+      skipDuplicates: true,
+    });
+    await tx.availabilityDay.updateMany({
+      where: { propertyId, date: { in: datesToBlock }, status: "OPEN" },
+      data: { status: "BLOCKED" },
+    });
+    await tx.availabilityDay.deleteMany({
+      where: {
+        propertyId,
+        date: { in: window.filter(date => !blockedDates.has(date.toISOString().slice(0, 10))) },
+        status: { in: ["OPEN", "BLOCKED"] },
+      },
+    });
   });
 
   return backTo(propertyId, formData);

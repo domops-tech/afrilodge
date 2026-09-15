@@ -44,6 +44,7 @@ export default async function LocaleLayout({
 
   // Fige la langue pour tout le rendu serveur de cette requête (RSC).
   setRequestLocale(locale);
+  const common = await getTranslations("common");
 
   return (
     <html
@@ -51,7 +52,10 @@ export default async function LocaleLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <a href="#main-content" className="sr-only focus:not-sr-only focus:p-3">{common("skipToContent")}</a>
+          <main id="main-content" tabIndex={-1} className="flex flex-1 flex-col">{children}</main>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

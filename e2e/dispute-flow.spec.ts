@@ -61,7 +61,7 @@ test("signalement, contre-visite, écart confirmé : la mention est retirée", a
       request,
       ownerFullName: "Propriétaire Litige",
       price: 350000,
-      checkInOffsetDays: 6,
+      checkInOffsetDays: 0,
       nights: 1,
     });
     propertyId = setup.propertyId;
@@ -202,7 +202,7 @@ test("résolution directe d'un litige, sans contre-visite : la mention est maint
       request,
       ownerFullName: "Propriétaire Litige Direct",
       price: 320000,
-      checkInOffsetDays: 7,
+      checkInOffsetDays: 0,
       nights: 1,
     });
     propertyId = setup.propertyId;

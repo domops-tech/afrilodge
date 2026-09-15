@@ -58,6 +58,7 @@ class SimulatedMobileMoneyProvider implements PaymentProvider {
   }
 
   async release(providerIntentRef: string): Promise<void> {
+    if (this.state.get(providerIntentRef) === "released") return;
     if (this.state.get(providerIntentRef) !== "held") {
       throw new Error(`Impossible de libérer des fonds non conservés : ${providerIntentRef}`);
     }

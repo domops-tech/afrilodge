@@ -1,0 +1,156 @@
+[
+  {
+    "width": 360,
+    "path": "/fr",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 1,
+    "mainLandmarks": 1,
+    "brokenImages": 0
+  },
+  {
+    "width": 360,
+    "path": "/en",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 1,
+    "mainLandmarks": 1,
+    "brokenImages": 0
+  },
+  {
+    "width": 360,
+    "path": "/fr/recherche",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 0,
+    "mainLandmarks": 0,
+    "brokenImages": 0
+  },
+  {
+    "width": 360,
+    "path": "/fr/connexion",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 0,
+    "mainLandmarks": 0,
+    "brokenImages": 0
+  },
+  {
+    "width": 360,
+    "path": "/fr/admin/connexion",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 0,
+    "mainLandmarks": 0,
+    "brokenImages": 0
+  },
+  {
+    "width": 360,
+    "path": "/fr/terrain/connexion",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 0,
+    "mainLandmarks": 0,
+    "brokenImages": 0
+  },
+  {
+    "width": 360,
+    "path": "/fr/logements/cmttv3s0e001rcpnmcwgdu2m0",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 1,
+    "mainLandmarks": 0,
+    "brokenImages": 0
+  },
+  {
+    "width": 360,
+    "path": "/fr/reserver/cmttv3s0e001rcpnmcwgdu2m0",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 0,
+    "mainLandmarks": 0,
+    "brokenImages": 0
+  },
+  {
+    "check": "reservation sans session",
+    "url": "http://localhost:3000/fr/reserver",
+    "status": 404
+  },
+  {
+    "width": 1440,
+    "path": "/fr",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 1,
+    "mainLandmarks": 1,
+    "brokenImages": 0
+  },
+  {
+    "width": 1440,
+    "path": "/en",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 1,
+    "mainLandmarks": 1,
+    "brokenImages": 0
+  },
+  {
+    "width": 1440,
+    "path": "/fr/recherche",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 0,
+    "mainLandmarks": 0,
+    "brokenImages": 0
+  },
+  {
+    "width": 1440,
+    "path": "/fr/connexion",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 0,
+    "mainLandmarks": 0,
+    "brokenImages": 0
+  },
+  {
+    "width": 1440,
+    "path": "/fr/admin/connexion",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 0,
+    "mainLandmarks": 0,
+    "brokenImages": 0
+  },
+  {
+    "width": 1440,
+    "path": "/fr/terrain/connexion",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 0,
+    "mainLandmarks": 0,
+    "brokenImages": 0
+  },
+  {
+    "width": 1440,
+    "path": "/fr/logements/cmttv3s0e001rcpnmcwgdu2m0",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 1,
+    "mainLandmarks": 0,
+    "brokenImages": 0
+  },
+  {
+    "width": 1440,
+    "path": "/fr/reserver/cmttv3s0e001rcpnmcwgdu2m0",
+    "status": 200,
+    "overflow": false,
+    "nestedButtons": 0,
+    "mainLandmarks": 0,
+    "brokenImages": 0
+  },
+  {
+    "check": "reservation sans session",
+    "url": "http://localhost:3000/fr/reserver",
+    "status": 404
+  }
+]

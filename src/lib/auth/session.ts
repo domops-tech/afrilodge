@@ -12,11 +12,11 @@ export type UserRole = "OWNER" | "AGENT" | "ADMIN";
 
 export type SessionPayload =
   | { kind: "user"; userId: string; role: UserRole; exp: number }
-  | { kind: "guest"; guestSessionId: string; exp: number };
+  | { kind: "guest"; guestSessionId: string; phoneVerified?: true; exp: number };
 
 const COOKIE_NAME = "sejours_session";
 const DEFAULT_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 jours pour propriétaire/agent/admin
-const GUEST_TTL_SECONDS = 60 * 60 * 6; // 6 heures : le temps d'un tunnel de réservation
+const GUEST_TTL_SECONDS = 60 * 60 * 6; // 6 heures, renouvelables par OTP depuis /reserver
 
 function getSecret(): string {
   const secret = process.env.AUTH_SECRET;
@@ -69,7 +69,7 @@ export async function createUserSession(userId: string, role: UserRole) {
 
 export async function createGuestSession(guestSessionId: string) {
   const exp = Date.now() + GUEST_TTL_SECONDS * 1000;
-  const token = encode({ kind: "guest", guestSessionId, exp });
+  const token = encode({ kind: "guest", guestSessionId, phoneVerified: true, exp });
   const jar = await cookies();
   jar.set(COOKIE_NAME, token, {
     httpOnly: true,

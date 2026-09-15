@@ -10,6 +10,8 @@ le canal d'envoi du code, à la place du SMS. Le CDC §2 mentionne les deux :
 produit construit jusqu'ici (décision 0001, §3, §6.2.2) n'implémente que
 téléphone + SMS ; aucun email n'était collecté nulle part.
 
+> Mise à jour du 14 septembre 2026 : pour le voyageur, voir [0015](0015-recuperation-reservations-et-integrite.md). L’accès à plusieurs réservations exige une preuve SMS ; l’email librement saisi reste une adresse de contact.
+
 ## Décision
 
 Le téléphone reste le seul canal **obligatoire**, sans exception, pour les quatre

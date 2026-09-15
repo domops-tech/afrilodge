@@ -13,7 +13,11 @@ const SAMPLE_IMAGE = path.join(__dirname, "fixtures/sample.jpg");
 
 // Agent 2 du seed (prisma/seed.ts), assigné à la visite "en attente" du
 // bien Plateau (VerificationRequest.status = SCHEDULED).
-const AGENT_PHONE = "+2250700000011";
+import { visitFixture } from "./helpers/visit-fixture";
+let fixture: Awaited<ReturnType<typeof visitFixture>>;
+let AGENT_PHONE: string;
+test.beforeEach(async () => { fixture = await visitFixture(false); AGENT_PHONE = fixture.agentPhone; });
+test.afterEach(async () => { await fixture?.cleanup(); });
 
 const FIXED_SLOTS = ["FACADE", "ENTREE", "SANITAIRES", "CUISINE", "VUE", "ACCES"];
 
@@ -49,7 +53,7 @@ test.describe("visite terrain hors connexion (CDC §4, §6.4, §11.1)", () => {
     await expect(page).toHaveURL(/\/fr\/terrain$/);
 
     // Ouvre la visite assignée (bien "Plateau" du seed).
-    await page.getByRole("link", { name: /studio cosy, plateau/i }).click();
+    await page.getByRole("link", { name: new RegExp(fixture.title) }).click();
     await expect(page).toHaveURL(/\/fr\/terrain\/visite\/.+/);
     const visitId = page.url().match(/\/visite\/([^/]+)/)?.[1];
     expect(visitId).toBeTruthy();

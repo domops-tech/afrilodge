@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db/client";
 import { Link } from "@/i18n/navigation";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Button, buttonClassName } from "@/components/ui/Button";
 import { logoutAction } from "@/lib/auth/logout-action";
 
 // Espace propriétaire (CDC §6.3).
@@ -38,9 +38,7 @@ export default async function OwnerDashboardPage({
         </form>
       </header>
 
-      <Link href="/proprietaire/nouveau">
-        <Button>{tOwner("newPropertyCta")}</Button>
-      </Link>
+      <Link href="/proprietaire/nouveau" className={buttonClassName("primary", "")}>{tOwner("newPropertyCta")}</Link>
 
       <div className="flex flex-col gap-3">
         {properties.length === 0 ? (

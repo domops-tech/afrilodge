@@ -132,14 +132,15 @@ export async function verifyOtp(params: {
   const stored = Buffer.from(otp.codeHash);
   const matches = candidate.length === stored.length && timingSafeEqual(candidate, stored);
 
-  await prisma.otpCode.update({
-    where: { id: otp.id },
+  const consumed = await prisma.otpCode.updateMany({
+    where: { id: otp.id, consumedAt: null, attempts: { lt: MAX_VERIFY_ATTEMPTS }, expiresAt: { gt: new Date() } },
     data: {
       attempts: { increment: 1 },
       consumedAt: matches ? new Date() : undefined,
     },
   });
 
+  if (consumed.count !== 1) return { ok: false, reason: "not_found" };
   if (!matches) return { ok: false, reason: "mismatch" };
   return { ok: true, otpCodeId: otp.id, userId: otp.userId };
 }

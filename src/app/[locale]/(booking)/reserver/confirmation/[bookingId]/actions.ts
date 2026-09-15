@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { hasArrivalDateStarted } from "@/lib/booking/arrival";
 import { prisma } from "@/lib/db/client";
 import { requireGuestSession } from "@/lib/auth/guard";
 import { redirect } from "@/i18n/navigation";
@@ -27,9 +28,9 @@ function backTo(bookingId: string, formData: FormData, error?: string) {
   return redirect({ href, locale });
 }
 
-async function loadOwnedBooking(bookingId: string, guestSessionId: string) {
-  const booking = await prisma.booking.findUnique({ where: { id: bookingId }, include: { payment: true } });
-  if (!booking || booking.guestSessionId !== guestSessionId) {
+async function loadOwnedBooking(bookingId: string, phone: string) {
+  const booking = await prisma.booking.findUnique({ where: { id: bookingId }, include: { payment: true, guestSession: { select: { phone: true } } } });
+  if (!booking || booking.guestSession.phone !== phone) {
     throw new Error("Réservation introuvable pour cette session.");
   }
   return booking;
@@ -37,14 +38,15 @@ async function loadOwnedBooking(bookingId: string, guestSessionId: string) {
 
 /** Confirmation d'arrivée (CDC §5.1.7) : démarre le séjour et ordonne la libération des fonds (§8.6). */
 export async function confirmArrivalAction(formData: FormData): Promise<void> {
-  const session = await requireGuestSession();
   const bookingId = String(formData.get("bookingId"));
-  const booking = await loadOwnedBooking(bookingId, session.guestSessionId);
+  const session = await requireGuestSession(`/reserver/confirmation/${bookingId}`);
+  const booking = await loadOwnedBooking(bookingId, session.phone);
 
   if (booking.status !== "PAID" || !booking.payment) {
     return backTo(bookingId, formData, "etat-invalide");
   }
 
+  if (!hasArrivalDateStarted(booking.checkIn)) return backTo(bookingId, formData, "arrivee-prematuree");
   await confirmArrivalAndRelease(bookingId);
 
   return backTo(bookingId, formData);
@@ -58,9 +60,9 @@ export async function confirmArrivalAction(formData: FormData): Promise<void> {
  * l'annulation en libre-service n'est pas proposée.
  */
 export async function cancelBookingAction(formData: FormData): Promise<void> {
-  const session = await requireGuestSession();
   const bookingId = String(formData.get("bookingId"));
-  const booking = await loadOwnedBooking(bookingId, session.guestSessionId);
+  const session = await requireGuestSession(`/reserver/confirmation/${bookingId}`);
+  const booking = await loadOwnedBooking(bookingId, session.phone);
 
   if (booking.status === "REQUESTED" || booking.status === "ACCEPTED") {
     try {
@@ -113,13 +115,13 @@ const reportDisputeSchema = z.object({
  * est en cours de traitement.
  */
 export async function reportDisputeAction(formData: FormData): Promise<void> {
-  const session = await requireGuestSession();
   const bookingId = String(formData.get("bookingId"));
+  const session = await requireGuestSession(`/reserver/confirmation/${bookingId}`);
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
-    include: { property: { include: { verification: true } }, dispute: true },
+    include: { guestSession: { select: { phone: true } }, property: { include: { verification: true } }, dispute: true },
   });
-  if (!booking || booking.guestSessionId !== session.guestSessionId) {
+  if (!booking || booking.guestSession.phone !== session.phone) {
     throw new Error("Réservation introuvable pour cette session.");
   }
 

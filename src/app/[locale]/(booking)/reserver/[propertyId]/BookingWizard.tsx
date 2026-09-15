@@ -48,20 +48,26 @@ export function BookingWizard({
   maxGuests,
   minDate,
   unavailableDates,
+  initialCheckIn = "",
+  initialCheckOut = "",
+  initialGuests = "1",
 }: {
   propertyId: string;
   locale: string;
   maxGuests: number;
   minDate: string;
   unavailableDates: string[];
+  initialCheckIn?: string;
+  initialCheckOut?: string;
+  initialGuests?: string;
 }) {
   const t = useTranslations("booking");
   const unavailable = useMemo(() => new Set(unavailableDates), [unavailableDates]);
 
   const [step, setStep] = useState<"dates" | "identity" | "code">("dates");
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
-  const [guests, setGuests] = useState("1");
+  const [checkIn, setCheckIn] = useState(initialCheckIn);
+  const [checkOut, setCheckOut] = useState(initialCheckOut);
+  const [guests, setGuests] = useState(initialGuests);
   const [phone, setPhone] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -131,9 +137,9 @@ export function BookingWizard({
           value={guests}
           onChange={(e) => setGuests(e.target.value)}
         />
-        {clientConflict ? <p className="text-sm text-danger">{t("unavailableRange")}</p> : null}
+        {clientConflict ? <p role="alert" className="text-sm text-danger">{t("unavailableRange")}</p> : null}
         {datesState.status === "error" ? (
-          <p className="text-sm text-danger">{t(errorKey(datesState.message))}</p>
+          <p role="alert" className="text-sm text-danger">{t(errorKey(datesState.message))}</p>
         ) : null}
         <Button type="submit" disabled={datesPending || clientConflict}>
           {t("nextCta")}
@@ -180,7 +186,7 @@ export function BookingWizard({
           onChange={(e) => setEmail(e.target.value)}
         />
         {identityState.status === "error" ? (
-          <p className="text-sm text-danger">{t(errorKey(identityState.message))}</p>
+          <p role="alert" className="text-sm text-danger">{t(errorKey(identityState.message))}</p>
         ) : null}
         <Button type="submit" disabled={identityPending}>
           {t("sendCode")}
@@ -211,8 +217,9 @@ export function BookingWizard({
         required
       />
       {confirmState.status === "error" ? (
-        <p className="text-sm text-danger">{t(errorKey(confirmState.message))}</p>
+        <p role="alert" className="text-sm text-danger">{t(errorKey(confirmState.message))}</p>
       ) : null}
+      <Button type="button" variant="secondary" onClick={() => setStep("dates")}>{t("backToDates")}</Button>
       <Button type="submit" disabled={confirmPending}>
         {t("confirmCta")}
       </Button>

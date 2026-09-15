@@ -1,3 +1,4 @@
+import { hasArrivalDateStarted } from "@/lib/booking/arrival";
 import { prisma } from "@/lib/db/client";
 import { transitionBooking } from "@/lib/booking/state-machine";
 import { getPaymentProvider, buildSimulatedWebhookRequest } from "@/lib/payments/simulated";
@@ -24,13 +25,18 @@ export async function confirmArrivalAndRelease(bookingId: string): Promise<void>
     where: { id: bookingId },
     include: { payment: true },
   });
+  if (!hasArrivalDateStarted(booking.checkIn) || !["PAID", "IN_PROGRESS"].includes(booking.status)) {
+    throw new Error("Arrivée non autorisée pour cette réservation.");
+  }
   if (!booking.payment) {
     throw new Error(`Aucun paiement associé à la réservation ${bookingId}`);
   }
 
   if (booking.status === "PAID") {
-    await transitionBooking({ bookingId, to: "IN_PROGRESS" });
-    await prisma.booking.update({ where: { id: bookingId }, data: { arrivalConfirmedAt: new Date() } });
+    await prisma.$transaction(async tx => {
+      await transitionBooking({ bookingId, to: "IN_PROGRESS" }, tx);
+      await tx.booking.update({ where: { id: bookingId }, data: { arrivalConfirmedAt: new Date() } });
+    });
   }
 
   if (booking.payment.status === "HELD") {

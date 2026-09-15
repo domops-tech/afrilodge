@@ -6,7 +6,8 @@
     "confirm": "Confirm",
     "back": "Back",
     "language": "Language",
-    "comingSoon": "This page is coming in a future sprint."
+    "comingSoon": "This page is coming in a future sprint.",
+    "skipToContent": "Skip to content"
   },
   "nav": {
     "search": "Search",
@@ -163,7 +164,8 @@
     "submit": "Search",
     "resultsCount": "{count, plural, =0 {No homes found} one {# verified home found} other {# verified homes found}}",
     "noResults": "No home matches your search.",
-    "perNight": "FCFA / night"
+    "perNight": "FCFA / night",
+    "invalidFilters": "Check your filters: valid dates from today, departure after arrival, a whole guest count and a non-negative budget."
   },
   "property": {
     "backToSearch": "Back to search",
@@ -239,7 +241,7 @@
     "fullNameLabel": "Full name",
     "phoneLabel": "Phone number",
     "phonePlaceholder": "+225 07 00 00 00 00",
-    "emailLabel": "Email (optional — backup channel for the code)",
+    "emailLabel": "Contact email (optional)",
     "emailPlaceholder": "you@example.com",
     "sendCode": "Send code",
     "codeSent": "A code was sent to {phone}.",
@@ -283,7 +285,15 @@
       "annulation-impossible": "This booking can no longer be cancelled.",
       "delai-depasse": "The refundable cancellation window has passed for this booking.",
       "signalement-impossible": "A report can only be made once, during the stay.",
-      "motif-requis": "Describe the discrepancy you found (10 characters minimum)."
-    }
+      "motif-requis": "Describe the discrepancy you found (10 characters minimum).",
+      "arrivee-prematuree": "You can confirm arrival from your scheduled arrival date."
+    },
+    "arrivalAvailableOn": "Arrival confirmation will be available on {date}.",
+    "myBookings": "My bookings",
+    "recoveryHint": "Find your bookings with the phone number used to book. If your session has expired, a new code lets you resume tracking your stay.",
+    "recoverCta": "Find my bookings",
+    "noBookings": "No bookings found for this number.",
+    "requestAnotherCode": "Change phone number or resend code",
+    "backToDates": "Change dates and start again"
   }
 }

@@ -1,5 +1,8 @@
 "use server";
 
+import { retryTransaction } from "@/lib/db/retry";
+import type { Prisma } from "@/generated/prisma/client";
+import { dateOnlySchema, validStayRange } from "@/lib/booking/selection";
 import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { prisma } from "@/lib/db/client";
@@ -30,8 +33,8 @@ function generateStayCode(): string {
 
 const datesSchema = z.object({
   propertyId: z.string().min(1),
-  checkIn: z.coerce.date(),
-  checkOut: z.coerce.date(),
+  checkIn: dateOnlySchema.transform(value => new Date(value)),
+  checkOut: dateOnlySchema.transform(value => new Date(value)),
   guests: z.coerce.number().int().positive(),
 });
 
@@ -41,17 +44,19 @@ async function checkPropertyAndRange(
   propertyId: string,
   checkIn: Date,
   checkOut: Date,
-  guests: number
+  guests: number,
+  db: Prisma.TransactionClient | typeof prisma = prisma
 ): Promise<string | null> {
-  if (!(checkOut > checkIn)) return "invalid_range";
+  if (!validStayRange(checkIn, checkOut)) return "invalid_range";
 
-  const property = await prisma.property.findUnique({
+  const property = await db.property.findUnique({
     where: { id: propertyId },
-    select: { maxGuests: true, status: true },
+    select: { maxGuests: true, status: true, verification: { select: { status: true, expiresAt: true } } },
   });
   if (!property || property.status !== "PUBLISHED") return "unavailable";
+  if (!property.verification || property.verification.status !== "ACTIVE" || property.verification.expiresAt <= new Date()) return "unavailable";
   if (guests > property.maxGuests) return "too_many_guests";
-  if (!(await isRangeAvailable(propertyId, checkIn, checkOut))) return "unavailable";
+  if (!(await isRangeAvailable(propertyId, checkIn, checkOut, db))) return "unavailable";
   return null;
 }
 
@@ -94,14 +99,16 @@ export async function requestGuestOtpAction(_prev: IdentityState, formData: Form
     email: formData.get("email"),
   });
   if (!parsed.success) return { status: "error", message: "invalid" };
-  const { propertyId, checkIn, checkOut, guests, phone: rawPhone, email } = parsed.data;
+  const { propertyId, checkIn, checkOut, guests, phone: rawPhone } = parsed.data;
   const phone = rawPhone.replace(/\s+/g, "");
 
   const error = await checkPropertyAndRange(propertyId, checkIn, checkOut, guests);
   if (error) return { status: "error", message: error };
 
   try {
-    await requestOtp({ phone, purpose: "GUEST_BOOKING", email });
+    // The phone authorizes access to previous bookings: send the proof only
+    // to that phone, never to an email just entered in this form.
+    await requestOtp({ phone, purpose: "GUEST_BOOKING" });
   } catch (err) {
     if (err instanceof OtpRateLimitError) return { status: "error", message: "rate_limited" };
     throw err;
@@ -138,6 +145,9 @@ export async function confirmBookingAction(_prev: ConfirmState, formData: FormDa
   const { propertyId, checkIn, checkOut, guests, phone: rawPhone, fullName, email, code } = parsed.data;
   const phone = rawPhone.replace(/\s+/g, "");
 
+  const validationError = await checkPropertyAndRange(propertyId, checkIn, checkOut, guests);
+  if (validationError) return { status: "error", message: validationError };
+
   const result = await verifyOtp({ phone, purpose: "GUEST_BOOKING", code });
   if (!result.ok) return { status: "error", message: result.reason };
 
@@ -147,10 +157,9 @@ export async function confirmBookingAction(_prev: ConfirmState, formData: FormDa
   let bookingId: string;
   let guestSessionId: string;
   try {
-    ({ bookingId, guestSessionId } = await prisma.$transaction(async (tx) => {
-      if (!(await isRangeAvailable(propertyId, checkIn, checkOut, tx))) {
-        throw new UnavailableError();
-      }
+    ({ bookingId, guestSessionId } = await retryTransaction(() => prisma.$transaction(async (tx) => {
+      const error = await checkPropertyAndRange(propertyId, checkIn, checkOut, guests, tx);
+      if (error) throw new UnavailableError(error);
 
       const guestSession = await tx.guestSession.create({
         data: { phone, email, fullName, expiresAt: holdExpiresAt },
@@ -170,7 +179,15 @@ export async function confirmBookingAction(_prev: ConfirmState, formData: FormDa
 
       await tx.availabilityDay.createMany({
         data: nights.map((date) => ({ propertyId, date, status: "HELD" as const, bookingId: booking.id })),
+        skipDuplicates: true,
       });
+
+      await tx.availabilityDay.updateMany({
+        where: { propertyId, date: { in: nights }, status: "OPEN" },
+        data: { status: "HELD", bookingId: booking.id },
+      });
+      const held = await tx.availabilityDay.count({ where: { bookingId: booking.id, status: "HELD" } });
+      if (held !== nights.length) throw new UnavailableError("unavailable");
 
       await tx.auditLog.create({
         data: {
@@ -183,9 +200,12 @@ export async function confirmBookingAction(_prev: ConfirmState, formData: FormDa
       });
 
       return { bookingId: booking.id, guestSessionId: guestSession.id };
-    }));
+    }, { isolationLevel: "Serializable" })));
   } catch (err) {
-    if (err instanceof UnavailableError) return { status: "error", message: "unavailable" };
+    if (err instanceof UnavailableError) return { status: "error", message: err.message };
+    if (err && typeof err === "object" && "code" in err && ["P2002", "P2034"].includes(String(err.code))) {
+      return { status: "error", message: "unavailable" };
+    }
     throw err;
   }
 

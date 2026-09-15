@@ -1,3 +1,4 @@
+import { dateOnlySchema, validStayRange, selectionQuery } from "@/lib/booking/selection";
 import { setRequestLocale, getTranslations, getFormatter } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/db/client";
@@ -29,15 +30,23 @@ export default async function SearchPage({
   const neighborhood = typeof sp.quartier === "string" ? sp.quartier.trim() : "";
   const checkIn = typeof sp.arrivee === "string" ? sp.arrivee : "";
   const checkOut = typeof sp.depart === "string" ? sp.depart : "";
-  const guests = typeof sp.voyageurs === "string" ? Number(sp.voyageurs) : undefined;
-  const maxPrice = typeof sp.budget === "string" ? Number(sp.budget) : undefined;
+  const guests = typeof sp.voyageurs === "string" && sp.voyageurs !== "" ? Number(sp.voyageurs) : undefined;
+  const maxPrice = typeof sp.budget === "string" && sp.budget !== "" ? Number(sp.budget) : undefined;
 
+  const invalidDates = (Boolean(checkIn) || Boolean(checkOut)) && (
+    !dateOnlySchema.safeParse(checkIn).success || !dateOnlySchema.safeParse(checkOut).success ||
+    !validStayRange(new Date(checkIn), new Date(checkOut))
+  );
+  const invalidFilters = invalidDates ||
+    (guests !== undefined && (!Number.isSafeInteger(guests) || guests < 1)) ||
+    (maxPrice !== undefined && (!Number.isSafeInteger(maxPrice) || maxPrice < 0));
+  const query = selectionQuery(sp);
   const where: Prisma.PropertyWhereInput = {
     status: "PUBLISHED",
     verification: { is: { status: "ACTIVE", expiresAt: { gt: new Date() } } },
     ...(neighborhood ? { neighborhood: { contains: neighborhood, mode: "insensitive" } } : {}),
     ...(guests && Number.isFinite(guests) ? { maxGuests: { gte: guests } } : {}),
-    ...(maxPrice && Number.isFinite(maxPrice) ? { pricePerNight: { lte: maxPrice } } : {}),
+    ...(maxPrice !== undefined && Number.isFinite(maxPrice) ? { pricePerNight: { lte: maxPrice } } : {}),
   };
 
   const checkInDate = checkIn ? new Date(checkIn) : null;
@@ -50,7 +59,7 @@ export default async function SearchPage({
     };
   }
 
-  const properties = await prisma.property.findMany({
+  const properties = invalidFilters ? [] : await prisma.property.findMany({
     where,
     select: {
       id: true,
@@ -84,23 +93,23 @@ export default async function SearchPage({
         <Field id="quartier" name="quartier" label={t("neighborhoodLabel")} placeholder={t("neighborhoodPlaceholder")} defaultValue={neighborhood} />
         <Field id="arrivee" name="arrivee" type="date" label={t("checkInLabel")} defaultValue={checkIn} />
         <Field id="depart" name="depart" type="date" label={t("checkOutLabel")} defaultValue={checkOut} />
-        <Field id="voyageurs" name="voyageurs" type="number" min={1} label={t("guestsLabel")} defaultValue={guests?.toString() ?? ""} />
-        <Field id="budget" name="budget" type="number" min={0} label={t("maxPriceLabel")} defaultValue={maxPrice?.toString() ?? ""} />
+        <Field id="voyageurs" name="voyageurs" type="number" min={1} label={t("guestsLabel")} defaultValue={Number.isFinite(guests) ? guests?.toString() : ""} />
+        <Field id="budget" name="budget" type="number" min={0} label={t("maxPriceLabel")} defaultValue={Number.isFinite(maxPrice) ? maxPrice?.toString() : ""} />
         <Button type="submit" className="self-end">
           {t("submit")}
         </Button>
       </form>
 
-      <p className="text-sm text-muted">{t("resultsCount", { count: properties.length })}</p>
+      {invalidFilters ? <p role="alert" className="text-sm text-danger">{t("invalidFilters")}</p> : <p className="text-sm text-muted">{t("resultsCount", { count: properties.length })}</p>}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {properties.length === 0 ? (
-          <p className="text-sm text-muted">{t("noResults")}</p>
+          <p className="text-sm text-muted">{invalidFilters ? "" : t("noResults")}</p>
         ) : (
           properties.map((property, index) => {
             const storageKey = coverByPropertyId.get(property.id);
             return (
-              <Link key={property.id} href={`/logements/${property.id}`}>
+              <Link key={property.id} href={`/logements/${property.id}${query}`}>
                 <Card className="flex gap-3">
                   {storageKey ? (
                     // Une vraie vignette, taille fixe — pas une photo pleine
