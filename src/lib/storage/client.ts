@@ -17,9 +17,9 @@ import { randomUUID } from "node:crypto";
  * second port.
  */
 
-function getClient(): S3Client {
+function getClient(endpoint: string): S3Client {
   return new S3Client({
-    endpoint: process.env.STORAGE_ENDPOINT,
+    endpoint,
     region: process.env.STORAGE_REGION ?? "us-east-1",
     forcePathStyle: process.env.STORAGE_FORCE_PATH_STYLE === "true",
     credentials: {
@@ -27,6 +27,34 @@ function getClient(): S3Client {
       secretAccessKey: process.env.STORAGE_SECRET_ACCESS_KEY ?? "",
     },
   });
+}
+
+function internalEndpoint(): string {
+  const endpoint = process.env.STORAGE_ENDPOINT;
+  if (!endpoint) throw new Error("STORAGE_ENDPOINT manquant — voir .env.example");
+  return endpoint;
+}
+
+/**
+ * Endpoint utilisé UNIQUEMENT pour signer les URLs remises à un
+ * navigateur (upload direct de l'agent, lecture d'une pièce d'identité
+ * par l'admin) — doit être joignable depuis l'extérieur du réseau Docker,
+ * contrairement à `STORAGE_ENDPOINT`, un nom de service interne en
+ * production (`http://minio:9000`, résolu uniquement dans le réseau
+ * Docker du projet). Une URL signée construite avec ce nom-là n'est
+ * jamais joignable depuis un vrai navigateur — c'est exactement ce qui
+ * faisait échouer la synchronisation terrain avant ce correctif : le
+ * serveur répondait normalement (rien à journaliser côté app), seul le
+ * PUT direct du navigateur vers MinIO échouait, invisible en dehors du
+ * navigateur de l'agent. Voir vd-platform, caddy/sites.d/*.caddy (route
+ * `/s3/*`, proxy MinIO transparent — sans réécriture de chemin comme
+ * `/media/*`, pour que la signature reste valide).
+ *
+ * Optionnelle : absente, on retombe sur `STORAGE_ENDPOINT` — le cas du
+ * développement local, où MinIO est déjà public sur `localhost`.
+ */
+function publicEndpoint(): string {
+  return process.env.STORAGE_PUBLIC_ENDPOINT ?? internalEndpoint();
 }
 
 function getBucket(): string {
@@ -52,7 +80,7 @@ export function buildStorageKey(kind: UploadKind, visitId: string, extension = "
  * stockage objet — l'image ne transite jamais par notre serveur Node.
  */
 export async function createUploadUrl(storageKey: string, contentType: string): Promise<string> {
-  const client = getClient();
+  const client = getClient(publicEndpoint());
   const command = new PutObjectCommand({
     Bucket: getBucket(),
     Key: storageKey,
@@ -68,7 +96,7 @@ export async function createUploadUrl(storageKey: string, contentType: string): 
  * `visits/`, déjà public : voir docs/agile/decisions/0006.
  */
 export async function createDownloadUrl(storageKey: string): Promise<string> {
-  const client = getClient();
+  const client = getClient(publicEndpoint());
   const command = new GetObjectCommand({ Bucket: getBucket(), Key: storageKey });
   return getSignedUrl(client, command, { expiresIn: 300 });
 }
@@ -83,7 +111,7 @@ export async function putObjectDirect(
   body: Buffer,
   contentType: string
 ): Promise<void> {
-  const client = getClient();
+  const client = getClient(internalEndpoint());
   await client.send(
     new PutObjectCommand({ Bucket: getBucket(), Key: storageKey, Body: body, ContentType: contentType })
   );
@@ -96,7 +124,7 @@ export async function putObjectDirect(
  * uniquement via une URL signée générée côté serveur pour le back-office.
  */
 export async function ensureBucketExists(): Promise<void> {
-  const client = getClient();
+  const client = getClient(internalEndpoint());
   const bucket = getBucket();
   try {
     await client.send(new HeadBucketCommand({ Bucket: bucket }));
