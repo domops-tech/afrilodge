@@ -44,6 +44,12 @@ export async function scheduleVisitAction(
     return { status: "error", message: "not_requestable" };
   }
 
+  const agent = await prisma.user.findUnique({ where: { id: parsed.data.agentId } });
+  const scheduledAt = new Date(parsed.data.scheduledAt);
+  if (!agent || agent.role !== "AGENT" || !Number.isFinite(scheduledAt.getTime())) {
+    return { status: "error", message: "invalid" };
+  }
+
   await prisma.$transaction([
     prisma.visit.create({
       data: {

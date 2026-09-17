@@ -10,7 +10,7 @@
 export type PaymentIntentRef = string;
 
 export interface CreateIntentParams {
-  bookingId: string;
+  bookingId: string; // clé d’idempotence stable : les reprises retournent la même intention
   amount: number; // francs CFA
   payerPhone: string;
 }

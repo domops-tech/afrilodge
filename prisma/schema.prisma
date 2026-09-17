@@ -41,6 +41,7 @@ model User {
   auditLogs        AuditLog[]
 
   @@index([role])
+  @@unique([role, email])
 }
 
 // ---------------------------------------------------------------------------
@@ -103,6 +104,7 @@ enum PropertyStatus {
 model Property {
   id          String         @id @default(cuid())
   status      PropertyStatus @default(DRAFT)
+  isDemo      Boolean        @default(false) // lignes synthétiques seed, jamais proposées comme biens réels
 
   // Modifiable par le propriétaire (CDC §6.3).
   title       String
@@ -133,6 +135,7 @@ model Property {
 
   @@index([status])
   @@index([neighborhood, city])
+  @@index([ownerId])
 }
 
 // Équipement annoncé par le propriétaire ; `confirmed` est renseigné par la
@@ -245,6 +248,7 @@ model VisitPhoto {
   slot      PhotoSlot
   label      String?  // ex. "Salon", "Chambre 2" — utile quand slot=PIECE, répétable
   storageKey String   // clé dans le service objet, pas l'image elle-même
+  isDemoPlaceholder Boolean @default(false) // le seed ne remplace jamais une vraie photo
   takenAt    DateTime
   latitude   Float?
   longitude  Float?
@@ -282,9 +286,9 @@ enum VerificationStatus {
   WITHDRAWN
 }
 
-// La mention « Vérifié » elle-même (CDC §4.2). Ne peut exister que rattachée
-// à une Visit complétée — voir contrainte d'unicité sur `visitId` et
-// `propertyId`, aucune mention n'est achetable indépendamment de la visite.
+// Mention courante unique par bien (CDC §4.2). La FK impose une visite ;
+// sa complétion est contrôlée par le flux d’approbation. Chaque renouvellement
+// archive l’état précédent dans AuditLog (verification.renewed).
 model Verification {
   id        String              @id @default(cuid())
   status    VerificationStatus  @default(ACTIVE)
@@ -343,6 +347,7 @@ model AvailabilityDay {
 
   @@unique([propertyId, date])
   @@index([propertyId, status])
+  @@index([bookingId])
 }
 
 enum BookingStatus {
@@ -371,6 +376,7 @@ model Booking {
   checkIn  DateTime @db.Date
   checkOut DateTime @db.Date
   guests   Int
+  totalAmount Int // total CFA figé lors de la demande, indépendant du tarif courant
 
   stayCode        String    @unique // remis au voyageur à la confirmation (CDC §5.1.6)
   accessInfo       String?  // coordonnées d'accès, masquées avant confirmation (CDC §6.1)
@@ -391,6 +397,8 @@ model Booking {
 
   @@index([status])
   @@index([propertyId])
+  @@index([guestSessionId])
+  @@index([status, holdExpiresAt])
 }
 
 // ---------------------------------------------------------------------------

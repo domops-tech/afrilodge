@@ -1,0 +1,402 @@
+[
+  {
+    "name": "accueil",
+    "width": 320,
+    "overflow": false,
+    "viewport": 320,
+    "scroll": 320,
+    "elements": []
+  },
+  {
+    "name": "recherche",
+    "width": 320,
+    "overflow": false,
+    "viewport": 320,
+    "scroll": 320,
+    "elements": []
+  },
+  {
+    "name": "fiche",
+    "width": 320,
+    "overflow": false,
+    "viewport": 320,
+    "scroll": 320,
+    "elements": []
+  },
+  {
+    "name": "reservation",
+    "width": 320,
+    "overflow": false,
+    "viewport": 320,
+    "scroll": 320,
+    "elements": []
+  },
+  {
+    "name": "reprise",
+    "width": 320,
+    "overflow": false,
+    "viewport": 320,
+    "scroll": 320,
+    "elements": []
+  },
+  {
+    "name": "connexion",
+    "width": 320,
+    "overflow": false,
+    "viewport": 320,
+    "scroll": 320,
+    "elements": []
+  },
+  {
+    "name": "accueil",
+    "width": 360,
+    "overflow": false,
+    "viewport": 360,
+    "scroll": 360,
+    "elements": []
+  },
+  {
+    "name": "recherche",
+    "width": 360,
+    "overflow": false,
+    "viewport": 360,
+    "scroll": 360,
+    "elements": []
+  },
+  {
+    "name": "fiche",
+    "width": 360,
+    "overflow": false,
+    "viewport": 360,
+    "scroll": 360,
+    "elements": []
+  },
+  {
+    "name": "reservation",
+    "width": 360,
+    "overflow": false,
+    "viewport": 360,
+    "scroll": 360,
+    "elements": []
+  },
+  {
+    "name": "reprise",
+    "width": 360,
+    "overflow": false,
+    "viewport": 360,
+    "scroll": 360,
+    "elements": []
+  },
+  {
+    "name": "connexion",
+    "width": 360,
+    "overflow": false,
+    "viewport": 360,
+    "scroll": 360,
+    "elements": []
+  },
+  {
+    "name": "accueil",
+    "width": 390,
+    "overflow": false,
+    "viewport": 390,
+    "scroll": 390,
+    "elements": []
+  },
+  {
+    "name": "recherche",
+    "width": 390,
+    "overflow": false,
+    "viewport": 390,
+    "scroll": 390,
+    "elements": []
+  },
+  {
+    "name": "fiche",
+    "width": 390,
+    "overflow": false,
+    "viewport": 390,
+    "scroll": 390,
+    "elements": []
+  },
+  {
+    "name": "reservation",
+    "width": 390,
+    "overflow": false,
+    "viewport": 390,
+    "scroll": 390,
+    "elements": []
+  },
+  {
+    "name": "reprise",
+    "width": 390,
+    "overflow": false,
+    "viewport": 390,
+    "scroll": 390,
+    "elements": []
+  },
+  {
+    "name": "connexion",
+    "width": 390,
+    "overflow": false,
+    "viewport": 390,
+    "scroll": 390,
+    "elements": []
+  },
+  {
+    "name": "accueil",
+    "width": 600,
+    "overflow": false,
+    "viewport": 600,
+    "scroll": 600,
+    "elements": []
+  },
+  {
+    "name": "recherche",
+    "width": 600,
+    "overflow": false,
+    "viewport": 600,
+    "scroll": 600,
+    "elements": []
+  },
+  {
+    "name": "fiche",
+    "width": 600,
+    "overflow": false,
+    "viewport": 600,
+    "scroll": 600,
+    "elements": []
+  },
+  {
+    "name": "reservation",
+    "width": 600,
+    "overflow": false,
+    "viewport": 600,
+    "scroll": 600,
+    "elements": []
+  },
+  {
+    "name": "reprise",
+    "width": 600,
+    "overflow": false,
+    "viewport": 600,
+    "scroll": 600,
+    "elements": []
+  },
+  {
+    "name": "connexion",
+    "width": 600,
+    "overflow": false,
+    "viewport": 600,
+    "scroll": 600,
+    "elements": []
+  },
+  {
+    "name": "accueil",
+    "width": 768,
+    "overflow": false,
+    "viewport": 768,
+    "scroll": 768,
+    "elements": []
+  },
+  {
+    "name": "recherche",
+    "width": 768,
+    "overflow": false,
+    "viewport": 768,
+    "scroll": 768,
+    "elements": []
+  },
+  {
+    "name": "fiche",
+    "width": 768,
+    "overflow": false,
+    "viewport": 768,
+    "scroll": 768,
+    "elements": []
+  },
+  {
+    "name": "reservation",
+    "width": 768,
+    "overflow": false,
+    "viewport": 768,
+    "scroll": 768,
+    "elements": []
+  },
+  {
+    "name": "reprise",
+    "width": 768,
+    "overflow": false,
+    "viewport": 768,
+    "scroll": 768,
+    "elements": []
+  },
+  {
+    "name": "connexion",
+    "width": 768,
+    "overflow": false,
+    "viewport": 768,
+    "scroll": 768,
+    "elements": []
+  },
+  {
+    "name": "accueil",
+    "width": 1024,
+    "overflow": false,
+    "viewport": 1024,
+    "scroll": 1024,
+    "elements": []
+  },
+  {
+    "name": "recherche",
+    "width": 1024,
+    "overflow": false,
+    "viewport": 1024,
+    "scroll": 1024,
+    "elements": []
+  },
+  {
+    "name": "fiche",
+    "width": 1024,
+    "overflow": false,
+    "viewport": 1024,
+    "scroll": 1024,
+    "elements": []
+  },
+  {
+    "name": "reservation",
+    "width": 1024,
+    "overflow": false,
+    "viewport": 1024,
+    "scroll": 1024,
+    "elements": []
+  },
+  {
+    "name": "reprise",
+    "width": 1024,
+    "overflow": false,
+    "viewport": 1024,
+    "scroll": 1024,
+    "elements": []
+  },
+  {
+    "name": "connexion",
+    "width": 1024,
+    "overflow": false,
+    "viewport": 1024,
+    "scroll": 1024,
+    "elements": []
+  },
+  {
+    "name": "accueil",
+    "width": 1440,
+    "overflow": false,
+    "viewport": 1440,
+    "scroll": 1440,
+    "elements": []
+  },
+  {
+    "name": "recherche",
+    "width": 1440,
+    "overflow": false,
+    "viewport": 1440,
+    "scroll": 1440,
+    "elements": []
+  },
+  {
+    "name": "fiche",
+    "width": 1440,
+    "overflow": false,
+    "viewport": 1440,
+    "scroll": 1440,
+    "elements": []
+  },
+  {
+    "name": "reservation",
+    "width": 1440,
+    "overflow": false,
+    "viewport": 1440,
+    "scroll": 1440,
+    "elements": []
+  },
+  {
+    "name": "reprise",
+    "width": 1440,
+    "overflow": false,
+    "viewport": 1440,
+    "scroll": 1440,
+    "elements": []
+  },
+  {
+    "name": "connexion",
+    "width": 1440,
+    "overflow": false,
+    "viewport": 1440,
+    "scroll": 1440,
+    "elements": []
+  },
+  {
+    "name": "accueil",
+    "width": 1920,
+    "overflow": false,
+    "viewport": 1920,
+    "scroll": 1920,
+    "elements": []
+  },
+  {
+    "name": "recherche",
+    "width": 1920,
+    "overflow": false,
+    "viewport": 1920,
+    "scroll": 1920,
+    "elements": []
+  },
+  {
+    "name": "fiche",
+    "width": 1920,
+    "overflow": false,
+    "viewport": 1920,
+    "scroll": 1920,
+    "elements": []
+  },
+  {
+    "name": "reservation",
+    "width": 1920,
+    "overflow": false,
+    "viewport": 1920,
+    "scroll": 1920,
+    "elements": []
+  },
+  {
+    "name": "reprise",
+    "width": 1920,
+    "overflow": false,
+    "viewport": 1920,
+    "scroll": 1920,
+    "elements": []
+  },
+  {
+    "name": "connexion",
+    "width": 1920,
+    "overflow": false,
+    "viewport": 1920,
+    "scroll": 1920,
+    "elements": []
+  },
+  {
+    "name": "recherche-zoom-200",
+    "displayWidthAt200Percent": 1280,
+    "overflow": false,
+    "viewport": 640,
+    "scroll": 640,
+    "dpr": 1
+  },
+  {
+    "name": "reservation-zoom-200",
+    "displayWidthAt200Percent": 1280,
+    "overflow": false,
+    "viewport": 640,
+    "scroll": 640,
+    "dpr": 1
+  }
+]

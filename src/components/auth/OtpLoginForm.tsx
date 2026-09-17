@@ -31,6 +31,8 @@ const requestErrorKey = (message?: string) => {
 
 const verifyErrorKey = (message?: string) => {
   switch (message) {
+    case "identifier_taken":
+      return "identifierTaken";
     case "expired":
       return "expiredCode";
     case "too_many_attempts":

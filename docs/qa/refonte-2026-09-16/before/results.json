@@ -1,0 +1,62 @@
+[
+  {
+    "name": "accueil",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "name": "recherche",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "name": "fiche",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "name": "reservation",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "name": "reprise",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "name": "connexion",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "name": "accueil",
+    "width": 1440,
+    "overflow": false
+  },
+  {
+    "name": "recherche",
+    "width": 1440,
+    "overflow": false
+  },
+  {
+    "name": "fiche",
+    "width": 1440,
+    "overflow": false
+  },
+  {
+    "name": "reservation",
+    "width": 1440,
+    "overflow": false
+  },
+  {
+    "name": "reprise",
+    "width": 1440,
+    "overflow": false
+  },
+  {
+    "name": "connexion",
+    "width": 1440,
+    "overflow": false
+  }
+]

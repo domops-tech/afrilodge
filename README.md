@@ -123,3 +123,20 @@ navigateur). Nouvelle variable `STORAGE_PUBLIC_ENDPOINT`, distincte de
 `docs/agile/decisions/0017-endpoint-public-urls-signees.md` et
 `.env.example`. Contrepartie infra : `vd-platform`,
 `caddy/sites.d/*.caddy`.
+
+## Intégrité des données et renouvellement (16 septembre 2026)
+
+Le total est désormais figé à la demande de réservation. L'acceptation et le
+paiement sont enregistrés ensemble avec reprise idempotente. Les propriétaires
+peuvent renouveler une vérification dès les 30 jours avant expiration ; les états
+précédents sont archivés dans l'audit. Les emails de connexion sont uniques par rôle,
+et des contraintes SQL protègent les données numériques et les dates.
+
+Appliquer `npx prisma migrate deploy`, puis `npx prisma generate`. Les anciens
+montants de paiement sont conservés ; sans paiement, le total est reconstruit au
+tarif courant et cette opération est auditée. Aucun compte ambigu n'est fusionné :
+la migration s'arrête si des emails normalisés sont en doublon pour le même rôle.
+Voir [la décision 0018](docs/agile/decisions/0018-integrite-reservations-et-renouvellement.md).
+
+`npm run test:integration` vérifie les migrations et les parcours critiques dans
+un schéma PostgreSQL temporaire isolé, sans modifier les données de l'application.

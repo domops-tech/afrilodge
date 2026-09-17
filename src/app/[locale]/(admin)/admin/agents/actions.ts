@@ -53,19 +53,22 @@ export async function createAgentAction(
     return { status: "error", message: "phone_taken" };
   }
 
-  const agent = await prisma.user.create({
-    data: { role: "AGENT", phone, email: parsed.data.email, fullName: parsed.data.fullName },
-  });
-
-  await prisma.auditLog.create({
-    data: {
-      action: "user.created",
-      entity: "User",
-      entityId: agent.id,
-      actorId: session.userId,
-      metadata: { role: "AGENT" },
-    },
-  });
+  try {
+    await prisma.$transaction(async tx => {
+      const agent = await tx.user.create({
+        data: { role: "AGENT", phone, email: parsed.data.email, fullName: parsed.data.fullName },
+      });
+      await tx.auditLog.create({ data: {
+        action: "user.created", entity: "User", entityId: agent.id,
+        actorId: session.userId, metadata: { role: "AGENT" },
+      } });
+    });
+  } catch (error) {
+    if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
+      return { status: "error", message: "identifier_taken" };
+    }
+    throw error;
+  }
 
   return redirect({ href: "/admin/agents", locale: (formData.get("locale") as string) || "fr" });
 }

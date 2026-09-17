@@ -6,8 +6,9 @@ import { requireRole } from "@/lib/auth/guard";
 import { redirect } from "@/i18n/navigation";
 import { AMENITY_OPTIONS } from "@/lib/property/amenities";
 import { transitionBooking } from "@/lib/booking/state-machine";
-import { startOfUtcDay, addUtcDays, nightsInRange } from "@/lib/booking/nights";
-import { getPaymentProvider } from "@/lib/payments/simulated";
+import { startOfUtcDay, addUtcDays } from "@/lib/booking/nights";
+import { acceptBooking } from "@/lib/booking/accept";
+import { requestVerification } from "@/lib/verification/request";
 
 /**
  * Actions de l'espace de gestion d'un bien (CDC §6.3). Formulaires
@@ -69,21 +70,9 @@ export async function updatePropertyAction(formData: FormData): Promise<void> {
 export async function requestVerificationAction(formData: FormData): Promise<void> {
   const session = await requireRole("OWNER");
   const propertyId = String(formData.get("propertyId"));
-  const property = await loadOwnedPropertyOrThrow(propertyId, session.userId);
-
-  const hasOngoingRequest = property.verificationRequests.some((r) =>
-    ["REQUESTED", "SCHEDULED", "VISITED", "APPROVED"].includes(r.status)
-  );
-  if (hasOngoingRequest) {
+  if (!(await requestVerification(propertyId, session.userId))) {
     return backTo(propertyId, formData, "demande-en-cours");
   }
-
-  await prisma.$transaction([
-    prisma.verificationRequest.create({
-      data: { propertyId, ownerId: session.userId, status: "REQUESTED", packPaid: false },
-    }),
-    prisma.property.update({ where: { id: propertyId }, data: { status: "PENDING_VERIFICATION" } }),
-  ]);
 
   return backTo(propertyId, formData);
 }
@@ -173,25 +162,11 @@ export async function acceptBookingAction(formData: FormData): Promise<void> {
   const session = await requireRole("OWNER");
   const propertyId = String(formData.get("propertyId"));
   const bookingId = String(formData.get("bookingId"));
-  const property = await loadOwnedPropertyOrThrow(propertyId, session.userId);
-  const booking = await loadOwnedBooking(propertyId, bookingId, formData);
-
   try {
-    await transitionBooking({ bookingId, to: "ACCEPTED", actorId: session.userId });
+    await acceptBooking({ propertyId, bookingId, ownerId: session.userId });
   } catch {
     return backTo(propertyId, formData, "transition-refusee");
   }
-
-  const nights = nightsInRange(booking.checkIn, booking.checkOut).length;
-  const amount = nights * property.pricePerNight;
-  const { providerIntentRef } = await getPaymentProvider().createIntent({
-    bookingId,
-    amount,
-    payerPhone: booking.guestSession.phone,
-  });
-  await prisma.payment.create({
-    data: { bookingId, status: "INTENT_CREATED", providerName: getPaymentProvider().name, providerIntentRef, amount },
-  });
 
   return backTo(propertyId, formData);
 }

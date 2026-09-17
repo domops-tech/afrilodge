@@ -15,12 +15,12 @@ for (const width of [360, 1440]) {
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
         if (name === 'fiche') {
           const cta = page.getByRole('link', { name: /^réserver$/i });
-          await expect(cta).toHaveCount(1);
-          const box = await cta.boundingBox();
+          await expect(cta).not.toHaveCount(0);
+          const box = await cta.first().boundingBox();
           expect(box!.y + box!.height).toBeLessThan(900);
           const images = page.getByRole('img');
           await expect(async () => {
-            for (const img of await images.all()) expect(await img.evaluate((node: HTMLImageElement) => node.naturalWidth)).toBeGreaterThan(0);
+            for (const img of await images.all()) expect(await img.evaluate((node: HTMLElement) => node instanceof HTMLImageElement ? node.naturalWidth : 1)).toBeGreaterThan(0);
           }).toPass();
         }
         await page.screenshot({ path: testInfo.outputPath(`${name}-${width}.png`), fullPage: true });

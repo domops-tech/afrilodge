@@ -40,7 +40,7 @@ function daysFromNow(days: number) {
   return d;
 }
 
-/** Envoi direct au stockage objet — voir src/lib/storage/client.ts. */
+/** Images privées synthétiques de démonstration, limitées au contrôle d’identité. */
 async function uploadDemoImage(kind: "visit-photo" | "identity-document", visitId: string) {
   const storageKey = buildStorageKey(kind, visitId, "jpg");
   await putObjectDirect(storageKey, SAMPLE_IMAGE, "image/jpeg");
@@ -52,12 +52,10 @@ const PHOTO_SLOTS = ["FACADE", "ENTREE", "SANITAIRES", "CUISINE", "VUE", "ACCES"
 /** Liste imposée de prises de vue (CDC §4.1.4), avec de vraies images envoyées à MinIO. */
 async function createDemoVisitPhotos(visitId: string, takenAt: Date) {
   for (const slot of PHOTO_SLOTS) {
-    const storageKey = await uploadDemoImage("visit-photo", visitId);
-    await prisma.visitPhoto.create({ data: { visitId, slot, storageKey, takenAt } });
+    await prisma.visitPhoto.create({ data: { visitId, slot, storageKey: `demo-placeholder/${slot.toLowerCase()}`, isDemoPlaceholder: true, takenAt } });
   }
-  const roomStorageKey = await uploadDemoImage("visit-photo", visitId);
   await prisma.visitPhoto.create({
-    data: { visitId, slot: "PIECE", label: "Salon", storageKey: roomStorageKey, takenAt },
+    data: { visitId, slot: "PIECE", label: "Salon", storageKey: "demo-placeholder/salon", isDemoPlaceholder: true, takenAt },
   });
 }
 
@@ -211,6 +209,7 @@ async function main() {
         latitude: alreadyPublished ? coords.lat : undefined,
         longitude: alreadyPublished ? coords.lng : undefined,
         status: alreadyPublished ? "PUBLISHED" : "DRAFT",
+        isDemo: true,
         ownerId: p.owner.id,
         amenities: {
           create: amenityNames.map((name) => ({

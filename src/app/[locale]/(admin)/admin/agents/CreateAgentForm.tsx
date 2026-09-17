@@ -6,7 +6,7 @@ import { Field } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { createAgentAction, type CreateAgentState } from "./actions";
 
-const errorKey = (message?: string) => (message === "phone_taken" ? "createAgentPhoneTaken" : "createAgentInvalid");
+const errorKey = (message?: string) => (message === "phone_taken" ? "createAgentPhoneTaken" : message === "identifier_taken" ? "createAgentIdentifierTaken" : "createAgentInvalid");
 
 export function CreateAgentForm({ locale }: { locale: string }) {
   const t = useTranslations("admin");

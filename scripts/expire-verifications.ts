@@ -10,6 +10,7 @@
  * Exécution : npm run verifications:expire
  */
 import "dotenv/config";
+import { expireVerification } from "../src/lib/verification/expire";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { isExpiredByClock, needsRenewalReminder } from "../src/lib/verification/badge";
@@ -28,25 +29,7 @@ async function expireOutdatedVerifications(now: Date) {
   for (const verification of candidates) {
     if (!isExpiredByClock(verification.expiresAt, now)) continue;
 
-    await prisma.$transaction([
-      prisma.verification.update({
-        where: { id: verification.id },
-        data: { status: "EXPIRED" },
-      }),
-      prisma.property.update({
-        where: { id: verification.propertyId },
-        data: { status: "UNPUBLISHED" },
-      }),
-      prisma.auditLog.create({
-        data: {
-          action: "verification.expired",
-          entity: "Verification",
-          entityId: verification.id,
-          metadata: { propertyId: verification.propertyId },
-        },
-      }),
-    ]);
-    expiredCount += 1;
+    if (await expireVerification(prisma, verification, now)) expiredCount += 1;
   }
   return expiredCount;
 }
@@ -68,8 +51,8 @@ async function sendRenewalReminders(now: Date) {
     });
 
     await prisma.$transaction([
-      prisma.verification.update({
-        where: { id: verification.id },
+      prisma.verification.updateMany({
+        where: { id: verification.id, visitId: verification.visitId, renewalReminderSentAt: null },
         data: { renewalReminderSentAt: now },
       }),
       prisma.notification.create({

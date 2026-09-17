@@ -1,6 +1,8 @@
 "use server";
 
 import { z } from "zod";
+import type { Prisma } from "@/generated/prisma/client";
+import { isVerificationValid } from "@/lib/verification/badge";
 import { prisma } from "@/lib/db/client";
 import { requireRole } from "@/lib/auth/guard";
 import { redirect } from "@/i18n/navigation";
@@ -16,8 +18,8 @@ import { withdrawVerification } from "@/lib/verification/withdraw";
 
 export type DecisionState = { status: "idle" | "error"; message?: string };
 
-async function loadRequestOrThrow(requestId: string) {
-  const request = await prisma.verificationRequest.findUniqueOrThrow({
+async function loadRequestOrThrow(requestId: string, db: Prisma.TransactionClient = prisma) {
+  const request = await db.verificationRequest.findUniqueOrThrow({
     where: { id: requestId },
     include: { visit: { include: { amenityChecks: true } }, dispute: true },
   });
@@ -34,12 +36,21 @@ export async function approveVerificationAction(
   const session = await requireRole("ADMIN");
   const requestId = String(formData.get("requestId"));
 
-  const request = await loadRequestOrThrow(requestId);
-  const visitDate = request.visit!.completedAt ?? request.visit!.checkInAt ?? new Date();
-
   await prisma.$transaction(async (tx) => {
-    await tx.verification.create({
-      data: {
+    await tx.$queryRaw`SELECT id FROM "VerificationRequest" WHERE id = ${requestId} FOR UPDATE`;
+    const request = await loadRequestOrThrow(requestId, tx);
+    if (request.dispute || !request.visit!.completedAt) throw new Error("Visite complète ordinaire requise.");
+    await tx.$queryRaw`SELECT id FROM "Property" WHERE id = ${request.propertyId} FOR UPDATE`;
+    const previous = await tx.verification.findUnique({ where: { propertyId: request.propertyId } });
+    if (previous) {
+      await tx.auditLog.create({ data: {
+        action: "verification.renewed", entity: "Verification", entityId: previous.id,
+        actorId: session.userId,
+        metadata: { previous: JSON.parse(JSON.stringify(previous)), requestId },
+      } });
+    }
+    const visitDate = request.visit!.completedAt!;
+    const data = {
         propertyId: request.propertyId,
         visitId: request.visit!.id,
         visitDate,
@@ -47,8 +58,11 @@ export async function approveVerificationAction(
         status: "ACTIVE",
         approvedBy: session.userId,
         approvedAt: new Date(),
-      },
-    });
+        withdrawnAt: null,
+        withdrawnReason: null,
+        renewalReminderSentAt: null,
+      } as const;
+    await tx.verification.upsert({ where: { propertyId: request.propertyId }, create: data, update: data });
     await tx.verificationRequest.update({ where: { id: requestId }, data: { status: "APPROVED" } });
     await tx.property.update({
       where: { id: request.propertyId },
@@ -171,14 +185,18 @@ export async function rejectVerificationAction(
     return { status: "error", message: "reason_required" };
   }
 
-  await loadRequestOrThrow(requestId);
-
   await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "VerificationRequest" WHERE id = ${requestId} FOR UPDATE`;
+    const pending = await loadRequestOrThrow(requestId, tx);
+    if (pending.dispute) throw new Error("Utiliser la décision de contre-visite.");
+    await tx.$queryRaw`SELECT id FROM "Property" WHERE id = ${pending.propertyId} FOR UPDATE`;
     const request = await tx.verificationRequest.update({
       where: { id: requestId },
       data: { status: "REJECTED", rejectionReason: parsed.data.reason },
     });
-    await tx.property.update({ where: { id: request.propertyId }, data: { status: "DRAFT" } });
+    const verification = await tx.verification.findUnique({ where: { propertyId: request.propertyId } });
+    const status = verification && isVerificationValid(verification) ? "PUBLISHED" : verification ? "UNPUBLISHED" : "DRAFT";
+    await tx.property.update({ where: { id: request.propertyId }, data: { status } });
     await tx.auditLog.create({
       data: {
         action: "verification.rejected",

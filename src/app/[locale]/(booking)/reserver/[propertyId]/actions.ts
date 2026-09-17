@@ -165,6 +165,9 @@ export async function confirmBookingAction(_prev: ConfirmState, formData: FormDa
         data: { phone, email, fullName, expiresAt: holdExpiresAt },
       });
 
+      const property = await tx.property.findUniqueOrThrow({ where: { id: propertyId } });
+      const totalAmount = nights.length * property.pricePerNight;
+      if (!Number.isSafeInteger(totalAmount) || totalAmount > 2147483647) throw new UnavailableError("invalid");
       const booking = await tx.booking.create({
         data: {
           propertyId,
@@ -172,6 +175,7 @@ export async function confirmBookingAction(_prev: ConfirmState, formData: FormDa
           checkIn,
           checkOut,
           guests,
+          totalAmount,
           stayCode: generateStayCode(),
           holdExpiresAt,
         },

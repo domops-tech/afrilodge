@@ -7,6 +7,7 @@ import { Field } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
+import { canRenewVerification } from "@/lib/verification/request";
 import { isVerificationValid } from "@/lib/verification/badge";
 import { AMENITY_OPTIONS } from "@/lib/property/amenities";
 import { isoDate as toIsoDate, startOfUtcDay, addUtcDays } from "@/lib/booking/nights";
@@ -41,7 +42,7 @@ export default async function PropertyManagePage({
     include: {
       amenities: true,
       verification: true,
-      verificationRequests: { orderBy: { createdAt: "desc" }, take: 1, include: { visit: true } },
+      verificationRequests: { orderBy: { createdAt: "desc" }, include: { visit: true } },
       bookings: { include: { payment: true }, orderBy: { createdAt: "desc" } },
     },
   });
@@ -51,8 +52,8 @@ export default async function PropertyManagePage({
   }
 
   const latestRequest = property.verificationRequests[0];
-  const hasVisit = Boolean(latestRequest?.visit);
-  const canRequestVerification = !latestRequest || latestRequest.status === "REJECTED";
+  const hasVisit = property.verificationRequests.some(request => Boolean(request.visit));
+  const canRequestVerification = !property.verificationRequests.some(request => ["REQUESTED", "SCHEDULED", "VISITED"].includes(request.status)) && canRenewVerification(property.verification);
 
   // UTC, jamais l'heure locale (`setHours`/`setDate`) : décale sinon le
   // calendrier d'un jour dès que le serveur ne tourne pas en UTC — voir
@@ -152,6 +153,13 @@ export default async function PropertyManagePage({
             ) : null}
             {latestRequest.status === "VISITED" ? <p className="text-sm">{t("verificationVisited")}</p> : null}
             {latestRequest.status === "APPROVED" ? <p className="text-sm">{t("verificationApproved")}</p> : null}
+            {latestRequest.status === "APPROVED" && canRequestVerification ? (
+              <form action={requestVerificationAction}>
+                <input type="hidden" name="propertyId" value={property.id} />
+                <input type="hidden" name="locale" value={locale} />
+                <Button type="submit" variant="secondary">{t("requestAgainCta")}</Button>
+              </form>
+            ) : null}
             {latestRequest.status === "REJECTED" ? (
               <>
                 <p className="text-sm text-danger">
@@ -260,7 +268,8 @@ export default async function PropertyManagePage({
                 {tBooking("guestsCount", { count: booking.guests })}
               </span>
               <span className="text-muted">{t(`bookingStatus.${booking.status}`)}</span>
-              {booking.status === "REQUESTED" ? (
+              <span>{tBooking("totalAmount", { amount: format.number(booking.totalAmount) })}</span>
+              {booking.status === "REQUESTED" || (booking.status === "ACCEPTED" && !booking.payment) ? (
                 <div className="flex gap-2">
                   <form action={acceptBookingAction}>
                     <input type="hidden" name="propertyId" value={property.id} />

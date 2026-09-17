@@ -101,7 +101,7 @@ export async function requestLoginOtp(
 
     // kind === "email" : jamais d'auto-inscription (voir en-tête), le
     // compte doit déjà exister avec ce rôle et cet email exact.
-    const user = await prisma.user.findFirst({ where: { email: identifier.value, role: options.role } });
+    const user = await prisma.user.findUnique({ where: { role_email: { email: identifier.value, role: options.role } } });
     if (!user) {
       // Même réponse qu'un identifiant inconnu : pas d'énumération de
       // comptes par email.
@@ -146,7 +146,7 @@ export async function verifyLoginOtp(
     user =
       identifier.kind === "phone"
         ? await prisma.user.findUnique({ where: { phone: identifier.value } })
-        : await prisma.user.findFirst({ where: { email: identifier.value, role: options.role } });
+        : await prisma.user.findUnique({ where: { role_email: { email: identifier.value, role: options.role } } });
   }
   // Voir la note d'en-tête du module : un compte trouvé sous un autre rôle
   // n'est jamais réutilisé.
@@ -158,14 +158,21 @@ export async function verifyLoginOtp(
     if (identifier.kind !== "phone" || !options.allowSelfSignup) {
       return { status: "error", message: "not_recognized" };
     }
-    user = await prisma.user.create({
-      data: {
-        phone: identifier.value,
-        role: options.role,
-        fullName: fullName || identifier.value,
-        email: secondaryEmail,
-      },
-    });
+    try {
+      user = await prisma.user.create({
+        data: {
+          phone: identifier.value,
+          role: options.role,
+          fullName: fullName || identifier.value,
+          email: secondaryEmail,
+        },
+      });
+    } catch (error) {
+      if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
+        return { status: "error", message: "identifier_taken" };
+      }
+      throw error;
+    }
   }
 
   await createUserSession(user.id, options.role);

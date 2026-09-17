@@ -84,7 +84,7 @@ test("filtres conservés et dates incohérentes expliquées", async ({ page }) =
   await expect(page.getByLabel(/date de départ/i)).toHaveValue(depart);
   await expect(page.getByLabel(/voyageurs/i)).toHaveValue('2');
   await page.goto(`/fr/recherche?arrivee=${depart}&depart=${arrivee}`);
-  await expect(page.getByRole('alert').filter({ hasText: 'Vérifiez les filtres' })).toContainText('Vérifiez les filtres');
+  await expect(page.getByRole('alert').filter({ hasText: 'Vérifiez les dates' })).toContainText('Vérifiez les dates');
   await expect(page.locator('a[href*="/logements/"]')).toHaveCount(0);
   await expect(page.getByRole('main')).toHaveCount(1);
   await expect(page.locator('a button')).toHaveCount(0);

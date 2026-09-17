@@ -6,7 +6,7 @@ import { test, expect } from "@playwright/test";
 // « Appartement meublé, Marcory Résidentiel » (Kouassi Yao).
 
 test.describe("recherche publique (CDC §6.1.1, §6.1.2)", () => {
-  test("liste les biens vérifiés, avec des photos qui se chargent réellement", async ({ page }) => {
+  test("liste les biens vérifiés et signale clairement les photos de démonstration", async ({ page }) => {
     await page.goto("/fr/recherche");
 
     // Au moins les 3 biens vérifiés du seed — pas un total exact : ce
@@ -21,16 +21,14 @@ test.describe("recherche publique (CDC §6.1.1, §6.1.2)", () => {
     await expect(firstCard).toBeVisible();
     await expect(firstCard.getByText("Vérifié")).toBeVisible();
 
-    const thumbnail = firstCard.getByRole("img");
-    await expect(async () => {
-      expect(await thumbnail.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
-    }).toPass({ timeout: 20_000 });
+    await expect(firstCard.getByRole("img", { name: /visuel de démonstration.*photo réelle du logement à ajouter/i })).toBeVisible();
+    await expect(firstCard.getByText("Logement de démonstration")).toBeVisible();
   });
 
   test("filtre par quartier", async ({ page }) => {
     await page.goto("/fr/recherche");
     await page.getByLabel(/quartier/i).fill("Angré");
-    await page.getByRole("button", { name: /^rechercher$/i }).click();
+    await page.getByRole("button", { name: /^mettre à jour$/i }).click();
 
     await expect(page).toHaveURL(/quartier=Angr/);
     await expect(page.getByText(/1 logement vérifié trouvé/)).toBeVisible();
@@ -40,8 +38,8 @@ test.describe("recherche publique (CDC §6.1.1, §6.1.2)", () => {
 
   test("filtre par budget maximum", async ({ page }) => {
     await page.goto("/fr/recherche");
-    await page.getByLabel(/budget max/i).fill("16000");
-    await page.getByRole("button", { name: /^rechercher$/i }).click();
+    await page.getByLabel(/budget.*nuit/i).fill("16000");
+    await page.getByRole("button", { name: /^mettre à jour$/i }).click();
 
     // Seul le studio Angré (15 000 FCFA) passe sous ce budget.
     await expect(page.getByText(/1 logement vérifié trouvé/)).toBeVisible();
@@ -58,7 +56,7 @@ test.describe("fiche détaillée (CDC §6.1.3, §6.1.4, §6.1.5)", () => {
     await expect(page).toHaveURL(/\/fr\/logements\/.+/);
 
     // CDC §6.1.3 : date de vérification et agent toujours affichés.
-    await expect(page.getByText(/Visité le/)).toBeVisible();
+    await expect(page.getByText(/Une personne de notre équipe s’est rendue sur place/i).first()).toBeVisible();
     await expect(page.getByText(/Vérifié par Aïssata Koné/)).toBeVisible();
 
     // Équipements constatés par la visite (tous confirmés pour ce bien).

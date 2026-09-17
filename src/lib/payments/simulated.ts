@@ -34,8 +34,8 @@ class SimulatedMobileMoneyProvider implements PaymentProvider {
   private state = sharedState;
 
   async createIntent(params: CreateIntentParams): Promise<CreateIntentResult> {
-    const providerIntentRef = `sim_${randomUUID()}`;
-    this.state.set(providerIntentRef, "pending");
+    const providerIntentRef = `sim_${params.bookingId}`;
+    if (!this.state.has(providerIntentRef)) this.state.set(providerIntentRef, "pending");
     console.log(
       `[PaymentSimulator] intention créée pour la réservation ${params.bookingId} : ${providerIntentRef} (${params.amount} FCFA)`
     );

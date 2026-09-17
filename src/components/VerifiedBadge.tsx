@@ -5,7 +5,7 @@ import { isVerificationValid, type VerificationLike } from "@/lib/verification/b
  * La mention « Vérifié », avec sa date — jamais affichée sans elle
  * (CDC §4.2 : "porte une date de visite, toujours affichée au voyageur").
  */
-export function VerifiedBadge({ verification }: { verification: VerificationLike }) {
+export function VerifiedBadge({ verification, compact = false }: { verification: VerificationLike; compact?: boolean }) {
   const t = useTranslations("verification");
   const format = useFormatter();
 
@@ -21,9 +21,7 @@ export function VerifiedBadge({ verification }: { verification: VerificationLike
         />
       </svg>
       {t("badge")}
-      <span className="font-normal opacity-90">
-        · {format.dateTime(verification.expiresAt, { day: "2-digit", month: "short", year: "numeric" })}
-      </span>
+      {!compact ? <span className="font-normal opacity-90">· {format.dateTime(verification.expiresAt, { day: "2-digit", month: "short", year: "numeric" })}</span> : null}
     </span>
   );
 }

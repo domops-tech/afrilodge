@@ -106,8 +106,8 @@ export async function createVerifiedProperty(
   inOneYear.setDate(inOneYear.getDate() + 300);
 
   await db.query(
-    `INSERT INTO "Property" (id, title, description, "pricePerNight", "maxGuests", neighborhood, city, "accessLandmarks", latitude, longitude, status, "ownerId", "createdAt", "updatedAt")
-     VALUES ($1, 'Bien vérifié de test', 'Logement meublé pour les tests de bout en bout.', $2, 4, 'Cocody', 'Abidjan', 'Repère de test à 100m du carrefour.', 5.36, -3.94, 'PUBLISHED', $3, now(), now())`,
+    `INSERT INTO "Property" (id, title, description, "pricePerNight", "maxGuests", neighborhood, city, "accessLandmarks", latitude, longitude, status, "isDemo", "ownerId", "createdAt", "updatedAt")
+     VALUES ($1, 'Bien vérifié de test', 'Logement meublé pour les tests de bout en bout.', $2, 4, 'Cocody', 'Abidjan', 'Repère de test à 100m du carrefour.', 5.36, -3.94, 'PUBLISHED', true, $3, now(), now())`,
     [propertyId, price, ownerId]
   );
   await db.query(
