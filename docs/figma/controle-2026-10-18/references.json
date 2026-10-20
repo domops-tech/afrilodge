@@ -1,0 +1,674 @@
+[
+  {
+    "name": "accueil",
+    "width": 1440,
+    "file": "sources/accueil-1440.png",
+    "path": "/fr",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "recherche",
+    "width": 1440,
+    "file": "sources/recherche-1440.png",
+    "path": "/fr/recherche",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "fiche",
+    "width": 1440,
+    "file": "sources/fiche-1440.png",
+    "path": "/fr/logements/cmttv3ruu0007cpnmsz89cjua",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "connexion",
+    "width": 1440,
+    "file": "sources/connexion-1440.png",
+    "path": "/fr/connexion",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "reservations-reprise",
+    "width": 1440,
+    "file": "sources/reservations-reprise-1440.png",
+    "path": "/fr/reserver",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "reservation-dates",
+    "width": 1440,
+    "file": "sources/reservation-dates-1440.png",
+    "path": "/fr/reserver/cmttv3ruu0007cpnmsz89cjua",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "terrain-connexion",
+    "width": 1440,
+    "file": "sources/terrain-connexion-1440.png",
+    "path": "/fr/terrain/connexion",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "admin-connexion",
+    "width": 1440,
+    "file": "sources/admin-connexion-1440.png",
+    "path": "/fr/admin/connexion",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "proprietaire",
+    "width": 1440,
+    "file": "sources/proprietaire-1440.png",
+    "path": "/fr/proprietaire",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "nouveau-bien",
+    "width": 1440,
+    "file": "sources/nouveau-bien-1440.png",
+    "path": "/fr/proprietaire/nouveau",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "gestion-bien",
+    "width": 1440,
+    "file": "sources/gestion-bien-1440.png",
+    "path": "/fr/proprietaire/biens/cmttv3ruu0007cpnmsz89cjua",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "admin",
+    "width": 1440,
+    "file": "sources/admin-1440.png",
+    "path": "/fr/admin",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "admin-agents",
+    "width": 1440,
+    "file": "sources/admin-agents-1440.png",
+    "path": "/fr/admin/agents",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "admin-commissions",
+    "width": 1440,
+    "file": "sources/admin-commissions-1440.png",
+    "path": "/fr/admin/commissions",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "admin-parametres",
+    "width": 1440,
+    "file": "sources/admin-parametres-1440.png",
+    "path": "/fr/admin/parametres",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "admin-litiges",
+    "width": 1440,
+    "file": "sources/admin-litiges-1440.png",
+    "path": "/fr/admin/litiges",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "admin-fiche",
+    "width": 1440,
+    "file": "sources/admin-fiche-1440.png",
+    "path": "/fr/admin/fiches/cmttv3s0c001pcpnmhlmlqu0r",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "terrain",
+    "width": 1440,
+    "file": "sources/terrain-1440.png",
+    "path": "/fr/terrain",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "terrain-visite",
+    "width": 1440,
+    "file": "sources/terrain-visite-1440.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "reservations-liste",
+    "width": 1440,
+    "file": "sources/reservations-liste-1440.png",
+    "path": "/fr/reserver",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "confirmation-attente",
+    "width": 1440,
+    "file": "sources/confirmation-attente-1440.png",
+    "path": "/fr/reserver/confirmation/figma-reference-20261017-requested",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "confirmation-acceptee",
+    "width": 1440,
+    "file": "sources/confirmation-acceptee-1440.png",
+    "path": "/fr/reserver/confirmation/figma-reference-20261017-accepted",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "paiement",
+    "width": 1440,
+    "file": "sources/paiement-1440.png",
+    "path": "/fr/reserver/paiement/figma-reference-20261017-accepted",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "confirmation-payee",
+    "width": 1440,
+    "file": "sources/confirmation-payee-1440.png",
+    "path": "/fr/reserver/confirmation/figma-reference-20261017-paid",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "confirmation-sejour",
+    "width": 1440,
+    "file": "sources/confirmation-sejour-1440.png",
+    "path": "/fr/reserver/confirmation/figma-reference-20261017-progress",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "confirmation-annulee",
+    "width": 1440,
+    "file": "sources/confirmation-annulee-1440.png",
+    "path": "/fr/reserver/confirmation/figma-reference-20261017-cancelled",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "accueil",
+    "width": 390,
+    "file": "sources/accueil-390.png",
+    "path": "/fr",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "recherche",
+    "width": 390,
+    "file": "sources/recherche-390.png",
+    "path": "/fr/recherche",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "fiche",
+    "width": 390,
+    "file": "sources/fiche-390.png",
+    "path": "/fr/logements/cmttv3ruu0007cpnmsz89cjua",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "connexion",
+    "width": 390,
+    "file": "sources/connexion-390.png",
+    "path": "/fr/connexion",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "reservations-reprise",
+    "width": 390,
+    "file": "sources/reservations-reprise-390.png",
+    "path": "/fr/reserver",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "reservation-dates",
+    "width": 390,
+    "file": "sources/reservation-dates-390.png",
+    "path": "/fr/reserver/cmttv3ruu0007cpnmsz89cjua",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "terrain-connexion",
+    "width": 390,
+    "file": "sources/terrain-connexion-390.png",
+    "path": "/fr/terrain/connexion",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "admin-connexion",
+    "width": 390,
+    "file": "sources/admin-connexion-390.png",
+    "path": "/fr/admin/connexion",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "proprietaire",
+    "width": 390,
+    "file": "sources/proprietaire-390.png",
+    "path": "/fr/proprietaire",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "nouveau-bien",
+    "width": 390,
+    "file": "sources/nouveau-bien-390.png",
+    "path": "/fr/proprietaire/nouveau",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "gestion-bien",
+    "width": 390,
+    "file": "sources/gestion-bien-390.png",
+    "path": "/fr/proprietaire/biens/cmttv3ruu0007cpnmsz89cjua",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "admin",
+    "width": 390,
+    "file": "sources/admin-390.png",
+    "path": "/fr/admin",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "admin-agents",
+    "width": 390,
+    "file": "sources/admin-agents-390.png",
+    "path": "/fr/admin/agents",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "admin-commissions",
+    "width": 390,
+    "file": "sources/admin-commissions-390.png",
+    "path": "/fr/admin/commissions",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "admin-parametres",
+    "width": 390,
+    "file": "sources/admin-parametres-390.png",
+    "path": "/fr/admin/parametres",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "admin-litiges",
+    "width": 390,
+    "file": "sources/admin-litiges-390.png",
+    "path": "/fr/admin/litiges",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "admin-fiche",
+    "width": 390,
+    "file": "sources/admin-fiche-390.png",
+    "path": "/fr/admin/fiches/cmttv3s0c001pcpnmhlmlqu0r",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "terrain",
+    "width": 390,
+    "file": "sources/terrain-390.png",
+    "path": "/fr/terrain",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "terrain-visite",
+    "width": 390,
+    "file": "sources/terrain-visite-390.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "reservations-liste",
+    "width": 390,
+    "file": "sources/reservations-liste-390.png",
+    "path": "/fr/reserver",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "confirmation-attente",
+    "width": 390,
+    "file": "sources/confirmation-attente-390.png",
+    "path": "/fr/reserver/confirmation/figma-reference-20261017-requested",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "confirmation-acceptee",
+    "width": 390,
+    "file": "sources/confirmation-acceptee-390.png",
+    "path": "/fr/reserver/confirmation/figma-reference-20261017-accepted",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "paiement",
+    "width": 390,
+    "file": "sources/paiement-390.png",
+    "path": "/fr/reserver/paiement/figma-reference-20261017-accepted",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "confirmation-payee",
+    "width": 390,
+    "file": "sources/confirmation-payee-390.png",
+    "path": "/fr/reserver/confirmation/figma-reference-20261017-paid",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "confirmation-sejour",
+    "width": 390,
+    "file": "sources/confirmation-sejour-390.png",
+    "path": "/fr/reserver/confirmation/figma-reference-20261017-progress",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "confirmation-annulee",
+    "width": 390,
+    "file": "sources/confirmation-annulee-390.png",
+    "path": "/fr/reserver/confirmation/figma-reference-20261017-cancelled",
+    "type": "Écran de référence"
+  },
+  {
+    "name": "connexion-otp",
+    "width": 1440,
+    "file": "etats/connexion-otp-1440.png",
+    "path": "/fr/connexion",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "connexion-otp-invalide",
+    "width": 1440,
+    "file": "etats/connexion-otp-invalide-1440.png",
+    "path": "/fr/connexion",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-connexion-otp",
+    "width": 1440,
+    "file": "etats/terrain-connexion-otp-1440.png",
+    "path": "/fr/terrain/connexion",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-connexion-otp-invalide",
+    "width": 1440,
+    "file": "etats/terrain-connexion-otp-invalide-1440.png",
+    "path": "/fr/terrain/connexion",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "admin-connexion-otp",
+    "width": 1440,
+    "file": "etats/admin-connexion-otp-1440.png",
+    "path": "/fr/admin/connexion",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "admin-connexion-otp-invalide",
+    "width": 1440,
+    "file": "etats/admin-connexion-otp-invalide-1440.png",
+    "path": "/fr/admin/connexion",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "reservations-reprise-otp",
+    "width": 1440,
+    "file": "etats/reservations-reprise-otp-1440.png",
+    "path": "/fr/reserver",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "reservations-reprise-otp-invalide",
+    "width": 1440,
+    "file": "etats/reservations-reprise-otp-invalide-1440.png",
+    "path": "/fr/reserver",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "reservation-identite",
+    "width": 1440,
+    "file": "etats/reservation-identite-1440.png",
+    "path": "/fr/reserver/cmttv3ruu0007cpnmsz89cjua",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "reservation-otp",
+    "width": 1440,
+    "file": "etats/reservation-otp-1440.png",
+    "path": "/fr/reserver/cmttv3ruu0007cpnmsz89cjua",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "reservation-otp-invalide",
+    "width": 1440,
+    "file": "etats/reservation-otp-invalide-1440.png",
+    "path": "/fr/reserver/cmttv3ruu0007cpnmsz89cjua",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "reservation-indisponible",
+    "width": 1440,
+    "file": "etats/reservation-indisponible-1440.png",
+    "path": "/fr/reserver/cmttv3ruu0007cpnmsz89cjua",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "recherche-vide",
+    "width": 1440,
+    "file": "etats/recherche-vide-1440.png",
+    "path": "/fr/recherche?quartier=SansResultatFigma",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "recherche-invalide",
+    "width": 1440,
+    "file": "etats/recherche-invalide-1440.png",
+    "path": "/fr/recherche?guests=-1",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-photos",
+    "width": 1440,
+    "file": "etats/terrain-photos-1440.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-photos-hors-connexion",
+    "width": 1440,
+    "file": "etats/terrain-photos-hors-connexion-1440.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-equipements",
+    "width": 1440,
+    "file": "etats/terrain-equipements-1440.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-reperes",
+    "width": 1440,
+    "file": "etats/terrain-reperes-1440.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-justificatifs",
+    "width": 1440,
+    "file": "etats/terrain-justificatifs-1440.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-recapitulatif",
+    "width": 1440,
+    "file": "etats/terrain-recapitulatif-1440.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-synchronisation-en-attente",
+    "width": 1440,
+    "file": "etats/terrain-synchronisation-en-attente-1440.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-synchronisation-erreur",
+    "width": 1440,
+    "file": "etats/terrain-synchronisation-erreur-1440.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "connexion-otp",
+    "width": 390,
+    "file": "etats/connexion-otp-390.png",
+    "path": "/fr/connexion",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "connexion-otp-invalide",
+    "width": 390,
+    "file": "etats/connexion-otp-invalide-390.png",
+    "path": "/fr/connexion",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-connexion-otp",
+    "width": 390,
+    "file": "etats/terrain-connexion-otp-390.png",
+    "path": "/fr/terrain/connexion",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-connexion-otp-invalide",
+    "width": 390,
+    "file": "etats/terrain-connexion-otp-invalide-390.png",
+    "path": "/fr/terrain/connexion",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "admin-connexion-otp",
+    "width": 390,
+    "file": "etats/admin-connexion-otp-390.png",
+    "path": "/fr/admin/connexion",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "admin-connexion-otp-invalide",
+    "width": 390,
+    "file": "etats/admin-connexion-otp-invalide-390.png",
+    "path": "/fr/admin/connexion",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "reservations-reprise-otp",
+    "width": 390,
+    "file": "etats/reservations-reprise-otp-390.png",
+    "path": "/fr/reserver",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "reservations-reprise-otp-invalide",
+    "width": 390,
+    "file": "etats/reservations-reprise-otp-invalide-390.png",
+    "path": "/fr/reserver",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "reservation-identite",
+    "width": 390,
+    "file": "etats/reservation-identite-390.png",
+    "path": "/fr/reserver/cmttv3ruu0007cpnmsz89cjua",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "reservation-otp",
+    "width": 390,
+    "file": "etats/reservation-otp-390.png",
+    "path": "/fr/reserver/cmttv3ruu0007cpnmsz89cjua",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "reservation-otp-invalide",
+    "width": 390,
+    "file": "etats/reservation-otp-invalide-390.png",
+    "path": "/fr/reserver/cmttv3ruu0007cpnmsz89cjua",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "reservation-indisponible",
+    "width": 390,
+    "file": "etats/reservation-indisponible-390.png",
+    "path": "/fr/reserver/cmttv3ruu0007cpnmsz89cjua",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "recherche-vide",
+    "width": 390,
+    "file": "etats/recherche-vide-390.png",
+    "path": "/fr/recherche?quartier=SansResultatFigma",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "recherche-invalide",
+    "width": 390,
+    "file": "etats/recherche-invalide-390.png",
+    "path": "/fr/recherche?guests=-1",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-photos",
+    "width": 390,
+    "file": "etats/terrain-photos-390.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-photos-hors-connexion",
+    "width": 390,
+    "file": "etats/terrain-photos-hors-connexion-390.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-equipements",
+    "width": 390,
+    "file": "etats/terrain-equipements-390.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-reperes",
+    "width": 390,
+    "file": "etats/terrain-reperes-390.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-justificatifs",
+    "width": 390,
+    "file": "etats/terrain-justificatifs-390.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-recapitulatif",
+    "width": 390,
+    "file": "etats/terrain-recapitulatif-390.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-synchronisation-en-attente",
+    "width": 390,
+    "file": "etats/terrain-synchronisation-en-attente-390.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  },
+  {
+    "name": "terrain-synchronisation-erreur",
+    "width": 390,
+    "file": "etats/terrain-synchronisation-erreur-390.png",
+    "path": "/fr/terrain/visite/figma-reference-20261017-visit",
+    "type": "État capturé dans le navigateur"
+  }
+]

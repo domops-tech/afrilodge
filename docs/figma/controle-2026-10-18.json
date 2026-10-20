@@ -1,0 +1,649 @@
+{
+  "date": "2026-10-18",
+  "fileKey": "D1yQiR8DLj4ykZGPzIMqUP",
+  "originalScreens": [
+    {
+      "id": "46:20",
+      "name": "Connexion · Bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "46:568",
+      "name": "recherche-bureau",
+      "width": 1440,
+      "height": 1642.28125,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "46:851",
+      "name": "fiche-bureau",
+      "width": 1440,
+      "height": 2084.859375,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "46:1045",
+      "name": "reservations-reprise-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "46:1062",
+      "name": "reservation-dates-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:12",
+      "name": "proprietaire-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:49",
+      "name": "nouveau-bien-bureau",
+      "width": 1440,
+      "height": 906,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:118",
+      "name": "gestion-bien-bureau",
+      "width": 1440,
+      "height": 1276,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:317",
+      "name": "terrain-connexion-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:329",
+      "name": "terrain-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:339",
+      "name": "admin-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:382",
+      "name": "admin-connexion-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:393",
+      "name": "admin-agents-bureau",
+      "width": 1440,
+      "height": 2562,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:528",
+      "name": "admin-commissions-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:554",
+      "name": "admin-parametres-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:573",
+      "name": "admin-litiges-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:606",
+      "name": "admin-fiche-bureau",
+      "width": 1440,
+      "height": 2191,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:716",
+      "name": "terrain-visite-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:726",
+      "name": "reservations-liste-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:748",
+      "name": "confirmation-attente-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:848",
+      "name": "confirmation-acceptee-bureau",
+      "width": 1440,
+      "height": 924.859375,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:952",
+      "name": "paiement-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:965",
+      "name": "confirmation-payee-bureau",
+      "width": 1440,
+      "height": 912.609375,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:1069",
+      "name": "confirmation-sejour-bureau",
+      "width": 1440,
+      "height": 912.609375,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:1174",
+      "name": "confirmation-annulee-bureau",
+      "width": 1440,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:1261",
+      "name": "accueil-mobile",
+      "width": 390,
+      "height": 2555.3125,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:1512",
+      "name": "recherche-mobile",
+      "width": 390,
+      "height": 2150.875,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:1788",
+      "name": "fiche-mobile",
+      "width": 390,
+      "height": 2449.65625,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:1937",
+      "name": "connexion-mobile",
+      "width": 390,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:1990",
+      "name": "reservations-reprise-mobile",
+      "width": 390,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:2005",
+      "name": "reservation-dates-mobile",
+      "width": 390,
+      "height": 1337.125,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:2108",
+      "name": "proprietaire-mobile",
+      "width": 390,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:2151",
+      "name": "nouveau-bien-mobile",
+      "width": 390,
+      "height": 906,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:2219",
+      "name": "gestion-bien-mobile",
+      "width": 390,
+      "height": 2448,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "56:2466",
+      "name": "terrain-connexion-mobile",
+      "width": 390,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:194",
+      "name": "terrain-mobile",
+      "width": 390,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:210",
+      "name": "admin-mobile",
+      "width": 390,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:254",
+      "name": "admin-connexion-mobile",
+      "width": 390,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:268",
+      "name": "admin-agents-mobile",
+      "width": 390,
+      "height": 2562,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:403",
+      "name": "admin-commissions-mobile",
+      "width": 390,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:428",
+      "name": "admin-parametres-mobile",
+      "width": 390,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:452",
+      "name": "admin-litiges-mobile",
+      "width": 390,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:490",
+      "name": "admin-fiche-mobile",
+      "width": 390,
+      "height": 2247,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:603",
+      "name": "terrain-visite-mobile",
+      "width": 390,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:615",
+      "name": "paiement-mobile",
+      "width": 390,
+      "height": 900,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:630",
+      "name": "confirmation-attente-mobile",
+      "width": 390,
+      "height": 1035.875,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:727",
+      "name": "confirmation-acceptee-mobile",
+      "width": 390,
+      "height": 1185.125,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:831",
+      "name": "confirmation-payee-mobile",
+      "width": 390,
+      "height": 1186.875,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:935",
+      "name": "confirmation-sejour-mobile",
+      "width": 390,
+      "height": 1129.375,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:1038",
+      "name": "confirmation-annulee-mobile",
+      "width": 390,
+      "height": 915.125,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:1123",
+      "name": "accueil-bureau",
+      "width": 1440,
+      "height": 1959.953125,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:1371",
+      "name": "reservation-identite-mobile",
+      "width": 390,
+      "height": 1559.125,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:1495",
+      "name": "recherche-vide-mobile",
+      "width": 390,
+      "height": 1527.484375,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:1609",
+      "name": "recherche-invalide-mobile",
+      "width": 390,
+      "height": 972.75,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    },
+    {
+      "id": "70:1694",
+      "name": "admin-fiche-rejet-mobile",
+      "width": 390,
+      "height": 2331,
+      "visualInspection": "effectuée",
+      "finalValidation": "réserves typographiques globales ; corrections récentes à recontrôler"
+    }
+  ],
+  "addedScreens": [
+    {
+      "id": "75:223",
+      "name": "connexion-otp-bureau",
+      "width": 1440,
+      "height": 900,
+      "counts": {
+        "FRAME": 42,
+        "TEXT": 20,
+        "INSTANCE": 5
+      },
+      "images": [],
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "77:259",
+      "name": "connexion-otp-invalide-bureau",
+      "width": 1440,
+      "height": 900,
+      "counts": {
+        "FRAME": 47,
+        "TEXT": 20,
+        "VECTOR": 1,
+        "INSTANCE": 4
+      },
+      "images": [],
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "77:331",
+      "name": "terrain-connexion-otp-bureau",
+      "width": 1440,
+      "height": 900,
+      "counts": {
+        "FRAME": 13,
+        "TEXT": 6,
+        "INSTANCE": 3
+      },
+      "images": [],
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "77:353",
+      "name": "terrain-connexion-otp-invalide-bureau",
+      "width": 1440,
+      "height": 900,
+      "counts": {
+        "FRAME": 14,
+        "TEXT": 7,
+        "INSTANCE": 3
+      },
+      "images": [],
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "77:377",
+      "name": "admin-connexion-otp-bureau",
+      "width": 1440,
+      "height": 900,
+      "counts": {
+        "FRAME": 13,
+        "TEXT": 6,
+        "INSTANCE": 3
+      },
+      "images": [],
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "77:399",
+      "name": "admin-connexion-otp-invalide-bureau",
+      "width": 1440,
+      "height": 900,
+      "counts": {
+        "FRAME": 14,
+        "TEXT": 7,
+        "INSTANCE": 3
+      },
+      "images": [],
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "77:423",
+      "name": "reservations-reprise-otp-bureau",
+      "width": 1440,
+      "height": 900,
+      "counts": {
+        "FRAME": 17,
+        "TEXT": 8,
+        "INSTANCE": 3
+      },
+      "images": [],
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "77:451",
+      "name": "reservations-reprise-otp-invalide-bureau",
+      "width": 1440,
+      "height": 900,
+      "counts": {
+        "FRAME": 18,
+        "TEXT": 9,
+        "INSTANCE": 3
+      },
+      "images": [],
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "78:281",
+      "name": "terrain-photos-bureau",
+      "width": 1440,
+      "height": 900,
+      "counts": {
+        "FRAME": 47,
+        "TEXT": 20,
+        "INSTANCE": 9
+      },
+      "images": [],
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "78:357",
+      "name": "terrain-recapitulatif-bureau",
+      "width": 1440,
+      "height": 900,
+      "counts": {
+        "FRAME": 14,
+        "TEXT": 7,
+        "INSTANCE": 1
+      },
+      "images": [],
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "78:379",
+      "name": "terrain-synchronisation-en-attente-bureau",
+      "width": 1440,
+      "height": 900,
+      "counts": {
+        "FRAME": 14,
+        "TEXT": 7,
+        "INSTANCE": 1
+      },
+      "images": [],
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "78:401",
+      "name": "terrain-synchronisation-erreur-bureau",
+      "width": 1440,
+      "height": 900,
+      "counts": {
+        "FRAME": 15,
+        "TEXT": 6,
+        "INSTANCE": 1
+      },
+      "images": [],
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "78:423",
+      "name": "connexion-otp-mobile",
+      "width": 390,
+      "height": 900,
+      "counts": {
+        "FRAME": 46,
+        "TEXT": 17,
+        "VECTOR": 3,
+        "INSTANCE": 4
+      },
+      "images": [],
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "77:605",
+      "name": "terrain-photos-hors-connexion-bureau",
+      "width": 1440,
+      "height": 900,
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "77:681",
+      "name": "terrain-equipements-bureau",
+      "width": 1440,
+      "height": 900,
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "77:711",
+      "name": "terrain-reperes-bureau",
+      "width": 1440,
+      "height": 900,
+      "finalValidation": "à contrôler après rétablissement du quota"
+    },
+    {
+      "id": "77:732",
+      "name": "terrain-justificatifs-bureau",
+      "width": 1440,
+      "height": 900,
+      "finalValidation": "à contrôler après rétablissement du quota"
+    }
+  ],
+  "totalScreens": 72,
+  "blocker": "Limite du forfait Starter : get_screenshot puis use_figma refusent les appels."
+}
