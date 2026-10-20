@@ -1,4 +1,4 @@
-# Diagramme de cas d'utilisation — Séjours / Afrilodge (v1)
+# Diagramme de cas d'utilisation — Ayostay (v1)
 
 Périmètre : CDC v1, backlog `docs/agile/product-backlog.md` (épics 0 à 7).
 Source PlantUML éditable : [`cas-utilisation.puml`](cas-utilisation.puml).
@@ -28,7 +28,7 @@ flowchart LR
   PSP([PSP Mobile Money])
   MSG([SMS / Email])
 
-  subgraph Plateforme["Plateforme Séjours"]
+  subgraph Plateforme["Plateforme Ayostay"]
     direction LR
 
     subgraph PUB["Recherche publique"]

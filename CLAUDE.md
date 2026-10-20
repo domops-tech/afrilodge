@@ -1,4 +1,4 @@
-# Séjours / Afrilodge — VD Technologies
+# Ayostay — VD Technologies
 
 Plateforme de réservation de logements meublés **vérifiés** (zone BCEAO,
 FCFA, FR/EN). En ligne : https://afrilodge.vd-technologies.com

@@ -84,15 +84,15 @@ export async function requestOtp(params: {
 
   await getSmsProvider().send({
     to: phone,
-    body: `Votre code Séjours est ${code}. Il expire dans 5 minutes.`,
+    body: `Votre code Ayostay est ${code}. Il expire dans 5 minutes.`,
   });
 
   if (email) {
     try {
       await getEmailProvider().send({
         to: email,
-        subject: "Votre code Séjours",
-        body: `Votre code Séjours est ${code}. Il expire dans 5 minutes.`,
+        subject: "Votre code Ayostay",
+        body: `Votre code Ayostay est ${code}. Il expire dans 5 minutes.`,
       });
     } catch (err) {
       // Best-effort : le SMS ci-dessus a déjà été envoyé, c'est lui qui
@@ -132,7 +132,7 @@ export async function requestEmailOtp(params: {
   await getEmailProvider().send({
     to: email,
     subject: "Votre code de connexion administrateur",
-    body: `Votre code Séjours est ${code}. Il expire dans 5 minutes.`,
+    body: `Votre code Ayostay est ${code}. Il expire dans 5 minutes.`,
   });
 }
 

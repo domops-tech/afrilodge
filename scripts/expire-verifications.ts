@@ -47,7 +47,7 @@ async function sendRenewalReminders(now: Date) {
 
     await sms.send({
       to: verification.property.owner.phone,
-      body: `Séjours : la vérification de "${verification.property.title}" expire le ${verification.expiresAt.toLocaleDateString("fr-FR")}. Sollicitez une nouvelle visite pour la renouveler.`,
+      body: `Ayostay : la vérification de "${verification.property.title}" expire le ${verification.expiresAt.toLocaleDateString("fr-FR")}. Sollicitez une nouvelle visite pour la renouveler.`,
     });
 
     await prisma.$transaction([

@@ -1,5 +1,5 @@
 @startuml cas-utilisation
-title Séjours / Afrilodge — Diagramme de cas d'utilisation (v1)
+title Ayostay — Diagramme de cas d'utilisation (v1)
 left to right direction
 skinparam packageStyle rectangle
 skinparam actorStyle awesome
@@ -12,7 +12,7 @@ actor "Planificateur\n(cron)" as CRON
 actor "PSP / Mobile Money" as PSP <<système>>
 actor "Fournisseur SMS / Email" as MSG <<système>>
 
-rectangle "Plateforme Séjours" {
+rectangle "Plateforme Ayostay" {
 
   package "Recherche publique (§6.1)" {
     usecase "Rechercher un logement\n(quartier, dates, budget, personnes)" as UC_SEARCH

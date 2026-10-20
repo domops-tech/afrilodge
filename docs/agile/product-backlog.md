@@ -1,4 +1,4 @@
-# Backlog produit — Séjours (VD Technologies)
+# Backlog produit — Ayostay (VD Technologies)
 
 Référence unique du backlog. Réordonné à chaque planification. Estimations en
 points (Fibonacci : 1, 2, 3, 5, 8) — un ordre de grandeur d'effort, pas une

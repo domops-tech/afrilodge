@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 #
-# Image de production pour Afrilodge (Next.js 16 standalone + Prisma 7).
+# Image de production pour Ayostay (Next.js 16 standalone + Prisma 7).
 # Voir vd-platform/templates/app/Dockerfile.next pour le gabarit générique
 # dont ce fichier est dérivé, et docs/agile/decisions/0001-tech-stack.md
 # pour les contraintes propres à Prisma 7 (client sans moteur binaire côté
