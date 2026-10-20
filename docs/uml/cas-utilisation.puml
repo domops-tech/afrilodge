@@ -1,0 +1,141 @@
+@startuml cas-utilisation
+title Séjours / Afrilodge — Diagramme de cas d'utilisation (v1)
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor "Voyageur\n(sans compte)" as V
+actor "Propriétaire" as P
+actor "Agent terrain" as A
+actor "Administrateur" as ADM
+actor "Planificateur\n(cron)" as CRON
+actor "PSP / Mobile Money" as PSP <<système>>
+actor "Fournisseur SMS / Email" as MSG <<système>>
+
+rectangle "Plateforme Séjours" {
+
+  package "Recherche publique (§6.1)" {
+    usecase "Rechercher un logement\n(quartier, dates, budget, personnes)" as UC_SEARCH
+    usecase "Consulter une fiche vérifiée\n(photos, équipements, date de vérification)" as UC_FICHE
+    usecase "Voir la situation approximative\n+ repères textuels" as UC_MAP
+  }
+
+  package "Réservation et paiement (§6.2, §8)" {
+    usecase "Choisir des dates\n(disponibilité temps réel)" as UC_DATES
+    usecase "S'identifier par code à usage unique" as UC_OTP
+    usecase "Demander une réservation\n(verrou de calendrier)" as UC_BOOK
+    usecase "Payer via Mobile Money" as UC_PAY
+    usecase "Confirmer son arrivée" as UC_ARRIVAL
+    usecase "Annuler / être remboursé" as UC_CANCEL
+    usecase "Retrouver ses réservations" as UC_RECOVER
+    usecase "Signaler un écart" as UC_DISPUTE_OPEN
+  }
+
+  package "Espace propriétaire (§6.3)" {
+    usecase "Demander une vérification\n+ suivre son traitement" as UC_REQ_VERIF
+    usecase "Modifier prix / titre / description" as UC_EDIT
+    usecase "Gérer le calendrier de disponibilité" as UC_CAL
+    usecase "Accepter / refuser une demande" as UC_ACCEPT
+    usecase "Consulter réservations et statuts" as UC_BOOKINGS
+    usecase "Consulter règlements et commissions" as UC_PAYOUTS
+    usecase "Renouveler une vérification\n(dès 30 j avant expiration)" as UC_RENEW
+  }
+
+  package "Application terrain (§4.1, §6.4)" {
+    usecase "Consulter ses visites affectées" as UC_VISITS
+    usecase "Réaliser une visite hors connexion" as UC_VISIT
+    usecase "Prendre les photos guidées" as UC_PHOTOS
+    usecase "Inventorier les équipements\n(annoncé vs constaté)" as UC_INVENTORY
+    usecase "Saisir les repères d'accès" as UC_ACCESS
+    usecase "Vérifier pièce d'identité\n+ titre de location" as UC_ID
+    usecase "Synchroniser la visite" as UC_SYNC
+  }
+
+  package "Back-office (§6.5)" {
+    usecase "Planifier une visite\n(affecter un agent)" as UC_PLAN
+    usecase "Créer un compte agent" as UC_AGENT
+    usecase "Valider / refuser une fiche\n(attribuer la mention Vérifié)" as UC_VALIDATE
+    usecase "Traiter un litige" as UC_DISPUTE
+    usecase "Déclencher une contre-visite" as UC_REVISIT
+    usecase "Retirer une mention" as UC_WITHDRAW
+    usecase "Suivre commissions et rapprochement" as UC_COMM
+    usecase "Paramétrer annulation et commission" as UC_SETTINGS
+  }
+
+  package "Authentification (§3)" {
+    usecase "Se connecter\n(téléphone ou email + OTP)" as UC_LOGIN
+  }
+
+  package "Traitements automatiques" {
+    usecase "Expirer les verrous de réservation impayés" as UC_EXP_HOLD
+    usecase "Expirer les mentions échues\n+ relancer le renouvellement" as UC_EXP_VERIF
+    usecase "Libérer les fonds après 24 h\nsans confirmation d'arrivée" as UC_RELEASE
+    usecase "Recevoir le webhook de paiement\n(vérifié, idempotent)" as UC_WEBHOOK
+    usecase "Publier la fiche sous 24 h\naprès la visite" as UC_PUBLISH
+  }
+}
+
+' Voyageur
+V --> UC_SEARCH
+V --> UC_FICHE
+V --> UC_BOOK
+V --> UC_PAY
+V --> UC_ARRIVAL
+V --> UC_CANCEL
+V --> UC_RECOVER
+V --> UC_DISPUTE_OPEN
+
+UC_FICHE ..> UC_MAP : <<include>>
+UC_BOOK ..> UC_DATES : <<include>>
+UC_BOOK ..> UC_OTP : <<include>>
+UC_RECOVER ..> UC_OTP : <<include>>
+UC_SEARCH ..> UC_FICHE : <<extend>>
+
+' Propriétaire
+P --> UC_LOGIN
+P --> UC_REQ_VERIF
+P --> UC_EDIT
+P --> UC_CAL
+P --> UC_ACCEPT
+P --> UC_BOOKINGS
+P --> UC_PAYOUTS
+P --> UC_RENEW
+UC_RENEW ..> UC_REQ_VERIF : <<extend>>
+
+' Agent
+A --> UC_LOGIN
+A --> UC_VISITS
+A --> UC_VISIT
+UC_VISIT ..> UC_PHOTOS : <<include>>
+UC_VISIT ..> UC_INVENTORY : <<include>>
+UC_VISIT ..> UC_ACCESS : <<include>>
+UC_VISIT ..> UC_ID : <<include>>
+UC_VISIT ..> UC_SYNC : <<include>>
+
+' Admin
+ADM --> UC_LOGIN
+ADM --> UC_PLAN
+ADM --> UC_AGENT
+ADM --> UC_VALIDATE
+ADM --> UC_DISPUTE
+ADM --> UC_COMM
+ADM --> UC_SETTINGS
+UC_DISPUTE ..> UC_REVISIT : <<extend>>
+UC_REVISIT ..> UC_WITHDRAW : <<extend>>
+UC_VALIDATE ..> UC_PUBLISH : <<include>>
+
+' Cron
+CRON --> UC_EXP_HOLD
+CRON --> UC_EXP_VERIF
+CRON --> UC_RELEASE
+
+' Systèmes externes
+PSP --> UC_WEBHOOK
+UC_PAY ..> PSP
+UC_RELEASE ..> PSP
+UC_CANCEL ..> PSP
+UC_LOGIN ..> MSG
+UC_OTP ..> MSG
+UC_EXP_VERIF ..> MSG
+
+@enduml
