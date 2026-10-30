@@ -30,7 +30,10 @@
     "disputes": "Litiges",
     "agents": "Agents",
     "commissions": "Commissions",
-    "settings": "Paramètres"
+    "settings": "Paramètres",
+    "ownerShort": "Propriétaire",
+    "fieldShort": "Terrain",
+    "adminShort": "Back-office"
   },
   "verification": {
     "badge": "Vérifié sur place",
@@ -144,7 +147,14 @@
     "syncing": "Synchronisation en cours…",
     "syncSuccess": "Visite synchronisée avec succès.",
     "syncErrorMsg": "Échec de synchronisation : vos données restent sauvegardées localement. Réessayez.",
-    "pendingSync": "Hors connexion : la synchronisation reprendra automatiquement au retour du réseau."
+    "pendingSync": "Hors connexion : la synchronisation reprendra automatiquement au retour du réseau.",
+    "stepCounter": "Étape {current} sur {total}",
+    "introTitle": "Avant de commencer",
+    "introPhotos": "Photographiez chaque emplacement demandé : façade, entrée, pièces, sanitaires, cuisine, vue et accès.",
+    "introAmenities": "Notez chaque équipement : ce que le propriétaire annonce et ce que vous constatez.",
+    "introLandmarks": "Relevez des repères pour permettre de trouver le logement.",
+    "introIdentity": "Contrôlez la pièce d'identité du propriétaire et son titre de location.",
+    "introNote": "Votre position et l'heure sont enregistrées à l'ouverture de la visite. Vous pouvez travailler sans connexion : tout est envoyé au retour du réseau."
   },
   "admin": {
     "greeting": "Bonjour, {name}",

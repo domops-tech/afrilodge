@@ -30,7 +30,10 @@
     "disputes": "Disputes",
     "agents": "Agents",
     "commissions": "Commissions",
-    "settings": "Settings"
+    "settings": "Settings",
+    "ownerShort": "Owner",
+    "fieldShort": "Field",
+    "adminShort": "Back office"
   },
   "verification": {
     "badge": "Verified in person",
@@ -144,7 +147,14 @@
     "syncing": "Syncing…",
     "syncSuccess": "Visit synced successfully.",
     "syncErrorMsg": "Sync failed: your data is still saved locally. Try again.",
-    "pendingSync": "Offline: sync will resume automatically once back online."
+    "pendingSync": "Offline: sync will resume automatically once back online.",
+    "stepCounter": "Step {current} of {total}",
+    "introTitle": "Before you start",
+    "introPhotos": "Photograph every requested spot: exterior, entrance, rooms, bathroom, kitchen, view and access.",
+    "introAmenities": "Note each amenity: what the owner states and what you observe.",
+    "introLandmarks": "Record landmarks that help guests find the home.",
+    "introIdentity": "Check the owner's ID and proof of right to let.",
+    "introNote": "Your location and the time are recorded when the visit opens. You can work offline: everything is sent when the network returns."
   },
   "admin": {
     "greeting": "Hello, {name}",

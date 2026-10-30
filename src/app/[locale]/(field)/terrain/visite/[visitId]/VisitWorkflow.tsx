@@ -25,6 +25,8 @@ import type { PhotoSlot } from "@/generated/prisma/enums";
 const FIXED_SLOTS: PhotoSlot[] = ["FACADE", "ENTREE", "SANITAIRES", "CUISINE", "VUE", "ACCES"];
 
 type Step = "intro" | "photos" | "amenities" | "landmarks" | "identity" | "review";
+const STEP_ORDER: Exclude<Step, "intro">[] = ["photos", "amenities", "landmarks", "identity", "review"];
+const STEP_LABEL_KEY = { photos: "stepPhotos", amenities: "stepAmenities", landmarks: "stepLandmarks", identity: "stepIdentity", review: "stepReview" } as const;
 
 function Thumb({ blob, className }: { blob: Blob; className?: string }) {
   const url = useMemo(() => URL.createObjectURL(blob), [blob]);
@@ -191,7 +193,7 @@ export function VisitWorkflow({
   if (!draft) return null;
 
   return (
-    <div className="flex flex-1 flex-col gap-6 px-4 py-6">
+    <div className="flex flex-col gap-6">
       <header className="flex items-center justify-between gap-2">
         <div>
           <Link href="/terrain" className="text-xs text-muted">
@@ -209,10 +211,33 @@ export function VisitWorkflow({
         ) : null}
       </header>
 
+      {step !== "intro" ? (
+        <div>
+          <p className="text-sm font-medium text-muted">
+            {t("stepCounter", { current: STEP_ORDER.indexOf(step) + 1, total: STEP_ORDER.length })} · {t(STEP_LABEL_KEY[step as Exclude<Step, "intro">])}
+          </p>
+          <ol aria-hidden="true" className="mt-2 grid grid-cols-5 gap-1.5">
+            {STEP_ORDER.map((name, index) => (
+              <li key={name} className={`h-1.5 rounded-full ${index <= STEP_ORDER.indexOf(step) ? "bg-accent" : "bg-surface-alt"}`} />
+            ))}
+          </ol>
+        </div>
+      ) : null}
+
       {step === "intro" ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-          {geoError ? <p className="text-sm text-danger">{geoError}</p> : null}
-          <Button data-testid="start-visit" onClick={handleStart}>
+        <div className="surface-card flex flex-col gap-5 p-5 sm:p-6">
+          <h2>{t("introTitle")}</h2>
+          <ul className="flex flex-col gap-3 text-[0.9375rem] leading-relaxed">
+            {(["introPhotos", "introAmenities", "introLandmarks", "introIdentity"] as const).map((key, index) => (
+              <li key={key} className="flex items-start gap-3">
+                <span aria-hidden="true" className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-accent text-xs font-bold text-accent-foreground">{index + 1}</span>
+                <span>{t(key)}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="rounded-[var(--radius)] bg-background px-4 py-3 text-sm leading-relaxed text-muted">{t("introNote")}</p>
+          {geoError ? <p className="text-sm text-danger" role="alert">{geoError}</p> : null}
+          <Button data-testid="start-visit" className="!min-h-12" onClick={handleStart}>
             {t("start")}
           </Button>
         </div>
@@ -282,14 +307,16 @@ export function VisitWorkflow({
                 </Button>
               </div>
             ))}
-            <div className="flex items-end gap-2">
-              <Field
-                id="roomLabel"
-                label={t("roomLabelLabel")}
-                placeholder={t("roomLabelPlaceholder")}
-                value={roomLabel}
-                onChange={(e) => setRoomLabel(e.target.value)}
-              />
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+              <div className="flex-1">
+                <Field
+                  id="roomLabel"
+                  label={t("roomLabelLabel")}
+                  placeholder={t("roomLabelPlaceholder")}
+                  value={roomLabel}
+                  onChange={(e) => setRoomLabel(e.target.value)}
+                />
+              </div>
               <input
                 ref={roomInputRef}
                 data-testid="photo-input-room"
@@ -310,6 +337,7 @@ export function VisitWorkflow({
                 type="button"
                 variant="secondary"
                 data-testid="add-room-photo"
+                className="whitespace-nowrap"
                 onClick={() => roomInputRef.current?.click()}
               >
                 {t("addRoomPhoto")}

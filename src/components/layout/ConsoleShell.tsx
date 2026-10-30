@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/Button";
 import { ConsoleNav, type ConsoleNavItem } from "./ConsoleNav";
 
 const AREAS = {
-  OWNER: { labelKey: "owner", home: "/proprietaire", width: "max-w-[68rem]" },
-  AGENT: { labelKey: "field", home: "/terrain", width: "max-w-[44rem]" },
-  ADMIN: { labelKey: "admin", home: "/admin", width: "max-w-[72rem]" },
+  OWNER: { labelKey: "owner", shortKey: "ownerShort", home: "/proprietaire", width: "max-w-[68rem]" },
+  AGENT: { labelKey: "field", shortKey: "fieldShort", home: "/terrain", width: "max-w-[44rem]" },
+  ADMIN: { labelKey: "admin", shortKey: "adminShort", home: "/admin", width: "max-w-[72rem]" },
 } as const;
 
 export async function ConsoleShell({ role, children }: { role: UserRole; children: React.ReactNode }) {
@@ -45,7 +45,7 @@ export async function ConsoleShell({ role, children }: { role: UserRole; childre
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={`/brand/ayostay-logo-horizontal-slogan-${logo}.svg`} alt={common("appName")} width={1278} height={326} className="h-8 w-auto sm:h-9" />
             </Link>
-            <span className="truncate rounded-full bg-surface-alt px-3 py-1 text-xs font-semibold text-foreground">{nav(area.labelKey)}</span>
+            <span className="shrink-0 rounded-full bg-surface-alt px-3 py-1 text-xs font-semibold text-foreground"><span className="sm:hidden">{nav(area.shortKey)}</span><span className="hidden sm:inline">{nav(area.labelKey)}</span></span>
           </div>
           {user ? (
             <div className="flex shrink-0 items-center gap-1 sm:gap-3">
