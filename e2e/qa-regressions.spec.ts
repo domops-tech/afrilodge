@@ -15,7 +15,7 @@ test("récupération OTP, deux réservations et arrivée prématurée", async ({
     propertyId = setup.propertyId;
     await waitForPaymentIntent(setup.bookingId);
     await page.goto(`/fr/reserver/paiement/${setup.bookingId}`);
-    await page.getByRole("button", { name: /payer via mobile money/i }).click();
+    await page.getByRole("button", { name: /payer \(démonstration\)/i }).click();
     await expect(page).toHaveURL(new RegExp(`/confirmation/${setup.bookingId}$`));
     await expect(page.getByRole("button", { name: /confirmer mon arrivée/i })).toHaveCount(0);
     await expect(page.getByText(/confirmation d’arrivée sera disponible/i)).toBeVisible();

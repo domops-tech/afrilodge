@@ -77,7 +77,7 @@ test("paiement confirmé par webhook, vérifié et idempotent — commission cr�
         // Redirection vers l'établissement de paiement (CDC §6.2.3, épic 6.2) :
         // la page affiche bien le montant exact de l'intention créée.
         await guestPage.goto(`/fr/reserver/paiement/${bookingId}`);
-        await expect(guestPage.getByText("600000 FCFA")).toBeVisible();
+        await expect(guestPage.getByText(/600[\s\u00a0\u202f]?000 FCFA/)).toBeVisible();
 
         // Webhook entrant : signature invalide rejetée (CDC §8.4, épic 6.3).
         const heldExternalId = randomUUID();
@@ -197,7 +197,7 @@ test("paiement via l'interface, confirmation d'arrivée et libération des fonds
         // épic 6.2) — ce qui garde l'état interne du simulateur cohérent
         // pour la libération des fonds qui suit (voir l'entête du fichier).
         await guestPage.goto(`/fr/reserver/paiement/${bookingId}`);
-        await guestPage.getByRole("button", { name: /payer via mobile money/i }).click();
+        await guestPage.getByRole("button", { name: /payer \(démonstration\)/i }).click();
         await expect(guestPage).toHaveURL(new RegExp(`/fr/reserver/confirmation/${bookingId}$`));
         await expect(guestPage.getByText(/réservation payée et confirmée/i)).toBeVisible();
 

@@ -208,7 +208,7 @@ export async function waitForPaymentIntent(bookingId: string): Promise<void> {
 export async function payAndConfirmArrival(guestPage: Page, bookingId: string) {
   await waitForPaymentIntent(bookingId);
   await guestPage.goto(`/fr/reserver/paiement/${bookingId}`);
-  await guestPage.getByRole("button", { name: /payer via mobile money/i }).click();
+  await guestPage.getByRole("button", { name: /payer \(démonstration\)/i }).click();
   await expect(guestPage).toHaveURL(new RegExp(`/fr/reserver/confirmation/${bookingId}$`));
   await guestPage.getByRole("button", { name: /confirmer mon arrivée/i }).click();
 }

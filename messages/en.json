@@ -350,7 +350,7 @@
     "summaryRange": "{checkIn} → {checkOut} · {guests, plural, one {# guest} other {# guests}}",
     "fullNameLabel": "Full name",
     "phoneLabel": "Phone number",
-    "phonePlaceholder": "+225 07 00 00 00 00",
+    "phonePlaceholder": "+229 01 97 00 00 00",
     "emailLabel": "Contact email (optional)",
     "emailPlaceholder": "you@example.com",
     "sendCode": "Send code",
@@ -374,10 +374,10 @@
     "statusCancelled": "This request has been cancelled.",
     "backToSearch": "Back to search",
     "payNowCta": "Pay now",
-    "paymentTitle": "Payment",
+    "paymentTitle": "Pay for your stay",
     "paymentAmount": "{amount} FCFA",
-    "paymentSimulatorNotice": "Mobile Money simulator — no real payment provider is connected until CDC §12 is settled.",
-    "paymentCta": "Pay via Mobile Money (simulator)",
+    "paymentSimulatorNotice": "Demonstration mode: no money is charged. Mobile Money payment is not active yet.",
+    "paymentCta": "Pay (demonstration)",
     "stayCodeLabel": "Stay code: {code}",
     "confirmArrivalCta": "Confirm my arrival",
     "cancelCta": "Cancel the booking",
@@ -387,8 +387,8 @@
     "disputeStatus": {
       "OPEN": "Being processed.",
       "COUNTER_VISIT_SCHEDULED": "A counter-visit has been triggered.",
-      "RESOLVED_KEPT": "Processed: the \"Verified\" badge is kept.",
-      "RESOLVED_WITHDRAWN": "Processed: the \"Verified\" badge has been withdrawn."
+      "RESOLVED_KEPT": "Processed: the \"verified in person\" badge is kept.",
+      "RESOLVED_WITHDRAWN": "Processed: the \"verified in person\" badge has been withdrawn."
     },
     "error": {
       "etat-invalide": "This action is no longer possible in the booking's current state.",
@@ -431,6 +431,17 @@
     "editDetails": "Edit my details",
     "perNightLabel": "per night",
     "acceptedPaymentHint": "The host has accepted your request. Your stay is confirmed after payment.",
-    "totalLabel": "Total"
+    "totalLabel": "Total",
+    "title": {
+      "REQUESTED": "Request sent",
+      "ACCEPTED": "Your request is accepted",
+      "PAID": "Booking confirmed",
+      "IN_PROGRESS": "Your stay is under way",
+      "COMPLETED": "Stay completed",
+      "CANCELLED": "Booking cancelled",
+      "DISPUTED": "Report under review"
+    },
+    "backToBooking": "Back to the booking",
+    "paymentAmountLabel": "Amount to pay"
   }
 }

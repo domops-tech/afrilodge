@@ -350,7 +350,7 @@
     "summaryRange": "{checkIn} → {checkOut} · {guests, plural, one {# voyageur} other {# voyageurs}}",
     "fullNameLabel": "Nom complet",
     "phoneLabel": "Numéro de téléphone",
-    "phonePlaceholder": "+225 07 00 00 00 00",
+    "phonePlaceholder": "+229 01 97 00 00 00",
     "emailLabel": "Email de contact (facultatif)",
     "emailPlaceholder": "vous@exemple.com",
     "sendCode": "Envoyer le code",
@@ -374,10 +374,10 @@
     "statusCancelled": "Cette demande a été annulée.",
     "backToSearch": "Retour à la recherche",
     "payNowCta": "Payer maintenant",
-    "paymentTitle": "Paiement",
+    "paymentTitle": "Payer votre séjour",
     "paymentAmount": "{amount} FCFA",
-    "paymentSimulatorNotice": "Simulateur Mobile Money — aucun établissement de paiement réel n'est branché tant que le §12 du CDC n'est pas tranché.",
-    "paymentCta": "Payer via Mobile Money (simulateur)",
+    "paymentSimulatorNotice": "Mode démonstration : aucun montant n'est débité. Le paiement par Mobile Money n'est pas encore activé.",
+    "paymentCta": "Payer (démonstration)",
     "stayCodeLabel": "Code de séjour : {code}",
     "confirmArrivalCta": "Confirmer mon arrivée",
     "cancelCta": "Annuler la réservation",
@@ -387,8 +387,8 @@
     "disputeStatus": {
       "OPEN": "En cours de traitement.",
       "COUNTER_VISIT_SCHEDULED": "Une contre-visite a été déclenchée.",
-      "RESOLVED_KEPT": "Traité : la mention « Vérifié » est maintenue.",
-      "RESOLVED_WITHDRAWN": "Traité : la mention « Vérifié » a été retirée."
+      "RESOLVED_KEPT": "Traité : la mention « vérifié sur place » est maintenue.",
+      "RESOLVED_WITHDRAWN": "Traité : la mention « vérifié sur place » a été retirée."
     },
     "error": {
       "etat-invalide": "Cette action n'est plus possible dans l'état actuel de la réservation.",
@@ -431,6 +431,17 @@
     "editDetails": "Modifier mes coordonnées",
     "perNightLabel": "par nuit",
     "acceptedPaymentHint": "Le propriétaire a accepté la demande. Le séjour sera confirmé après votre paiement.",
-    "totalLabel": "Total"
+    "totalLabel": "Total",
+    "title": {
+      "REQUESTED": "Demande envoyée",
+      "ACCEPTED": "Votre demande est acceptée",
+      "PAID": "Réservation confirmée",
+      "IN_PROGRESS": "Votre séjour est en cours",
+      "COMPLETED": "Séjour terminé",
+      "CANCELLED": "Réservation annulée",
+      "DISPUTED": "Signalement en cours"
+    },
+    "backToBooking": "Retour à la réservation",
+    "paymentAmountLabel": "Montant à payer"
   }
 }

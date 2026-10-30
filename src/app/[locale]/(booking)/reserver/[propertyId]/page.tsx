@@ -65,7 +65,7 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
       <Link href={`/logements/${property.id}${query}`} className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted hover:text-verified"><span aria-hidden="true">←</span>{t("backToProperty")}</Link>
       {property.isDemo ? <div role="note" className="mx-auto mt-4 max-w-[1240px] rounded-[.85rem] border border-ocre/40 bg-ocre/10 px-4 py-3 text-sm leading-relaxed text-foreground"><span className="font-semibold">{tc("demoListing")}.</span> {tc("demoListingDetail")}</div>:null}
       <div className="booking-layout mx-auto mt-4 max-w-[1240px]">
-        <div><p className="eyebrow">{t("stayRequest")}</p><h1 className="mt-2 max-w-[20ch] t-1">{t("bookHeading", { title: property.title })}</h1><p className="mt-3 max-w-[55ch] text-sm leading-relaxed text-muted">{t("stayRequestSent")}</p>
+        <div><p className="eyebrow">{t("stayRequest")}</p><h1 className="mt-2 t-1">{t("bookHeading", { title: property.title })}</h1><p className="mt-3 max-w-[55ch] text-sm leading-relaxed text-muted">{t("stayRequestSent")}</p>
       <BookingWizard
         initialCheckIn={dateOnlySchema.safeParse(sp.arrivee).data ?? ""}
         initialCheckOut={dateOnlySchema.safeParse(sp.depart).data ?? ""}
