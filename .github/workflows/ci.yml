@@ -47,6 +47,9 @@ jobs:
       # étape, le typecheck, le seed et le build ne trouvent pas `@/generated/prisma`.
       - run: npx prisma generate
       - run: npm run lint
+      # PageProps / LayoutProps sont des types globaux générés par Next.js : absents
+      # d'un dépôt fraîchement cloné, donc à générer avant le typecheck.
+      - run: npx next typegen
       - run: npm run typecheck
       - run: npx prisma migrate deploy
       - run: npm test
