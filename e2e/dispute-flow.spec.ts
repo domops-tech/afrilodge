@@ -15,7 +15,7 @@ import {
 // est créé directement en base pour chaque test (l'admin ne s'auto-inscrit
 // pas, contrairement au propriétaire — voir e2e/admin-review.spec.ts) :
 // évite toute collision d'OTP avec les admins fixes des autres fichiers
-// (+2250700000001, +2250700000002).
+// (+2290100000001, +2290100000002).
 //
 // La contre-visite elle-même n'est pas rejouée via l'app terrain complète
 // (hors connexion, capture photo…) : ce parcours est déjà exhaustivement
@@ -114,7 +114,7 @@ test("signalement, contre-visite, écart confirmé : la mention est retirée", a
         await adminPage.goto("/fr/admin");
         await expect(adminPage.getByText(/contre-visite — litige/i)).toBeVisible();
         const scheduleCard = adminPage.getByTestId(`schedule-request-${propertyId}`);
-        await scheduleCard.getByLabel(/agent/i).selectOption({ label: "Aïssata Koné" });
+        await scheduleCard.getByLabel(/agent/i).selectOption({ label: "Judith Hounkpatin" });
         await scheduleCard.getByLabel(/date de visite/i).fill("2027-02-01T10:00");
         await scheduleCard.getByRole("button", { name: /planifier/i }).click();
 

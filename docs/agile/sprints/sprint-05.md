@@ -68,7 +68,7 @@ npm run dev
 
 Voyageur (`/logements/<un bien vérifié>`, bouton Réserver, sans compte) :
 dates, identité, code OTP (journalisé en développement) — demande envoyée.
-Propriétaire (`/connexion`, `+2250700000020`) : voit la demande dans sa
+Propriétaire (`/connexion`, `+2290100000020`) : voit la demande dans sa
 fiche de gestion, Accepter ou Refuser. `npm run bookings:expire-holds`
 démontre l'expiration du verrou (script autonome, à planifier en cron).
 

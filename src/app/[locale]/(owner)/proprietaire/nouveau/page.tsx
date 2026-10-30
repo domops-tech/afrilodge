@@ -41,7 +41,7 @@ export default async function NewPropertyPage({
           />
         </label>
         <Field id="neighborhood" name="neighborhood" label={t("neighborhoodLabel")} required />
-        <Field id="city" name="city" label={t("cityLabel")} required defaultValue="Abidjan" />
+        <Field id="city" name="city" label={t("cityLabel")} required defaultValue="Cotonou" />
         <Field id="pricePerNight" name="pricePerNight" type="number" min={1} label={t("priceLabel")} required />
         <Field id="maxGuests" name="maxGuests" type="number" min={1} label={t("maxGuestsLabel")} required />
 

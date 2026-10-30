@@ -12,7 +12,7 @@ import { test, expect } from "@playwright/test";
 const SAMPLE_IMAGE = path.join(__dirname, "fixtures/sample.jpg");
 
 // Agent 2 du seed (prisma/seed.ts), assigné à la visite "en attente" du
-// bien Plateau (VerificationRequest.status = SCHEDULED).
+// bien Jéricho (VerificationRequest.status = SCHEDULED).
 import { visitFixture } from "./helpers/visit-fixture";
 let fixture: Awaited<ReturnType<typeof visitFixture>>;
 let AGENT_PHONE: string;
@@ -52,7 +52,7 @@ test.describe("visite terrain hors connexion (CDC §4, §6.4, §11.1)", () => {
     await page.getByRole("button", { name: /vérifier/i }).click();
     await expect(page).toHaveURL(/\/fr\/terrain$/);
 
-    // Ouvre la visite assignée (bien "Plateau" du seed).
+    // Ouvre la visite assignée (bien "Jéricho" du seed).
     await page.getByRole("link", { name: new RegExp(fixture.title) }).click();
     await expect(page).toHaveURL(/\/fr\/terrain\/visite\/.+/);
     const visitId = page.url().match(/\/visite\/([^/]+)/)?.[1];

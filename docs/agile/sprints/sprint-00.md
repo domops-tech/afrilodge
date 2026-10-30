@@ -59,7 +59,7 @@ npm run dev
 ```
 
 Ouvrir `http://localhost:3000` → bascule FR/EN → « Se connecter » → un des
-numéros du seed (ex. `+2250700000020`, Fatou Diabaté) → le code s'affiche
+numéros du seed (ex. `+2290100000020`, Rosine Agossou) → le code s'affiche
 dans les logs du serveur (`SMS_PROVIDER=console`) → tableau de bord avec
 biens vérifiés.
 

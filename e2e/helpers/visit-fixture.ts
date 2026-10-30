@@ -17,7 +17,7 @@ export async function visitFixture(completed: boolean) {
     await db.query('INSERT INTO "User" (id, phone, role, "fullName", "createdAt", "updatedAt") VALUES ($1,$2,$3,$4,now(),now())', [id, phone, role, role]);
   }
   await db.query(`INSERT INTO "Property" (id,title,description,"pricePerNight","maxGuests",neighborhood,city,status,"ownerId","createdAt","updatedAt")
-    VALUES ($1,$2,'Logement de recette',500000,4,'QA','Abidjan','PENDING_VERIFICATION',$3,now(),now())`, [propertyId,title,ownerId]);
+    VALUES ($1,$2,'Logement de recette',500000,4,'QA','Cotonou','PENDING_VERIFICATION',$3,now(),now())`, [propertyId,title,ownerId]);
   await db.query(`INSERT INTO "VerificationRequest" (id,status,"propertyId","ownerId","packPaid","createdAt","updatedAt")
     VALUES ($1,$2,$3,$4,true,now(),now())`, [requestId, completed ? "VISITED" : "SCHEDULED", propertyId, ownerId]);
   await db.query(`INSERT INTO "Visit" (id,"scheduledAt","completedAt","checkInAt","verificationRequestId","agentId","createdAt","updatedAt")

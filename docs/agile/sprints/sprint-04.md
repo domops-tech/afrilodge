@@ -62,7 +62,7 @@ npm run dev
 ```
 
 Propriétaire (`/connexion`, tout numéro) : créer un bien, demander sa
-vérification. Admin (`/admin/connexion`, `+2250700000001`) : le voir dans
+vérification. Admin (`/admin/connexion`, `+2290100000001`) : le voir dans
 « Demandes à planifier », l'affecter à un agent. Retour côté propriétaire :
 le statut affiche la date planifiée. Le calendrier se manipule sur
 n'importe quel bien déjà publié.

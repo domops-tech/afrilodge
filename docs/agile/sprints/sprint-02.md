@@ -59,10 +59,10 @@ npm run db:seed
 npm run dev
 ```
 
-Connexion sur `/fr/admin/connexion` avec `+2250700000001`. Deux fiches
-attendent en file : « Villa meublée, Bingerville » (approuvez-la — la
-mention apparaît aussitôt sur `/proprietaire` du compte de Marième Sow) et
-« Chambre meublée, Yopougon » (refusez-la avec un motif).
+Connexion sur `/fr/admin/connexion` avec `+2290100000001`. Deux fiches
+attendent en file : « Villa meublée, Godomey » (approuvez-la — la
+mention apparaît aussitôt sur `/proprietaire` du compte de Mariam Adjovi) et
+« Chambre meublée, Zogbo » (refusez-la avec un motif).
 
 `npm run test:e2e` rejoue les deux décisions automatiquement et vérifie le
 résultat en base.

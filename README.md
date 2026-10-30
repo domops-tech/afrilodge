@@ -39,18 +39,18 @@ serveur au lieu de l'envoyer.
 
 ## Comptes de démonstration (`prisma/seed.ts`)
 
-Connexion par téléphone + code à usage unique (`+225…`, voir le seed pour la
+Connexion par téléphone + code à usage unique (`+229…`, voir le seed pour la
 liste complète). Le code s'affiche dans les logs du serveur en
 développement.
 
-- Propriétaire (`/connexion`) : `+2250700000020` (Fatou Diabaté, biens déjà
+- Propriétaire (`/connexion`) : `+2290100000020` (Rosine Agossou, biens déjà
   vérifiés) — le compte se crée à la première connexion.
-- Agent (`/terrain/connexion`) : `+2250700000011` (Jean-Marc Assouan, une
-  visite lui est affectée sur le bien « Studio cosy, Plateau »). Compte
+- Agent (`/terrain/connexion`) : `+2290100000011` (Florent Sossou, une
+  visite lui est affectée sur le bien « Studio cosy, Jéricho »). Compte
   provisionné par le seed, pas d'auto-inscription.
-- Admin (`/admin/connexion`) : `+2250700000001`. Deux fiches déjà visitées
-  attendent une décision : « Villa meublée, Bingerville » et « Chambre
-  meublée, Yopougon ». `+2250700000002` (second compte admin, réservé au
+- Admin (`/admin/connexion`) : `+2290100000001`. Deux fiches déjà visitées
+  attendent une décision : « Villa meublée, Godomey » et « Chambre
+  meublée, Zogbo ». `+2290100000002` (second compte admin, réservé au
   test e2e de planification, voir `e2e/owner-space.spec.ts`). `/admin/litiges` :
   signalements en cours, contre-visite ou résolution directe (CDC §6.5.3,
   épic 7).

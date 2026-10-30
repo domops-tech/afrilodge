@@ -105,7 +105,7 @@ npm run db:seed
 npm run dev
 ```
 
-Voyageur : réserve un bien vérifié, propriétaire (`+2250700000020`)
+Voyageur : réserve un bien vérifié, propriétaire (`+2290100000020`)
 accepte — l'intention de paiement se crée. Voyageur : `/reserver/paiement/
 <id>`, « Payer via Mobile Money (simulateur) » — réservation payée, code
 de séjour et coordonnées d'accès révélés. « Confirmer mon arrivée » —

@@ -8,7 +8,7 @@ d'annulation par date).
 
 ## Le symptôme
 
-Après qu'un voyageur ait réservé le Studio Cocody Angré du 15 au 17
+Après qu'un voyageur ait réservé le Studio Fidjrossè du 15 au 17
 octobre, le calendrier de disponibilité du propriétaire affichait les
 cases **16 et 17** comme verrouillées (grisées, non décochables) — alors
 que la base contenait bien les lignes `AvailabilityDay` attendues pour le

@@ -6,12 +6,12 @@ import { test, expect } from "@playwright/test";
 // Espace propriétaire (CDC §6.3). Utilise trois identités distinctes pour
 // rester parallélisable sans course sur la file d'OTP (voir
 // e2e/admin-review.spec.ts pour la même contrainte) : un propriétaire
-// fraîchement inscrit, Fatou Diabaté (biens déjà publiés du seed) et
-// Kouassi Yao (bien de test inséré directement pour ce fichier), plus le
+// fraîchement inscrit, Rosine Agossou (biens déjà publiés du seed) et
+// Codjo Dossou (bien de test inséré directement pour ce fichier), plus le
 // second compte admin dédié à ce fichier (prisma/seed.ts).
-const NEW_ADMIN_PHONE = "+2250700000002";
-const FATOU_PHONE = "+2250700000020";
-const KOUASSI_PHONE = "+2250700000021";
+const NEW_ADMIN_PHONE = "+2290100000002";
+const FATOU_PHONE = "+2290100000020";
+const KOUASSI_PHONE = "+2290100000021";
 
 async function requestAndReadOtp(
   page: import("@playwright/test").Page,
@@ -39,7 +39,7 @@ test("un propriétaire crée un bien, le demande en vérification, et l'admin pl
   request,
 }) => {
   test.setTimeout(30_000);
-  const ownerPhone = `+225070000${Math.floor(1000 + Math.random() * 8999)}`;
+  const ownerPhone = `+229010000${Math.floor(1000 + Math.random() * 8999)}`;
 
   // Première connexion : crée le compte propriétaire (CDC §5.2.16).
   await page.goto("/fr/connexion");
@@ -49,8 +49,8 @@ test("un propriétaire crée un bien, le demande en vérification, et l'admin pl
   await page.getByRole("link", { name: /ajouter un bien/i }).click();
   await page.getByLabel(/^titre$/i).fill("Bien de test Sprint 4");
   await page.getByLabel(/description/i).fill("Un logement meublé pour le test de bout en bout.");
-  await page.getByLabel(/quartier/i).fill("Cocody");
-  await page.getByLabel(/^ville$/i).fill("Abidjan");
+  await page.getByLabel(/quartier/i).fill("Cadjèhoun");
+  await page.getByLabel(/^ville$/i).fill("Cotonou");
   await page.getByLabel(/prix/i).fill("12000");
   await page.getByLabel(/voyageurs maximum/i).fill("2");
   await page.getByRole("button", { name: /créer le bien/i }).click();
@@ -69,7 +69,7 @@ test("un propriétaire crée un bien, le demande en vérification, et l'admin pl
   await expect(page).toHaveURL(/\/fr\/admin$/);
 
   const requestCard = page.getByTestId(`schedule-request-${propertyId}`);
-  await requestCard.getByLabel(/agent/i).selectOption({ label: "Aïssata Koné" });
+  await requestCard.getByLabel(/agent/i).selectOption({ label: "Judith Hounkpatin" });
   await requestCard.getByLabel(/date de visite/i).fill("2027-01-15T10:00");
   await requestCard.getByRole("button", { name: /planifier/i }).click();
 
@@ -106,7 +106,7 @@ test("un propriétaire tient son calendrier de disponibilité", async ({ page, r
   await requestAndReadOtp(page, request, FATOU_PHONE);
   await expect(page).toHaveURL(/\/fr\/proprietaire$/);
 
-  await page.getByRole("link", { name: /cocody angré/i }).click();
+  await page.getByRole("link", { name: /fidjrossè/i }).click();
   await expect(page).toHaveURL(/\/fr\/proprietaire\/biens\/.+/);
   const propertyId = page.url().match(/\/biens\/([^/]+)/)?.[1];
   expect(propertyId).toBeTruthy();
@@ -184,7 +184,7 @@ test("un propriétaire voit le motif de refus et peut redemander une vérificati
     propertyId = randomUUID();
     await db.query(
       `INSERT INTO "Property" (id, title, description, "pricePerNight", "maxGuests", neighborhood, city, status, "ownerId", "createdAt", "updatedAt")
-       VALUES ($1, 'Bien refusé de test', 'Description de test pour le refus.', 8000, 2, 'Marcory', 'Abidjan', 'DRAFT', $2, now(), now())`,
+       VALUES ($1, 'Bien refusé de test', 'Description de test pour le refus.', 8000, 2, 'Akpakpa', 'Cotonou', 'DRAFT', $2, now(), now())`,
       [propertyId, ownerId]
     );
     await db.query(

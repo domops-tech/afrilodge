@@ -9,7 +9,7 @@ vi.mock("@/lib/auth/otp", () => ({ verifyOtp: mocks.otp, requestOtp: mocks.reque
 vi.mock("@/lib/auth/session", () => ({ createGuestSession: vi.fn() }));
 vi.mock("@/i18n/navigation", () => ({ redirect: vi.fn() }));
 import { confirmBookingAction, requestGuestOtpAction } from "./actions";
-const valid = { propertyId: "property", checkIn: "2030-01-01", checkOut: "2030-01-03", guests: "2", phone: "+2250700123456", fullName: "Voyageur", code: "123456" };
+const valid = { propertyId: "property", checkIn: "2030-01-01", checkOut: "2030-01-03", guests: "2", phone: "+2290100123456", fullName: "Voyageur", code: "123456" };
 const published = { maxGuests: 4, status: "PUBLISHED", verification: { status: "ACTIVE", expiresAt: new Date("2031-01-01") } };
 beforeEach(() => { vi.clearAllMocks(); mocks.property.mockResolvedValue(published); mocks.available.mockResolvedValue(true); mocks.otp.mockResolvedValue({ ok: true }); });
 async function confirm(values: Partial<typeof valid> = {}) {

@@ -8,10 +8,10 @@ import { expect } from "@playwright/test";
 // bien créé directement en base plutôt que rejouer le parcours terrain +
 // admin, pourquoi des numéros aléatoires).
 
-export const AGENT_ID_PHONE = "+2250700000010";
+export const AGENT_ID_PHONE = "+2290100000010";
 
 export function randomPhone(): string {
-  return `+225070000${Math.floor(1000 + Math.random() * 8999)}`;
+  return `+229010000${Math.floor(1000 + Math.random() * 8999)}`;
 }
 
 export function isoDate(date: Date): string {
@@ -107,7 +107,7 @@ export async function createVerifiedProperty(
 
   await db.query(
     `INSERT INTO "Property" (id, title, description, "pricePerNight", "maxGuests", neighborhood, city, "accessLandmarks", latitude, longitude, status, "isDemo", "ownerId", "createdAt", "updatedAt")
-     VALUES ($1, 'Bien vérifié de test', 'Logement meublé pour les tests de bout en bout.', $2, 4, 'Cocody', 'Abidjan', 'Repère de test à 100m du carrefour.', 5.36, -3.94, 'PUBLISHED', true, $3, now(), now())`,
+     VALUES ($1, 'Bien vérifié de test', 'Logement meublé pour les tests de bout en bout.', $2, 4, 'Cadjèhoun', 'Cotonou', 'Repère de test à 100m du carrefour.', 5.36, -3.94, 'PUBLISHED', true, $3, now(), now())`,
     [propertyId, price, ownerId]
   );
   await db.query(

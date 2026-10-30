@@ -69,7 +69,7 @@ npm run dev
 ```
 
 `/fr/recherche` sans filtre liste les trois biens vérifiés. Filtrer par
-quartier (« Angré ») ou budget max réduit les résultats. Ouvrir une fiche
+quartier (« Fidjrossè ») ou budget max réduit les résultats. Ouvrir une fiche
 affiche la galerie, la date de vérification, l'agent, les équipements
 constatés, les points de repère et la carte approximative.
 

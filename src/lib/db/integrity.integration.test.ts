@@ -113,7 +113,7 @@ describe.skipIf(process.env.RUN_DB_TESTS !== "1")("intégrité PostgreSQL et par
   it("fige le total dès la demande puis conserve ce total après changement de tarif", async () => {
     const p = await property();
     const form = new FormData();
-    Object.entries({ propertyId: p.id, checkIn: "2030-01-01", checkOut: "2030-01-03", guests: "1", phone: "+2250700112233", fullName: "Guest Test", code: "123456" }).forEach(([k,v]) => form.set(k,v));
+    Object.entries({ propertyId: p.id, checkIn: "2030-01-01", checkOut: "2030-01-03", guests: "1", phone: "+2290100112233", fullName: "Guest Test", code: "123456" }).forEach(([k,v]) => form.set(k,v));
     await expect(confirmBookingAction({ status: "idle" }, form)).rejects.toThrow("redirect");
     const b = await shared.db.booking.findFirstOrThrow({ where: { propertyId: p.id } });
     expect(b.totalAmount).toBe(200);

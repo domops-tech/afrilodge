@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 
 // Recherche et fiche détaillée publiques (CDC §6.1). Le jeu de seed publie
-// trois biens vérifiés : « Studio meublé, Cocody Angré » et « Deux pièces
-// climatisé, Cocody Riviera » (propriétaire Fatou Diabaté), et
-// « Appartement meublé, Marcory Résidentiel » (Kouassi Yao).
+// trois biens vérifiés : « Studio meublé, Fidjrossè » et « Deux pièces
+// climatisé, Haie Vive » (propriétaire Rosine Agossou), et
+// « Appartement meublé, Akpakpa » (Codjo Dossou).
 
 test.describe("recherche publique (CDC §6.1.1, §6.1.2)", () => {
   test("liste les biens vérifiés et signale clairement les photos de démonstration", async ({ page }) => {
@@ -17,7 +17,7 @@ test.describe("recherche publique (CDC §6.1.1, §6.1.2)", () => {
     const resultsText = await page.getByText(/logements? vérifiés? trouvés?/).textContent();
     expect(Number(resultsText?.match(/\d+/)?.[0])).toBeGreaterThanOrEqual(3);
 
-    const firstCard = page.getByRole("link", { name: /cocody angré/i });
+    const firstCard = page.getByRole("link", { name: /fidjrossè/i });
     await expect(firstCard).toBeVisible();
     await expect(firstCard.getByText("Vérifié")).toBeVisible();
 
@@ -27,13 +27,13 @@ test.describe("recherche publique (CDC §6.1.1, §6.1.2)", () => {
 
   test("filtre par quartier", async ({ page }) => {
     await page.goto("/fr/recherche");
-    await page.getByLabel(/quartier/i).fill("Angré");
+    await page.getByLabel(/quartier/i).fill("Fidjrossè");
     await page.getByRole("button", { name: /^mettre à jour$/i }).click();
 
-    await expect(page).toHaveURL(/quartier=Angr/);
+    await expect(page).toHaveURL(/quartier=Fidjross/);
     await expect(page.getByText(/1 logement vérifié trouvé/)).toBeVisible();
-    await expect(page.getByRole("link", { name: /cocody angré/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /marcory/i })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /fidjrossè/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /akpakpa/i })).toHaveCount(0);
   });
 
   test("filtre par budget maximum", async ({ page }) => {
@@ -41,9 +41,9 @@ test.describe("recherche publique (CDC §6.1.1, §6.1.2)", () => {
     await page.getByLabel(/budget.*nuit/i).fill("16000");
     await page.getByRole("button", { name: /^mettre à jour$/i }).click();
 
-    // Seul le studio Angré (15 000 FCFA) passe sous ce budget.
+    // Seul le studio Fidjrossè (15 000 FCFA) passe sous ce budget.
     await expect(page.getByText(/1 logement vérifié trouvé/)).toBeVisible();
-    await expect(page.getByRole("link", { name: /cocody angré/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /fidjrossè/i })).toBeVisible();
   });
 });
 
@@ -52,12 +52,12 @@ test.describe("fiche détaillée (CDC §6.1.3, §6.1.4, §6.1.5)", () => {
     page,
   }) => {
     await page.goto("/fr/recherche");
-    await page.getByRole("link", { name: /cocody angré/i }).click();
+    await page.getByRole("link", { name: /fidjrossè/i }).click();
     await expect(page).toHaveURL(/\/fr\/logements\/.+/);
 
     // CDC §6.1.3 : date de vérification et agent toujours affichés.
     await expect(page.getByText(/Une personne de notre équipe s’est rendue sur place/i).first()).toBeVisible();
-    await expect(page.getByText(/Vérifié par Aïssata Koné/)).toBeVisible();
+    await expect(page.getByText(/Vérifié par Judith Hounkpatin/)).toBeVisible();
 
     // Équipements constatés par la visite (tous confirmés pour ce bien).
     await expect(page.getByText("Wifi")).toBeVisible();
@@ -66,9 +66,9 @@ test.describe("fiche détaillée (CDC §6.1.3, §6.1.4, §6.1.5)", () => {
     await expect(page.locator('iframe[title="Situation approximative"]')).toBeVisible();
 
     // CDC §6.1.5 : coordonnées exactes et contact du propriétaire jamais
-    // exposés avant confirmation — le numéro de la propriétaire (Fatou
-    // Diabaté) ne doit apparaître nulle part sur la page.
-    await expect(page.getByText("+2250700000020")).toHaveCount(0);
+    // exposés avant confirmation — le numéro de la propriétaire (Rosine
+    // Agossou) ne doit apparaître nulle part sur la page.
+    await expect(page.getByText("+2290100000020")).toHaveCount(0);
 
     // CTA vers la réservation (Sprint 5).
     await page.getByRole("link", { name: /réserver/i }).click();

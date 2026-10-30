@@ -79,7 +79,7 @@ test.describe("budget de poids des pages publiques (CDC §7.3)", () => {
     context,
   }) => {
     await page.goto("/fr/recherche");
-    const href = await page.getByRole("link", { name: /cocody angré/i }).getAttribute("href");
+    const href = await page.getByRole("link", { name: /fidjrossè/i }).getAttribute("href");
     expect(href).toBeTruthy();
 
     // Nouvelle page pour mesurer un vrai premier chargement, sans cache

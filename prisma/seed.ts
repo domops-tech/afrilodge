@@ -3,9 +3,8 @@
  * 2 agents, 1 admin. Trois biens déjà vérifiés et publiés, un en attente de
  * visite, un brouillon, et deux fiches déjà visitées en attente de décision
  * du back-office (une pour démontrer l'approbation, une le refus). Le CDC ne
- * fixe pas de ville précise au-delà de la zone BCEAO ; Abidjan est utilisée
- * ici comme ville de démonstration, à ajuster si VD Technologies vise une
- * autre place.
+ * fixe pas de ville précise au-delà de la zone BCEAO ; Cotonou (Bénin, marché
+ * de lancement) est utilisée comme ville de démonstration.
  *
  * Exécution : npx prisma db seed (ou `npm run db:seed`).
  */
@@ -21,17 +20,17 @@ const prisma = new PrismaClient({ adapter });
 
 const SAMPLE_IMAGE = readFileSync(join(__dirname, "..", "e2e", "fixtures", "sample.jpg"));
 
-// Coordonnées approximatives par quartier (Abidjan) — la position exacte
-// n'est jamais capturée en amont : seul le point de repère textuel l'est
-// (CDC §6.1.4). Sert à peupler Property/Visit pour la démonstration de la
-// carte de situation approximative du Sprint 3.
+// Coordonnées approximatives par quartier (Cotonou et Abomey-Calavi) — la
+// position exacte n'est jamais capturée en amont : seul le point de repère
+// textuel l'est (CDC §6.1.4). Sert à peupler Property/Visit pour la
+// démonstration de la carte de situation approximative.
 const NEIGHBORHOOD_COORDS: Record<string, { lat: number; lng: number }> = {
-  Angré: { lat: 5.409, lng: -3.982 },
-  Riviera: { lat: 5.359952, lng: -3.941 },
-  Marcory: { lat: 5.288, lng: -3.98 },
-  Plateau: { lat: 5.32, lng: -4.021 },
-  Bingerville: { lat: 5.356, lng: -3.882 },
-  Yopougon: { lat: 5.345, lng: -4.09 },
+  Fidjrossè: { lat: 6.3505, lng: 2.36 },
+  "Haie Vive": { lat: 6.36, lng: 2.39 },
+  Akpakpa: { lat: 6.356, lng: 2.44 },
+  Jéricho: { lat: 6.366, lng: 2.405 },
+  Godomey: { lat: 6.3908, lng: 2.342 },
+  Zogbo: { lat: 6.379, lng: 2.378 },
 };
 
 function daysFromNow(days: number) {
@@ -88,7 +87,7 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       role: "ADMIN",
-      phone: "+2250700000001",
+      phone: "+2290100000001",
       email: "admin@vdtechnologies.example",
       fullName: "Admin VD Technologies",
     },
@@ -100,7 +99,7 @@ async function main() {
   await prisma.user.create({
     data: {
       role: "ADMIN",
-      phone: "+2250700000002",
+      phone: "+2290100000002",
       fullName: "Admin Secondaire",
     },
   });
@@ -109,28 +108,28 @@ async function main() {
     prisma.user.create({
       data: {
         role: "AGENT",
-        phone: "+2250700000010",
-        fullName: "Aïssata Koné",
+        phone: "+2290100000010",
+        fullName: "Judith Hounkpatin",
       },
     }),
     prisma.user.create({
       data: {
         role: "AGENT",
-        phone: "+2250700000011",
-        fullName: "Jean-Marc Assouan",
+        phone: "+2290100000011",
+        fullName: "Florent Sossou",
       },
     }),
   ]);
 
   const [owner1, owner2, owner3] = await Promise.all([
     prisma.user.create({
-      data: { role: "OWNER", phone: "+2250700000020", fullName: "Fatou Diabaté" },
+      data: { role: "OWNER", phone: "+2290100000020", fullName: "Rosine Agossou" },
     }),
     prisma.user.create({
-      data: { role: "OWNER", phone: "+2250700000021", fullName: "Kouassi Yao" },
+      data: { role: "OWNER", phone: "+2290100000021", fullName: "Codjo Dossou" },
     }),
     prisma.user.create({
-      data: { role: "OWNER", phone: "+2250700000022", fullName: "Marième Sow" },
+      data: { role: "OWNER", phone: "+2290100000022", fullName: "Mariam Adjovi" },
     }),
   ]);
 
@@ -138,54 +137,54 @@ async function main() {
   const propertiesData = [
     {
       owner: owner1,
-      title: "Studio meublé, Cocody Angré",
-      neighborhood: "Angré",
-      city: "Abidjan",
+      title: "Studio meublé, Fidjrossè",
+      neighborhood: "Fidjrossè",
+      city: "Cotonou",
       price: 15000,
       guests: 2,
       status: "verified" as const,
     },
     {
       owner: owner1,
-      title: "Deux pièces climatisé, Cocody Riviera",
-      neighborhood: "Riviera",
-      city: "Abidjan",
+      title: "Deux pièces climatisé, Haie Vive",
+      neighborhood: "Haie Vive",
+      city: "Cotonou",
       price: 22000,
       guests: 3,
       status: "verified" as const,
     },
     {
       owner: owner2,
-      title: "Appartement meublé, Marcory Résidentiel",
-      neighborhood: "Marcory",
-      city: "Abidjan",
+      title: "Appartement meublé, Akpakpa",
+      neighborhood: "Akpakpa",
+      city: "Cotonou",
       price: 18000,
       guests: 4,
       status: "verified" as const,
     },
     {
       owner: owner2,
-      title: "Studio cosy, Plateau",
-      neighborhood: "Plateau",
-      city: "Abidjan",
+      title: "Studio cosy, Jéricho",
+      neighborhood: "Jéricho",
+      city: "Cotonou",
       price: 20000,
       guests: 2,
       status: "scheduled" as const, // visite planifiée, pas encore réalisée — voir e2e/field-visit.spec.ts
     },
     {
       owner: owner3,
-      title: "Villa meublée, Bingerville",
-      neighborhood: "Bingerville",
-      city: "Abidjan",
+      title: "Villa meublée, Godomey",
+      neighborhood: "Godomey",
+      city: "Abomey-Calavi",
       price: 35000,
       guests: 6,
       status: "pending_review" as const, // visitée, en attente de décision admin — démonstration de l'approbation
     },
     {
       owner: owner2,
-      title: "Chambre meublée, Yopougon",
-      neighborhood: "Yopougon",
-      city: "Abidjan",
+      title: "Chambre meublée, Zogbo",
+      neighborhood: "Zogbo",
+      city: "Cotonou",
       price: 9000,
       guests: 1,
       status: "pending_review_reject" as const, // visitée, en attente de décision admin — démonstration du refus

@@ -41,9 +41,9 @@
   },
   "auth": {
     "phoneLabel": "Phone number",
-    "phonePlaceholder": "+225 07 00 00 00 00",
+    "phonePlaceholder": "+229 01 97 00 00 00",
     "identifierLabel": "Phone or email",
-    "identifierPlaceholder": "+225 07 00 00 00 00 or you@example.com",
+    "identifierPlaceholder": "+229 01 97 00 00 00 or you@example.com",
     "fullNameLabel": "Full name (first login)",
     "emailLabel": "Email (optional — backup channel for the code)",
     "emailPlaceholder": "you@example.com",

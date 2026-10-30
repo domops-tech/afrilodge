@@ -70,8 +70,8 @@ npm run db:seed
 npm run dev
 ```
 
-Se connecter sur `/fr/terrain/connexion` avec `+2250700000011` (agent 2 du
-seed, une visite lui est affectée sur le bien « Studio cosy, Plateau »).
+Se connecter sur `/fr/terrain/connexion` avec `+2290100000011` (agent 2 du
+seed, une visite lui est affectée sur le bien « Studio cosy, Jéricho »).
 Couper le réseau du navigateur après avoir démarré la visite : tout le
 parcours reste utilisable. Rétablir le réseau : la synchronisation se
 déclenche automatiquement.

@@ -7,7 +7,7 @@ test("un nouveau propriétaire se connecte par téléphone + code à usage uniqu
   page,
   request,
 }) => {
-  const phone = `+225070000${Math.floor(1000 + Math.random() * 8999)}`;
+  const phone = `+229010000${Math.floor(1000 + Math.random() * 8999)}`;
 
   await page.goto("/fr/connexion");
   await page.getByLabel(/téléphone ou email/i).fill(phone);
