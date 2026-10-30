@@ -1,6 +1,7 @@
 # 0013 — Fournisseur SMS (OTP et relances)
 
 **Statut** : bloqué — analyse faite avec vous, choix du fournisseur reporté.
+**Mise à jour (30 octobre 2026) : le marché de lancement est le Bénin, pas la Côte d'Ivoire.** Les opérateurs comparés ci-dessous sont ivoiriens et ne valent plus ; voir la décision 0019 pour le comparatif béninois.
 Voir aussi la décision 0014 : l'email est devenu un canal de secours optionnel
 en complément de ce qui suit, jamais un remplacement.
 
