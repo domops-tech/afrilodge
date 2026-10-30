@@ -9,6 +9,9 @@ import { VerificationNote } from "@/components/property/VerificationNote";
 import { Field } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 
+// Les logements affichés viennent de la base : rendu à chaque visite, jamais figé à la construction de l'image.
+export const dynamic = "force-dynamic";
+
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
