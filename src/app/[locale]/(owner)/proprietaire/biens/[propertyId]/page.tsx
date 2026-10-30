@@ -34,7 +34,6 @@ export default async function PropertyManagePage({
   setRequestLocale(locale);
   const session = await requireRole("OWNER");
   const t = await getTranslations("owner");
-  const tVerif = await getTranslations("verification");
   const tBooking = await getTranslations("booking");
   const format = await getFormatter();
 
@@ -66,6 +65,15 @@ export default async function PropertyManagePage({
   });
   const availabilityByDate = new Map(availability.map((a) => [toIsoDate(a.date), a.status]));
   const calendarDays = Array.from({ length: CALENDAR_WINDOW_DAYS }, (_, i) => addUtcDays(today, i));
+  const monthFormat = new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "UTC" });
+  const weekdayLabels = Array.from({ length: 7 }, (_, i) => new Intl.DateTimeFormat(locale, { weekday: "narrow", timeZone: "UTC" }).format(new Date(Date.UTC(2024, 0, 1 + i))));
+  const months: { key: string; label: string; days: Date[] }[] = [];
+  for (const day of calendarDays) {
+    const key = toIsoDate(day).slice(0, 7);
+    let month = months.find((m) => m.key === key);
+    if (!month) { month = { key, label: monthFormat.format(day), days: [] }; months.push(month); }
+    month.days.push(day);
+  }
 
   const bookingIds = property.bookings.map((b) => b.id);
   const commissionEntries =
@@ -188,8 +196,8 @@ export default async function PropertyManagePage({
             <p className="text-xs text-muted">{t("amenitiesLockedNotice")}</p>
             <ul className="flex flex-wrap gap-2">
               {property.amenities.map((a) => (
-                <li key={a.id} className="rounded-full bg-surface px-3 py-1 text-sm">
-                  {a.name} {a.confirmed ? tVerif("badge") : null}
+                <li key={a.id} className={`rounded-full px-3 py-1 text-sm ${a.confirmed ? "bg-verified-soft text-verified" : "bg-surface"}`}>
+                  {a.confirmed ? <span aria-hidden="true">✓ </span> : null}{a.name}
                 </li>
               ))}
             </ul>
@@ -223,32 +231,41 @@ export default async function PropertyManagePage({
         <form action={updateAvailabilityAction} className="flex flex-col gap-3">
           <input type="hidden" name="propertyId" value={property.id} />
           <input type="hidden" name="locale" value={locale} />
-          <div className="flex flex-wrap gap-1.5">
-            {calendarDays.map((day) => {
-              const iso = toIsoDate(day);
-              const status = availabilityByDate.get(iso);
-              const locked = status === "HELD" || status === "BOOKED";
-              return (
-                <label
-                  key={iso}
-                  className={`flex h-9 w-9 items-center justify-center rounded text-xs ${
-                    locked
-                      ? "cursor-not-allowed bg-border text-muted"
-                      : "cursor-pointer border border-border has-checked:bg-danger has-checked:text-white"
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    name="blockedDate"
-                    value={iso}
-                    defaultChecked={status === "BLOCKED"}
-                    disabled={locked}
-                    className="sr-only"
-                  />
-                  {day.getUTCDate()}
-                </label>
-              );
-            })}
+          <div className="flex flex-wrap gap-x-10 gap-y-6">
+            {months.map((month) => (
+              <div key={month.key}>
+                <p className="font-semibold capitalize">{month.label}</p>
+                <div className="mt-2 grid w-[17.5rem] grid-cols-7 gap-1">
+                  {weekdayLabels.map((w, i) => <span key={i} aria-hidden="true" className="text-center text-xs font-medium uppercase text-muted">{w}</span>)}
+                  {Array.from({ length: (month.days[0].getUTCDay() + 6) % 7 }, (_, i) => <span key={`gap-${i}`} />)}
+                  {month.days.map((day) => {
+                    const iso = toIsoDate(day);
+                    const status = availabilityByDate.get(iso);
+                    const locked = status === "HELD" || status === "BOOKED";
+                    return (
+                      <label
+                        key={iso}
+                        className={`flex h-9 items-center justify-center rounded-[var(--radius-sm)] text-sm ${
+                          locked
+                            ? "cursor-not-allowed bg-surface-alt text-muted line-through"
+                            : "cursor-pointer border border-border bg-background hover:border-foreground/40 has-checked:border-danger has-checked:bg-danger has-checked:text-white"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          name="blockedDate"
+                          value={iso}
+                          defaultChecked={status === "BLOCKED"}
+                          disabled={locked}
+                          className="sr-only"
+                        />
+                        {day.getUTCDate()}
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
           <Button type="submit" variant="secondary" className="self-start">
             {t("calendarSave")}

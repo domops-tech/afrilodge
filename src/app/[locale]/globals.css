@@ -156,3 +156,6 @@ h1 { font-weight: 700; text-wrap: balance; }
   .booking-form-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.1rem; }
   .booking-fields-wide { grid-column: 1 / -1; }
 }
+
+.console-main h1 { font-size: clamp(1.5rem, 3vw, 1.75rem); line-height: 1.2; font-weight: 600; letter-spacing: -.01em; }
+.console-main h2 { font-size: 1.1875rem; line-height: 1.37; font-weight: 600; color: var(--foreground); }

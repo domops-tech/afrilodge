@@ -3,8 +3,6 @@ import { requireRole } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db/client";
 import { Link } from "@/i18n/navigation";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { logoutAction } from "@/lib/auth/logout-action";
 import { isReviewOverdue } from "@/lib/verification/badge";
 import { ScheduleForm } from "./ScheduleForm";
 
@@ -17,7 +15,6 @@ export default async function AdminQueuePage({
   setRequestLocale(locale);
   const session = await requireRole("ADMIN");
   const t = await getTranslations("admin");
-  const tNav = await getTranslations("nav");
   const format = await getFormatter();
 
   const [user, toSchedule, agents, toReview] = await Promise.all([
@@ -42,30 +39,8 @@ export default async function AdminQueuePage({
 
   return (
     <div className="flex flex-1 flex-col gap-6 px-4 py-8">
-      <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{t("greeting", { name: user.fullName })}</h1>
-        <form action={logoutAction}>
-          <input type="hidden" name="locale" value={locale} />
-          <Button type="submit" variant="ghost">
-            {tNav("logout")}
-          </Button>
-        </form>
-      </header>
+      <h1>{t("greeting", { name: user.fullName })}</h1>
 
-      <nav className="flex gap-4 text-sm">
-        <Link href="/admin/agents" className="font-medium text-accent">
-          {t("agentsTitle")}
-        </Link>
-        <Link href="/admin/commissions" className="font-medium text-accent">
-          {t("commissionsTitle")}
-        </Link>
-        <Link href="/admin/parametres" className="font-medium text-accent">
-          {t("settingsTitle")}
-        </Link>
-        <Link href="/admin/litiges" className="font-medium text-accent">
-          {t("disputesTitle")}
-        </Link>
-      </nav>
 
       <section className="flex flex-col gap-3">
         <h2 className="text-sm font-medium text-muted">{t("toScheduleTitle")}</h2>

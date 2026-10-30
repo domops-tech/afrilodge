@@ -25,7 +25,12 @@
     "login": "Log in",
     "logout": "Log out",
     "myBookings": "My bookings",
-    "mainNavigation": "Main navigation"
+    "mainNavigation": "Main navigation",
+    "toProcess": "To review",
+    "disputes": "Disputes",
+    "agents": "Agents",
+    "commissions": "Commissions",
+    "settings": "Settings"
   },
   "verification": {
     "badge": "Verified in person",
@@ -63,7 +68,7 @@
     "notRecognized": "This identifier isn't linked to any recognized account for this space. Contact your administrator.",
     "identifierTaken": "Phone or email already used for this account type.",
     "loginIntro": "Sign in to your host, field agent or administrator space.",
-    "accessByCode": "SECURE SIGN-IN WITH A CODE"
+    "accessByCode": "Secure sign-in with a code"
   },
   "home": {
     "tagline": "A furnished home, verified on site.",
@@ -338,7 +343,10 @@
       "verrouille": "Amenities can no longer be edited: the visit has already taken place.",
       "reservation-introuvable": "This booking could not be found for this property.",
       "transition-refusee": "This booking can no longer be changed in its current state."
-    }
+    },
+    "greeting": "Hello, {name}",
+    "dashboardIntro": "Your homes and where each one stands in verification.",
+    "perNight": "night"
   },
   "booking": {
     "backToProperty": "Back to listing",

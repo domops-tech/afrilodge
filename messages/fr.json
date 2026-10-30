@@ -25,7 +25,12 @@
     "login": "Se connecter",
     "logout": "Se déconnecter",
     "myBookings": "Mes réservations",
-    "mainNavigation": "Navigation principale"
+    "mainNavigation": "Navigation principale",
+    "toProcess": "À traiter",
+    "disputes": "Litiges",
+    "agents": "Agents",
+    "commissions": "Commissions",
+    "settings": "Paramètres"
   },
   "verification": {
     "badge": "Vérifié sur place",
@@ -63,7 +68,7 @@
     "notRecognized": "Cet identifiant n'est associé à aucun compte reconnu pour cet espace. Contactez votre administrateur.",
     "identifierTaken": "Téléphone ou email déjà utilisé pour ce type de compte.",
     "loginIntro": "Connectez-vous à votre espace propriétaire, agent ou administrateur.",
-    "accessByCode": "ACCÈS SÉCURISÉ PAR CODE"
+    "accessByCode": "Accès sécurisé par code"
   },
   "home": {
     "tagline": "Un logement meublé, vérifié sur place.",
@@ -338,7 +343,10 @@
       "verrouille": "Les équipements ne sont plus modifiables : la visite a déjà eu lieu.",
       "reservation-introuvable": "Cette réservation est introuvable pour ce bien.",
       "transition-refusee": "Cette réservation ne peut plus être modifiée dans cet état."
-    }
+    },
+    "greeting": "Bonjour, {name}",
+    "dashboardIntro": "Vos logements et l'état de leur vérification.",
+    "perNight": "nuit"
   },
   "booking": {
     "backToProperty": "Retour à la fiche",

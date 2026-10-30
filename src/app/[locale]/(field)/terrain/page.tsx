@@ -3,8 +3,6 @@ import { requireRole } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db/client";
 import { Link } from "@/i18n/navigation";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { logoutAction } from "@/lib/auth/logout-action";
 
 // Liste des visites affectées à l'agent (CDC §6.4.1).
 export default async function AgentVisitsPage({
@@ -14,7 +12,6 @@ export default async function AgentVisitsPage({
   setRequestLocale(locale);
   const session = await requireRole("AGENT");
   const t = await getTranslations("field");
-  const tNav = await getTranslations("nav");
   const format = await getFormatter();
 
   const [user, visits] = await Promise.all([
@@ -28,15 +25,7 @@ export default async function AgentVisitsPage({
 
   return (
     <div className="flex flex-1 flex-col gap-6 px-4 py-8">
-      <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{t("greeting", { name: user.fullName })}</h1>
-        <form action={logoutAction}>
-          <input type="hidden" name="locale" value={locale} />
-          <Button type="submit" variant="ghost">
-            {tNav("logout")}
-          </Button>
-        </form>
-      </header>
+      <h1>{t("greeting", { name: user.fullName })}</h1>
 
       <div className="flex flex-col gap-3">
         {visits.length === 0 ? (
