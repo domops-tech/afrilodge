@@ -15,7 +15,8 @@
     "mainNavigation": "Navigation principale",
     "demoListing": "Logement de démonstration",
     "demoListingDetail": "Cette annonce, sa description et ses équipements sont des données fictives du jeu de démonstration. Elle ne correspond pas à un logement proposé à la réservation.",
-    "verifiedOnSite": "Vérifié sur place"
+    "verifiedOnSite": "Vérifié sur place",
+    "copyright": "© {year} VD Technologies"
   },
   "nav": {
     "search": "Rechercher",
@@ -105,7 +106,8 @@
     "verifyValidity": "La mention est valable douze mois. Passé ce délai, le logement est visité à nouveau.",
     "ownerTitle": "Vous avez un logement à proposer ?",
     "ownerBody": "Faites-le visiter par notre équipe. Votre fiche est publiée dès que la visite est validée.",
-    "ownerCta": "Espace propriétaire"
+    "ownerCta": "Espace propriétaire",
+    "featuredLabel": "À la une"
   },
   "field": {
     "greeting": "Bonjour, {name}",

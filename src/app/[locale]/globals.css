@@ -36,7 +36,7 @@
   --radius-pill: 999px;
   --radius-large: var(--radius-porte);
   --page-gutter: clamp(1rem, 3.6vw, 4.5rem);
-  --content-max: 1720px;
+  --content-max: 1280px;
   --shadow-card: 0 1px 2px rgb(31 43 45 / 6%), 0 14px 36px -30px rgb(31 43 45 / 24%);
   --shadow-pop: 0 16px 48px -22px rgb(31 43 45 / 27%);
   --transition-fast: 160ms cubic-bezier(.2,.7,.2,1);
@@ -82,6 +82,7 @@ img { color: transparent; }
 h1, h2, h3, .font-display { font-weight: 600; letter-spacing: -.012em; line-height: 1.15; }
 h1 { font-weight: 700; text-wrap: balance; }
 .t-display { font-size: clamp(2.25rem, 5.2vw, 3rem); line-height: 1.08; font-weight: 700; letter-spacing: -.01em; }
+.t-hero { font-size: clamp(2.5rem, 4.4vw, 3.75rem); line-height: 1.04; font-weight: 700; letter-spacing: -.015em; }
 .t-1 { font-size: clamp(1.75rem, 3.4vw, 2rem); line-height: 1.2; font-weight: 600; }
 .t-2 { font-size: clamp(1.375rem, 2.6vw, 1.5rem); line-height: 1.25; font-weight: 600; }
 .t-3 { font-size: 1.1875rem; line-height: 1.37; font-weight: 600; }
@@ -110,7 +111,7 @@ h1 { font-weight: 700; text-wrap: balance; }
 .property-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: clamp(1.15rem,2.6vw,2.5rem) clamp(.9rem,2vw,1.5rem); }
 .property-grid-3 { grid-template-columns: repeat(3,minmax(0,1fr)); }
 .property-grid-4 { grid-template-columns: repeat(4,minmax(0,1fr)); }
-.card-photo { overflow: hidden; border-radius: var(--radius); aspect-ratio: 4 / 3; background: var(--surface-alt); }
+.card-photo { position: relative; overflow: hidden; border-radius: var(--radius); aspect-ratio: 4 / 5; background: var(--surface-alt); }
 .card-photo img, .card-photo .photo-placeholder { width: 100%; height: 100%; object-fit: cover; transition: transform 480ms cubic-bezier(.2,.7,.2,1); }
 .property-card-link:hover .card-photo img { transform: scale(1.025); }
 .booking-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(19rem, .72fr); gap: clamp(2rem,6vw,7rem); align-items: start; }
@@ -159,3 +160,13 @@ h1 { font-weight: 700; text-wrap: balance; }
 
 .console-main h1 { font-size: clamp(1.5rem, 3vw, 1.75rem); line-height: 1.2; font-weight: 600; letter-spacing: -.01em; }
 .console-main h2 { font-size: 1.1875rem; line-height: 1.37; font-weight: 600; color: var(--foreground); }
+
+/* Largeur de lecture : sur grand écran le contenu ne s'étire plus au-delà de 1280 px (couche « components » : les max-w-* de Tailwind restent prioritaires). */
+@layer components {
+  .page-shell { max-width: calc(var(--content-max) + 2 * var(--page-gutter)); }
+}
+.motif-porte {
+  background-color: var(--terracotta);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='56' height='72' viewBox='0 0 56 72'><path d='M12 64V26a9 9 0 0 1 9-9h14a9 9 0 0 1 9 9v38' fill='none' stroke='%23fbf8f3' stroke-opacity='.2' stroke-width='3'/><circle cx='36' cy='42' r='2.2' fill='%23fbf8f3' fill-opacity='.28'/></svg>");
+  background-size: 56px 72px;
+}

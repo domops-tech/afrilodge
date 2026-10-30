@@ -15,7 +15,8 @@
     "mainNavigation": "Main navigation",
     "demoListing": "Demonstration listing",
     "demoListingDetail": "This listing, its description and amenities are sample data. It is not a real home available to book.",
-    "verifiedOnSite": "Verified in person"
+    "verifiedOnSite": "Verified in person",
+    "copyright": "© {year} VD Technologies"
   },
   "nav": {
     "search": "Search",
@@ -105,7 +106,8 @@
     "verifyValidity": "The label is valid for twelve months. After that, the home is visited again.",
     "ownerTitle": "Do you have a home to offer?",
     "ownerBody": "Have our team visit it. Your listing is published as soon as the visit is validated.",
-    "ownerCta": "Owner space"
+    "ownerCta": "Owner space",
+    "featuredLabel": "Featured"
   },
   "field": {
     "greeting": "Hello, {name}",
