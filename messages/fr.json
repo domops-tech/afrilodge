@@ -1,12 +1,12 @@
 {
   "common": {
-    "appName": "Ayostay",
+    "appName": "AyoStay",
     "loading": "Chargement…",
     "cancel": "Annuler",
     "confirm": "Confirmer",
     "back": "Retour",
     "language": "Langue",
-    "comingSoon": "Cette page arrive dans un prochain sprint.",
+    "comingSoon": "Cette page n'est pas encore disponible.",
     "skipToContent": "Aller au contenu",
     "footerNote": "Des logements meublés vérifiés sur place.",
     "footerNavigation": "Pied de page",
@@ -14,7 +14,8 @@
     "demoPhotoBadge": "Visuel de démonstration",
     "mainNavigation": "Navigation principale",
     "demoListing": "Logement de démonstration",
-    "demoListingDetail": "Cette annonce, sa description et ses équipements sont des données fictives du jeu de démonstration. Elle ne correspond pas à un logement proposé à la réservation."
+    "demoListingDetail": "Cette annonce, sa description et ses équipements sont des données fictives du jeu de démonstration. Elle ne correspond pas à un logement proposé à la réservation.",
+    "verifiedOnSite": "Vérifié sur place"
   },
   "nav": {
     "search": "Rechercher",
@@ -27,7 +28,7 @@
     "mainNavigation": "Navigation principale"
   },
   "verification": {
-    "badge": "Vérifié",
+    "badge": "Vérifié sur place",
     "visitedOn": "Visité le {date}",
     "verifiedBy": "Vérifié par {agentName}",
     "expiresOn": "Valable jusqu'au {date}",
@@ -35,7 +36,8 @@
     "explainerTitle": "Ce que signifie « vérifié sur place »",
     "teamVisitDate": "Une personne de notre équipe s’est rendue sur place le {date}.",
     "explainerBody": "La mention décrit cette visite de notre équipe. Les équipements annoncés et ceux constatés sont présentés séparément sur cette fiche. Il ne s’agit ni d’un avis de voyageur ni d’une garantie de conformité ou de sécurité.",
-    "validUntil": "Mention valable jusqu’au {date}."
+    "validUntil": "Mention valable jusqu’au {date}.",
+    "badgeVisited": "Visité le {date}"
   },
   "auth": {
     "phoneLabel": "Numéro de téléphone",
@@ -65,19 +67,37 @@
   },
   "home": {
     "tagline": "Un logement meublé, vérifié sur place.",
-    "searchCta": "Explorer les logements",
-    "eyebrow": "HÉBERGEMENT · VÉRIFIÉ SUR PLACE",
-    "intro": "Découvrez des logements meublés visités par notre équipe. Comparez leur quartier, leur capacité et le prix affiché avant de demander votre séjour.",
+    "searchCta": "Voir les logements",
+    "eyebrow": "Logements meublés vérifiés sur place",
+    "intro": "Chaque logement est visité par notre équipe avant d'être publié. Vous lisez ce que nous avons constaté, avec la date de la visite.",
     "searchLocation": "Ville ou quartier",
     "searchPlaceholder": "Cotonou, Fidjrossè, Haie Vive…",
-    "stays": "Des logements à découvrir",
-    "staysDescription": "Des fiches renseignées après la visite de notre équipe.",
+    "stays": "Logements à découvrir",
+    "staysDescription": "Chaque fiche a été renseignée après une visite de notre équipe.",
     "allStays": "Voir tous les logements",
-    "verificationTitle": "Une visite réelle. Des informations présentées clairement.",
-    "verificationBody": "Chaque fiche publiée porte une mention datée correspondant à la visite effectuée par notre équipe. Les informations déclarées et les équipements constatés restent distingués.",
     "emptyTitle": "De nouveaux logements bientôt disponibles",
     "emptyBody": "Aucun logement publié pour le moment. Revenez consulter la recherche.",
-    "cities": "Les fiches montrent la ville et le quartier réellement enregistrés."
+    "heroTitle": "Chez vous, où que vous soyez.",
+    "exampleLabel": "Exemple de ce que vous lisez sur une fiche",
+    "exampleVisit": "Notre équipe a visité ce logement le 15 septembre 2026.",
+    "exampleAmenity": "La climatisation fonctionne : nous l'avons testée.",
+    "stepsTitle": "Comment ça marche",
+    "step1Title": "Nous visitons",
+    "step1Body": "Un agent de notre équipe se rend sur place : photos de chaque pièce, équipements testés, repères pour trouver le logement.",
+    "step2Title": "Vous lisez le constat",
+    "step2Body": "La fiche porte la date de la visite et sépare ce que l'hôte annonce de ce que nous avons constaté.",
+    "step3Title": "Vous réservez sans compte",
+    "step3Body": "Un code reçu par SMS suffit. Le propriétaire n'est payé qu'une fois votre arrivée confirmée.",
+    "verifyTitle": "Ce que signifie « vérifié sur place »",
+    "verifyIntro": "Ce n'est pas une promesse du propriétaire. C'est ce que notre équipe a constaté en se rendant sur place.",
+    "verifyPoint1": "Des photos prises sur place, pièce par pièce.",
+    "verifyPoint2": "Les équipements annoncés comparés à ceux que nous avons trouvés.",
+    "verifyPoint3": "Des repères pour trouver le logement, relevés sur le terrain.",
+    "verifyPoint4": "L'identité du propriétaire et son titre de location contrôlés.",
+    "verifyValidity": "La mention est valable douze mois. Passé ce délai, le logement est visité à nouveau.",
+    "ownerTitle": "Vous avez un logement à proposer ?",
+    "ownerBody": "Faites-le visiter par notre équipe. Votre fiche est publiée dès que la visite est validée.",
+    "ownerCta": "Espace propriétaire"
   },
   "field": {
     "greeting": "Bonjour, {name}",
@@ -229,7 +249,7 @@
     "allPlaces": "Tous les logements",
     "resultsHeading": "Résultats de recherche",
     "activeFilters": "{count, plural, one {# filtre appliqué} other {# filtres appliqués}}",
-    "resultCap": "affichés",
+    "resultCap": "Les {count} premiers logements sont affichés.",
     "sortAction": "Trier",
     "photoUnavailable": "Photo réelle du logement à ajouter"
   },
@@ -240,7 +260,7 @@
     "sectionAmenities": "Équipements constatés",
     "sectionLandmarks": "Points de repère d'accès",
     "sectionMap": "Situation approximative",
-    "mapDisclaimer": "Localisation approximative — l'adresse exacte est communiquée après confirmation de la réservation (CDC §6.1.5).",
+    "mapDisclaimer": "Localisation approximative. L'adresse exacte vous est communiquée une fois la réservation confirmée.",
     "bookCta": "Réserver",
     "noAmenities": "Aucun équipement constaté pour l'instant.",
     "noLandmarks": "—",

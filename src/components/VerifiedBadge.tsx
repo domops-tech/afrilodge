@@ -2,26 +2,24 @@ import { useFormatter, useTranslations } from "next-intl";
 import { isVerificationValid, type VerificationLike } from "@/lib/verification/badge";
 
 /**
- * La mention « Vérifié », avec sa date — jamais affichée sans elle
+ * La mention « Vérifié sur place », avec sa date — jamais affichée sans elle
  * (CDC §4.2 : "porte une date de visite, toujours affichée au voyageur").
+ * Forme de la charte : pilule indigo, cadre de porte blanc, coche ocre.
  */
-export function VerifiedBadge({ verification, compact = false }: { verification: VerificationLike; compact?: boolean }) {
+export function VerifiedBadge({ verification, compact = false }: { verification: VerificationLike & { visitDate?: Date }; compact?: boolean }) {
   const t = useTranslations("verification");
   const format = useFormatter();
 
   if (!isVerificationValid(verification)) return null;
 
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-verified px-3 py-1 text-xs font-semibold text-verified-foreground">
-      <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
-        <path
-          fillRule="evenodd"
-          d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-          clipRule="evenodd"
-        />
+    <span className="inline-flex items-center gap-2 rounded-full bg-verified py-1 pl-2 pr-3.5 text-[.8125rem] font-semibold leading-none text-verified-foreground">
+      <svg viewBox="0 0 24 24" fill="none" className="size-5 shrink-0" aria-hidden="true">
+        <path d="M5 22V7.5A2.5 2.5 0 0 1 7.5 5h9A2.5 2.5 0 0 1 19 7.5V22" stroke="currentColor" strokeWidth="2" />
+        <path d="m8.5 14.2 2.6 2.7 4.6-5.6" stroke="var(--ocre)" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
       {t("badge")}
-      {!compact ? <span className="font-normal opacity-90">· {format.dateTime(verification.expiresAt, { day: "2-digit", month: "short", year: "numeric" })}</span> : null}
+      {!compact && verification.visitDate ? <span className="font-normal opacity-90">· {t("badgeVisited", { date: format.dateTime(verification.visitDate, { day: "numeric", month: "short", year: "numeric" }) })}</span> : null}
     </span>
   );
 }

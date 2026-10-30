@@ -10,7 +10,7 @@ test.describe("accueil et internationalisation (CDC §2)", () => {
     await page.goto("/");
     await expect(page).toHaveURL(/\/fr$/);
     await expect(
-      page.getByRole("heading", { name: /logement meublé, vérifié sur place/i })
+      page.getByRole("heading", { name: /chez vous, où que vous soyez/i })
     ).toBeVisible();
   });
 
@@ -19,7 +19,7 @@ test.describe("accueil et internationalisation (CDC §2)", () => {
     await page.getByLabel("Langue").selectOption("en");
     await expect(page).toHaveURL(/\/en$/);
     await expect(
-      page.getByRole("heading", { name: /furnished home, verified on site/i })
+      page.getByRole("heading", { name: /feel at home, wherever you are/i })
     ).toBeVisible();
   });
 });

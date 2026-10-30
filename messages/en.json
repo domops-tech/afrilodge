@@ -1,12 +1,12 @@
 {
   "common": {
-    "appName": "Ayostay",
+    "appName": "AyoStay",
     "loading": "Loading…",
     "cancel": "Cancel",
     "confirm": "Confirm",
     "back": "Back",
     "language": "Language",
-    "comingSoon": "This page is coming in a future sprint.",
+    "comingSoon": "This page is not available yet.",
     "skipToContent": "Skip to content",
     "footerNote": "Furnished homes visited by our team.",
     "footerNavigation": "Footer",
@@ -14,7 +14,8 @@
     "demoPhotoBadge": "Demonstration visual",
     "mainNavigation": "Main navigation",
     "demoListing": "Demonstration listing",
-    "demoListingDetail": "This listing, its description and amenities are sample data. It is not a real home available to book."
+    "demoListingDetail": "This listing, its description and amenities are sample data. It is not a real home available to book.",
+    "verifiedOnSite": "Verified in person"
   },
   "nav": {
     "search": "Search",
@@ -27,7 +28,7 @@
     "mainNavigation": "Main navigation"
   },
   "verification": {
-    "badge": "Verified",
+    "badge": "Verified in person",
     "visitedOn": "Visited on {date}",
     "verifiedBy": "Verified by {agentName}",
     "expiresOn": "Valid until {date}",
@@ -35,7 +36,8 @@
     "explainerTitle": "What “verified in person” means",
     "teamVisitDate": "A member of our team visited in person on {date}.",
     "explainerBody": "This label describes a visit by our team. Declared amenities and amenities observed during that visit are shown separately on this listing. It is not a guest review or a guarantee of compliance or safety.",
-    "validUntil": "Verification valid until {date}."
+    "validUntil": "Verification valid until {date}.",
+    "badgeVisited": "Visited {date}"
   },
   "auth": {
     "phoneLabel": "Phone number",
@@ -65,19 +67,37 @@
   },
   "home": {
     "tagline": "A furnished home, verified on site.",
-    "searchCta": "Explore furnished homes",
-    "eyebrow": "HOSPITALITY · VISITED IN PERSON",
-    "intro": "Explore furnished homes visited by our team. Compare the area, guest capacity and listed nightly price before requesting your stay.",
+    "searchCta": "See homes",
+    "eyebrow": "Furnished homes verified in person",
+    "intro": "Every home is visited by our team before it is published. You read what we found, with the date of the visit.",
     "searchLocation": "City or neighbourhood",
     "searchPlaceholder": "Cotonou, Fidjrossè, Haie Vive…",
-    "stays": "Places to explore",
-    "staysDescription": "Listing details are recorded after a visit from our team.",
+    "stays": "Homes to explore",
+    "staysDescription": "Each listing was filled in after a visit from our team.",
     "allStays": "Explore all homes",
-    "verificationTitle": "A real visit. Clear details for your stay.",
-    "verificationBody": "Each published listing displays a dated label for a visit by our team. Declared details remain distinct from amenities observed during that visit.",
     "emptyTitle": "More homes coming soon",
     "emptyBody": "There are no published homes at the moment. Visit search again soon.",
-    "cities": "Every listing shows its recorded city and neighbourhood."
+    "heroTitle": "Feel at home, wherever you are.",
+    "exampleLabel": "An example of what you read on a listing",
+    "exampleVisit": "Our team visited this home on 15 September 2026.",
+    "exampleAmenity": "The air conditioning works: we tested it.",
+    "stepsTitle": "How it works",
+    "step1Title": "We visit",
+    "step1Body": "One of our agents goes to the home: photos of every room, tested amenities, directions to find it.",
+    "step2Title": "You read what we found",
+    "step2Body": "The listing shows the visit date and separates what the host states from what we observed.",
+    "step3Title": "You book without an account",
+    "step3Body": "A code sent by SMS is enough. The owner is only paid once your arrival is confirmed.",
+    "verifyTitle": "What “verified in person” means",
+    "verifyIntro": "It is not the owner's promise. It is what our team observed on site.",
+    "verifyPoint1": "Photos taken on site, room by room.",
+    "verifyPoint2": "Stated amenities compared with what we found.",
+    "verifyPoint3": "Directions to find the home, recorded on the ground.",
+    "verifyPoint4": "The owner's identity and proof of right to let, checked.",
+    "verifyValidity": "The label is valid for twelve months. After that, the home is visited again.",
+    "ownerTitle": "Do you have a home to offer?",
+    "ownerBody": "Have our team visit it. Your listing is published as soon as the visit is validated.",
+    "ownerCta": "Owner space"
   },
   "field": {
     "greeting": "Hello, {name}",
@@ -229,7 +249,7 @@
     "allPlaces": "All homes",
     "resultsHeading": "Search results",
     "activeFilters": "{count, plural, one {# filter applied} other {# filters applied}}",
-    "resultCap": "shown",
+    "resultCap": "The first {count} homes are shown.",
     "sortAction": "Apply sort",
     "photoUnavailable": "A real photo of this home is needed"
   },
@@ -240,7 +260,7 @@
     "sectionAmenities": "Confirmed amenities",
     "sectionLandmarks": "Access landmarks",
     "sectionMap": "Approximate location",
-    "mapDisclaimer": "Approximate location — the exact address is shared once the booking is confirmed (CDC §6.1.5).",
+    "mapDisclaimer": "Approximate location. The exact address is shared once the booking is confirmed.",
     "bookCta": "Book this home",
     "noAmenities": "No confirmed amenities yet.",
     "noLandmarks": "—",

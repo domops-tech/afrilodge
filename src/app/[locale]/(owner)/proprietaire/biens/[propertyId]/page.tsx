@@ -1,3 +1,4 @@
+import { nbsp } from "@/lib/format/nbsp";
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations, getFormatter } from "next-intl/server";
 import { requireRole } from "@/lib/auth/guard";
@@ -268,7 +269,7 @@ export default async function PropertyManagePage({
                 {tBooking("guestsCount", { count: booking.guests })}
               </span>
               <span className="text-muted">{t(`bookingStatus.${booking.status}`)}</span>
-              <span>{tBooking("totalAmount", { amount: format.number(booking.totalAmount) })}</span>
+              <span>{tBooking("totalAmount", { amount: nbsp(format.number(booking.totalAmount)) })}</span>
               {booking.status === "REQUESTED" || (booking.status === "ACCEPTED" && !booking.payment) ? (
                 <div className="flex gap-2">
                   <form action={acceptBookingAction}>

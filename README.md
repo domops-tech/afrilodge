@@ -1,4 +1,4 @@
-# Ayostay — VD Technologies
+# AyoStay — VD Technologies
 
 Plateforme de réservation de logements meublés vérifiés. Cahier des charges
 complet : `docs/cdc/VD_Technologies_CDC_Sejours_v1.docx-1.pdf`. Suivi de

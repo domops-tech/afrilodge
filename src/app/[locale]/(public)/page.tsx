@@ -13,7 +13,6 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("home");
-  const search = await getTranslations("search");
   const common = await getTranslations("common");
   const where = { status: "PUBLISHED" as const, verification: { is: { status: "ACTIVE" as const, expiresAt: { gt: new Date() } } } };
   const homes = await prisma.property.findMany({ where, orderBy: { createdAt: "desc" }, take: 4, select: { id: true, isDemo: true, title: true, neighborhood: true, city: true, pricePerNight: true, maxGuests: true, verification: { select: { status: true, visitDate: true, expiresAt: true } } } });
@@ -22,33 +21,101 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const featured = homes.filter(home => home.verification && isVerificationValid(home.verification));
   const firstVerified = featured.find(home => home.verification)?.verification ?? null;
 
-  return <div className="flex min-h-screen flex-col"><SiteHeader />
-    <div className="flex-1">
-      <section className="overflow-hidden border-b border-border bg-[#f1f0e8]">
-        <div className="page-shell grid min-h-[30rem] items-center gap-10 py-12 sm:py-16 lg:min-h-[33rem] lg:grid-cols-[minmax(0,1.05fr)_minmax(22rem,.8fr)] lg:gap-16 lg:py-20">
-          <div className="max-w-[47rem]">
-            <p className="eyebrow">{t("eyebrow")}</p>
-            <h1 className="mt-4 max-w-[12ch] text-[clamp(3.1rem,7vw,6.9rem)] leading-[.98] text-foreground">{t("tagline")}</h1>
-            <p className="mt-5 max-w-[46ch] text-base leading-relaxed text-muted sm:text-lg">{t("intro")}</p>
-            <Link href="/recherche" className="mt-6 inline-flex min-h-11 items-center gap-2 font-semibold text-verified underline decoration-verified/30 underline-offset-4 hover:decoration-verified">{t("allStays")}<span aria-hidden="true">→</span></Link>
-          </div>
-          <div className="w-full max-w-[39rem] justify-self-end rounded-[var(--radius-large)] border border-border/90 bg-surface p-5 shadow-[var(--shadow-card)] sm:p-7 lg:p-8">
-            <div className="flex items-start gap-4"><span aria-hidden="true" className="grid size-12 shrink-0 place-items-center rounded-full bg-verified text-verified-foreground"><svg viewBox="0 0 24 24" fill="none" className="size-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.1 4.1L19.5 6"/><circle cx="12" cy="12" r="9.2"/></svg></span><div><p className="eyebrow">{t("verificationTitle")}</p><p className="mt-2 max-w-[39ch] text-sm leading-relaxed text-muted">{t("verificationBody")}</p></div></div>
-            <form action={`/${locale}/recherche`} className="mt-6 flex flex-col gap-3 border-t border-border pt-5">
-              <Field id="home-quartier" className="min-h-12 bg-white" name="quartier" label={t("searchLocation")} placeholder={t("searchPlaceholder")} autoComplete="address-level2" />
-              <Button className="!min-h-12 justify-between !px-5" type="submit">{t("searchCta")}<span aria-hidden="true">→</span></Button>
-              <p className="text-xs text-muted">{search("verifiedFilterHint")}</p>
-            </form>
-          </div>
-        </div>
-      </section>
+  const steps = [
+    { title: t("step1Title"), body: t("step1Body") },
+    { title: t("step2Title"), body: t("step2Body") },
+    { title: t("step3Title"), body: t("step3Body") },
+  ];
+  const checks = [t("verifyPoint1"), t("verifyPoint2"), t("verifyPoint3"), t("verifyPoint4")];
 
-      <section className="page-shell py-12 sm:py-16 lg:py-20" aria-labelledby="discover-heading">
-        <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><p className="eyebrow">{t("staysDescription")}</p><h2 id="discover-heading" className="mt-2 max-w-[17ch] text-[clamp(2rem,3.5vw,3.45rem)] leading-tight">{t("stays")}</h2></div><Link href="/recherche" className="inline-flex min-h-11 items-center gap-2 self-start text-sm font-semibold text-verified underline decoration-verified/30 underline-offset-4 hover:decoration-verified sm:self-auto">{t("allStays")}<span aria-hidden="true">→</span></Link></div>
-        {featured.length ? <div className="property-grid property-grid-wide mt-8 lg:mt-10">{featured.map((property,index) => <PropertyCard key={property.id} property={property} photo={photoByProperty.get(property.id) ?? null} priority={index===0} />)}</div> : <div className="mt-8 surface-card-plain p-7 sm:p-10"><h3 className="font-display text-2xl">{t("emptyTitle")}</h3><p className="mt-2 max-w-[55ch] text-sm leading-relaxed text-muted">{t("emptyBody")}</p><Link className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-verified underline underline-offset-4" href="/recherche">{t("allStays")}</Link></div>}
-        <p className="mt-5 max-w-[72ch] text-xs leading-relaxed text-muted">{t("cities")}</p>
-      </section>
+  return (
+    <div className="flex min-h-screen flex-col">
+      <SiteHeader />
+      <div className="flex-1">
+        <section className="border-b border-border">
+          <div className="page-shell grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(20rem,.9fr)] lg:gap-16 lg:py-20">
+            <div>
+              <p className="eyebrow">{t("eyebrow")}</p>
+              <h1 className="t-display mt-3 max-w-[16ch]">{t("heroTitle")}</h1>
+              <p className="mt-4 max-w-[52ch] text-lg leading-relaxed text-muted">{t("intro")}</p>
+              <form action={`/${locale}/recherche`} className="mt-8 flex max-w-[34rem] flex-col gap-3 sm:flex-row sm:items-end">
+                <div className="flex-1">
+                  <Field id="home-quartier" name="quartier" label={t("searchLocation")} placeholder={t("searchPlaceholder")} autoComplete="address-level2" className="min-h-12" />
+                </div>
+                <Button className="!min-h-12" type="submit">{t("searchCta")}</Button>
+              </form>
+            </div>
+            <aside aria-label={t("exampleLabel")} className="porte bg-terracotta px-5 pb-6 pt-10 sm:px-8 sm:pb-8 sm:pt-14">
+              <div className="rounded-[var(--radius)] bg-background p-5 text-foreground shadow-[var(--shadow-pop)] sm:p-6">
+                <p className="text-sm font-medium text-muted">{t("exampleLabel")}</p>
+                <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-verified py-1 pl-2 pr-3.5 text-[.8125rem] font-semibold leading-none text-verified-foreground">
+                  <svg viewBox="0 0 24 24" fill="none" className="size-5 shrink-0" aria-hidden="true"><path d="M5 22V7.5A2.5 2.5 0 0 1 7.5 5h9A2.5 2.5 0 0 1 19 7.5V22" stroke="currentColor" strokeWidth="2" /><path d="m8.5 14.2 2.6 2.7 4.6-5.6" stroke="var(--ocre)" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  {common("verifiedOnSite")}
+                </span>
+                <p className="mt-4 text-[1.0625rem] font-medium leading-snug">{t("exampleVisit")}</p>
+                <p className="mt-2 border-t border-border pt-3 text-sm leading-relaxed text-muted">{t("exampleAmenity")}</p>
+              </div>
+            </aside>
+          </div>
+        </section>
 
-      <section className="border-y border-border bg-white py-10 sm:py-12"><div className="page-shell grid gap-7 md:grid-cols-[minmax(0,1fr)_minmax(22rem,.8fr)] md:items-center"><div><p className="eyebrow">{common("appName")}</p><h2 className="mt-2 max-w-[19ch] text-[clamp(1.9rem,3.4vw,3.1rem)] leading-tight">{t("verificationTitle")}</h2><p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-muted">{t("verificationBody")}</p></div>{firstVerified ? <VerificationNote verification={firstVerified} /> : <div className="surface-card-plain p-5 text-sm leading-relaxed text-muted sm:p-6">{t("verificationBody")}</div>}</div></section>
-    </div><SiteFooter /></div>;
+        <section className="page-shell py-12 sm:py-16" aria-labelledby="discover-heading">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <h2 id="discover-heading" className="t-1">{t("stays")}</h2>
+              <p className="mt-2 max-w-[52ch] text-muted">{t("staysDescription")}</p>
+            </div>
+            <Link href="/recherche" className="inline-flex min-h-11 items-center gap-2 self-start font-semibold text-accent underline decoration-accent/30 underline-offset-4 hover:decoration-accent sm:self-auto">{t("allStays")}<span aria-hidden="true">→</span></Link>
+          </div>
+          {featured.length ? (
+            <div className="property-grid property-grid-wide mt-8">{featured.map((property, index) => <PropertyCard key={property.id} property={property} photo={photoByProperty.get(property.id) ?? null} priority={index === 0} />)}</div>
+          ) : (
+            <div className="surface-card-plain mt-8 p-7 sm:p-10"><h3 className="t-3">{t("emptyTitle")}</h3><p className="mt-2 max-w-[55ch] text-muted">{t("emptyBody")}</p></div>
+          )}
+        </section>
+
+        <section className="bg-surface py-12 sm:py-16" aria-labelledby="steps-heading">
+          <div className="page-shell">
+            <h2 id="steps-heading" className="t-1">{t("stepsTitle")}</h2>
+            <ol className="mt-8 grid gap-8 md:grid-cols-3 md:gap-10">
+              {steps.map((step, index) => (
+                <li key={step.title} className="flex gap-4">
+                  <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-full bg-accent text-lg font-bold text-accent-foreground">{index + 1}</span>
+                  <div><h3 className="t-3">{step.title}</h3><p className="mt-1.5 leading-relaxed text-muted">{step.body}</p></div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        <section className="page-shell grid gap-10 py-12 sm:py-16 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)] lg:gap-16" aria-labelledby="verify-heading">
+          <div>
+            <h2 id="verify-heading" className="t-1">{t("verifyTitle")}</h2>
+            <p className="mt-3 max-w-[56ch] text-lg leading-relaxed text-muted">{t("verifyIntro")}</p>
+            <ul className="mt-6 space-y-3">
+              {checks.map(item => (
+                <li key={item} className="flex items-start gap-3">
+                  <svg viewBox="0 0 24 24" fill="none" className="mt-0.5 size-6 shrink-0 text-verified" aria-hidden="true"><path d="M5 22V7.5A2.5 2.5 0 0 1 7.5 5h9A2.5 2.5 0 0 1 19 7.5V22" stroke="currentColor" strokeWidth="1.8" /><path d="m8.5 14.2 2.6 2.7 4.6-5.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 text-sm text-muted">{t("verifyValidity")}</p>
+          </div>
+          {firstVerified ? <div className="self-start"><VerificationNote verification={firstVerified} /></div> : null}
+        </section>
+
+        <section className="border-t border-border bg-anthracite py-12 text-chaux sm:py-14">
+          <div className="page-shell flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
+            <div>
+              <h2 className="t-2">{t("ownerTitle")}</h2>
+              <p className="mt-2 max-w-[52ch] text-chaux/80">{t("ownerBody")}</p>
+            </div>
+            <Link href="/connexion" className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-[var(--radius)] bg-terracotta px-6 font-semibold text-anthracite hover:brightness-110">{t("ownerCta")}</Link>
+          </div>
+        </section>
+      </div>
+      <SiteFooter />
+    </div>
+  );
 }

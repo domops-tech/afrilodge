@@ -13,7 +13,7 @@ export const Field = forwardRef<
       <input
         ref={ref}
         id={fieldId}
-        className={`min-h-11 rounded-[var(--radius-default)] border border-border bg-background px-3.5 py-2.5 text-base text-foreground outline-none focus:border-accent ${className}`}
+        className={`min-h-11 rounded-[var(--radius-sm)] border border-foreground/30 bg-background px-3.5 py-2.5 text-base text-foreground outline-none placeholder:text-muted/80 focus:border-accent ${className}`}
         {...props}
         aria-invalid={error ? true : props["aria-invalid"]}
         aria-describedby={[props["aria-describedby"], error ? errorId : undefined].filter(Boolean).join(" ") || undefined}
