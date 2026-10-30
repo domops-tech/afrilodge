@@ -43,6 +43,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Le client Prisma est généré dans src/generated (non versionné) : sans cette
+      # étape, le typecheck, le seed et le build ne trouvent pas `@/generated/prisma`.
+      - run: npx prisma generate
       - run: npm run lint
       - run: npm run typecheck
       - run: npx prisma migrate deploy
@@ -72,6 +75,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Le client Prisma est généré dans src/generated (non versionné) : sans cette
+      # étape, le typecheck, le seed et le build ne trouvent pas `@/generated/prisma`.
+      - run: npx prisma generate
       # MinIO n'accepte pas de commande personnalisée via `services:` (pas
       # de champ `command` dans cette syntaxe) — démarré manuellement.
       - name: Start MinIO
