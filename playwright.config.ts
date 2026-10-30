@@ -26,6 +26,7 @@ export default defineConfig({
     command: "npm run build && npm run start",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
+    env: { ENABLE_DEV_OTP_ENDPOINT: "1" },
     timeout: 120_000,
   },
   projects: [

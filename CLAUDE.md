@@ -77,7 +77,7 @@ Services compose : `afrilodge-app`, `afrilodge-db`, `afrilodge-minio`,
 `afrilodge-migrate` (profil `tools`). Base et utilisateur : `afrilodge`.
 
 Points ouverts connus : opérateur SMS réel non branché
-(`SMS_PROVIDER=console` en production, `/api/dev/last-otp` répond) ; PSP réel
+(`SMS_PROVIDER=console` en production : les codes ne sont lisibles que dans les journaux ; `/api/dev/last-otp` exige en plus `ENABLE_DEV_OTP_ENDPOINT=1`, réservé aux tests e2e) ; PSP réel
 bloqué sur le CDC §12 ; `TODO-JURIDIQUE` sur `Verification.attestationLabel`.
 
 @AGENTS.md
