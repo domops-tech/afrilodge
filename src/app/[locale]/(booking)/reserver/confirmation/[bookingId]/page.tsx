@@ -3,12 +3,12 @@ import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
+import { PropertyImage } from "@/components/property/PropertyImage";
 import { setRequestLocale, getTranslations, getFormatter } from "next-intl/server";
 import { requireGuestSession } from "@/lib/auth/guard";
 import { hasArrivalDateStarted } from "@/lib/booking/arrival";
 import { prisma } from "@/lib/db/client";
 import { Link } from "@/i18n/navigation";
-import { Card } from "@/components/ui/Card";
 import { Button, buttonClassName } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { confirmArrivalAction, cancelBookingAction, reportDisputeAction } from "./actions";
@@ -45,34 +45,85 @@ export default async function BookingConfirmationPage({
 
   const canCancelFreely = booking.status === "REQUESTED" || booking.status === "ACCEPTED";
   const canCancelWithPolicy = booking.status === "PAID";
+  const hasAccess = booking.status === "PAID" || booking.status === "IN_PROGRESS";
+  const nights = Math.max(1, Math.round((booking.checkOut.getTime() - booking.checkIn.getTime()) / 86_400_000));
+  const cover = await prisma.visitPhoto.findFirst({
+    where: { slot: "FACADE", visit: { verification: { propertyId: booking.propertyId } } },
+    select: { storageKey: true, isDemoPlaceholder: true },
+  });
+  const day = (date: Date) => format.dateTime(date, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const alertClass = "mt-6 border border-danger bg-danger-soft px-4 py-3 text-sm text-danger";
+  const row = "flex items-baseline justify-between gap-6 py-4";
 
   return (
-    <div className="flex min-h-screen flex-col"><SiteHeader active="bookings"/><div className="page-shell flex-1 py-7 sm:py-10">
-      <div className="mx-auto max-w-[900px]">
-        <Link href="/reserver" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted hover:text-verified"><span aria-hidden="true">←</span>{t("myBookings")}</Link>
-        <div className="mt-3"><p className="eyebrow">{t("bookingReference")}</p><h1 className="mt-2 t-1">{t(`title.${booking.status}`)}</h1></div>
-        {booking.status === "REQUESTED" ? <div className="mt-5 flex items-start gap-3 rounded-[var(--radius)] border border-ocre/40 bg-ocre/10 p-4 sm:p-5"><span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-ocre font-semibold text-anthracite" aria-hidden="true">1</span><div><p className="font-semibold text-foreground">{t("hostResponse")}</p><p className="mt-1 text-sm leading-relaxed text-muted">{t("statusRequested")}</p></div></div> : null}
-        {booking.status === "ACCEPTED" && booking.payment ? <div className="mt-5 flex items-start gap-3 rounded-[var(--radius)] border border-success/25 bg-success/10 p-4 sm:p-5"><span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-success font-semibold text-white" aria-hidden="true">✓</span><div><p className="font-semibold text-success">{t("statusAccepted")}</p><p className="mt-1 text-sm leading-relaxed text-muted">{t("acceptedPaymentHint")}</p></div></div> : null}
-        {booking.status === "PAID" || booking.status === "IN_PROGRESS" ? <div className="mt-5 flex items-start gap-3 rounded-[var(--radius)] border border-success/25 bg-success/10 p-4 sm:p-5"><span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-success font-semibold text-white" aria-hidden="true">✓</span><div><p className="font-semibold text-success">{t("paymentConfirmation")}</p><p className="mt-1 text-sm leading-relaxed text-muted">{booking.status === "IN_PROGRESS" ? t("statusInProgress") : t("statusPaid")}</p></div></div> : null}
-        {typeof erreur === "string" ? <p role="alert" className="mt-4 rounded-[var(--radius)] border border-danger/25 bg-danger-soft p-3 text-sm text-danger">{t(`error.${erreur}`)}</p> : null}
-        <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_19rem]">
-          <Card className="flex flex-col gap-4 p-4 sm:p-6">
-            <div><p className="eyebrow">{t("yourStay")}</p><h2 className="mt-1 text-2xl leading-tight">{booking.property.title}</h2><p className="mt-1 text-sm text-muted">{booking.property.neighborhood} · {booking.property.city}</p></div>
-            {booking.property.verification ? <VerifiedBadge verification={booking.property.verification} compact/> : null}
-            <div className="grid grid-cols-2 gap-3 border-y border-border py-4 text-sm"><div><p className="text-xs font-medium text-muted">{t("checkInLabel")}</p><p className="mt-1 font-medium">{format.dateTime(booking.checkIn,{dateStyle:"medium"})}</p></div><div><p className="text-xs font-medium text-muted">{t("checkOutLabel")}</p><p className="mt-1 font-medium">{format.dateTime(booking.checkOut,{dateStyle:"medium"})}</p></div><div><p className="text-xs font-medium text-muted">{t("guestsLabel")}</p><p className="mt-1 font-medium">{t("guestsCount",{count:booking.guests})}</p></div><div><p className="text-xs font-medium text-muted">{t("totalLabel")}</p><p className="mt-1 font-semibold tabular-nums">{nbsp(format.number(booking.totalAmount))} FCFA</p></div></div>
-            {booking.status === "ACCEPTED" && booking.payment ? <div className="flex flex-col gap-2"><Link href={`/reserver/paiement/${booking.id}`} className={buttonClassName("primary","w-full")}>{t("payNowCta")}<span aria-hidden="true">→</span></Link><p className="text-xs leading-relaxed text-muted">{t("paymentSimulatorNotice")}</p></div>:null}
-            {(booking.status === "PAID" || booking.status === "IN_PROGRESS") ? <div className="rounded-[.8rem] bg-success/10 p-3.5"><p className="text-sm font-medium text-success">{t("stayCodeLabel",{code:booking.stayCode})}</p>{booking.accessInfo ? <p className="mt-2 text-sm leading-relaxed text-foreground">{booking.accessInfo}</p>:null}</div>:null}
-            {booking.status === "CANCELLED" ? <p className="rounded-[.8rem] bg-danger-soft p-3.5 text-sm text-danger">{t("statusCancelled")}</p>:null}
-          </Card>
-          <aside className="flex flex-col gap-3 rounded-[var(--radius)] bg-surface-alt/65 p-4 sm:p-5"><h2 className="text-xl">{t("actionsTitle")}</h2>
-            {booking.status === "PAID" && !hasArrivalDateStarted(booking.checkIn) ? <p className="text-sm leading-relaxed text-muted">{t("arrivalAvailableOn",{date:format.dateTime(booking.checkIn,{dateStyle:"long"})})}</p>:null}
-            {booking.status === "PAID" && hasArrivalDateStarted(booking.checkIn) ? <form action={confirmArrivalAction}><input type="hidden" name="bookingId" value={booking.id}/><input type="hidden" name="locale" value={locale}/><Button type="submit" className="w-full">{t("confirmArrivalCta")}</Button></form>:null}
-            {booking.status === "IN_PROGRESS" ? booking.dispute ? <div className="flex flex-col gap-1 text-sm"><span className="font-medium">{t("disputeTitle")}</span><span className="text-muted">{t(`disputeStatus.${booking.dispute.status}`)}</span>{booking.dispute.resolutionNote?<span>{booking.dispute.resolutionNote}</span>:null}</div>:<form action={reportDisputeAction} className="flex flex-col gap-3"><input type="hidden" name="bookingId" value={booking.id}/><input type="hidden" name="locale" value={locale}/><Field id="reason" name="reason" label={t("reportDisputeLabel")} required/><Button type="submit" variant="secondary" className="w-full">{t("reportDisputeCta")}</Button></form>:null}
-            {canCancelFreely || canCancelWithPolicy ? <form action={cancelBookingAction}><input type="hidden" name="bookingId" value={booking.id}/><input type="hidden" name="locale" value={locale}/><Button type="submit" variant="secondary" className="w-full">{t("cancelCta")}</Button></form>:null}
-            <Link href={`/logements/${booking.propertyId}`} className="inline-flex min-h-11 items-center text-sm font-medium text-accent underline underline-offset-4">{t("propertyLink")}</Link>
-          </aside>
+    <div className="flex min-h-screen flex-col">
+      <SiteHeader active="bookings" />
+      <div className="flex-1">
+        <div className="page-shell py-10 sm:py-14">
+          <Link href="/reserver" className="quiet-link inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted hover:text-foreground"><span aria-hidden="true">←</span>{t("myBookings")}</Link>
+          <div className="mt-6 grid gap-14 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-24">
+            <div>
+              <h1 className="t-hero">{t(`title.${booking.status}`)}</h1>
+              <p className="lede mt-5 max-w-[46ch] text-muted">{t(`next.${booking.status}`)}</p>
+              {typeof erreur === "string" ? <p role="alert" className={alertClass}>{t(`error.${erreur}`)}</p> : null}
+
+              {booking.status === "ACCEPTED" && booking.payment ? (
+                <div className="mt-8 max-w-[28rem]">
+                  <Link href={`/reserver/paiement/${booking.id}`} className={buttonClassName("primary", "!min-h-12 w-full")}>{t("payNowCta")}</Link>
+                  <p className="mt-3 text-xs leading-relaxed text-muted">{t("paymentSimulatorNotice")}</p>
+                </div>
+              ) : null}
+
+              {hasAccess ? (
+                <div className="mt-10 border border-foreground p-6 sm:p-8">
+                  <p className="caps !text-[.625rem] text-muted">{t("stayCode")}</p>
+                  <p className="mt-2 font-serif text-4xl tracking-[.14em] tabular-nums sm:text-5xl">{booking.stayCode}</p>
+                  {booking.accessInfo ? (
+                    <>
+                      <p className="caps mt-7 !text-[.625rem] text-muted">{t("accessTitle")}</p>
+                      <p className="mt-2 max-w-[52ch] leading-relaxed">{booking.accessInfo}</p>
+                    </>
+                  ) : null}
+                </div>
+              ) : null}
+
+              <dl className="mt-12 divide-y divide-border border-y border-border">
+                <div className={row}><dt className="text-sm text-muted">{t("checkInLabel")}</dt><dd className="text-right font-serif text-lg first-letter:uppercase">{day(booking.checkIn)}</dd></div>
+                <div className={row}><dt className="text-sm text-muted">{t("checkOutLabel")}</dt><dd className="text-right font-serif text-lg first-letter:uppercase">{day(booking.checkOut)}</dd></div>
+                <div className={row}><dt className="text-sm text-muted">{t("guestsLabel")}</dt><dd className="text-right font-serif text-lg">{t("stayLength", { nights, guests: booking.guests })}</dd></div>
+                <div className={row}><dt className="text-sm text-muted">{t("totalLabel")}</dt><dd className="text-right font-serif text-lg tabular-nums">{nbsp(format.number(booking.totalAmount))} FCFA</dd></div>
+              </dl>
+
+              <section className="mt-12" aria-labelledby="manage-heading">
+                <h2 id="manage-heading" className="t-3">{t("actionsTitle")}</h2>
+                <div className="mt-5 flex max-w-[28rem] flex-col gap-4">
+                  {booking.status === "PAID" && !hasArrivalDateStarted(booking.checkIn) ? <p className="text-sm leading-relaxed text-muted">{t("arrivalAvailableOn", { date: format.dateTime(booking.checkIn, { dateStyle: "long" }) })}</p> : null}
+                  {booking.status === "PAID" && hasArrivalDateStarted(booking.checkIn) ? <form action={confirmArrivalAction}><input type="hidden" name="bookingId" value={booking.id} /><input type="hidden" name="locale" value={locale} /><Button type="submit" className="!min-h-12 w-full">{t("confirmArrivalCta")}</Button></form> : null}
+                  {booking.status === "IN_PROGRESS" ? (
+                    booking.dispute ? (
+                      <div className="border border-border p-4 text-sm"><p className="font-medium">{t("disputeTitle")}</p><p className="mt-1 text-muted">{t(`disputeStatus.${booking.dispute.status}`)}</p>{booking.dispute.resolutionNote ? <p className="mt-2">{booking.dispute.resolutionNote}</p> : null}</div>
+                    ) : (
+                      <form action={reportDisputeAction} className="flex flex-col gap-4"><input type="hidden" name="bookingId" value={booking.id} /><input type="hidden" name="locale" value={locale} /><Field id="reason" name="reason" label={t("reportDisputeLabel")} required className="min-h-12" /><Button type="submit" variant="secondary" className="w-full">{t("reportDisputeCta")}</Button></form>
+                    )
+                  ) : null}
+                  {canCancelFreely || canCancelWithPolicy ? <form action={cancelBookingAction}><input type="hidden" name="bookingId" value={booking.id} /><input type="hidden" name="locale" value={locale} /><Button type="submit" variant="secondary" className="w-full">{t("cancelCta")}</Button></form> : null}
+                  <Link href={`/logements/${booking.propertyId}`} className="quiet-link inline-flex min-h-11 items-center text-sm font-medium text-foreground underline underline-offset-4">{t("propertyLink")}</Link>
+                </div>
+              </section>
+            </div>
+
+            <aside aria-label={booking.property.title} className="lg:self-start">
+              <div className="card-photo !aspect-[4/3]">
+                {cover ? <PropertyImage storageKey={cover.storageKey} isDemoPlaceholder={cover.isDemoPlaceholder} alt="" width={900} height={675} priority sizes="(min-width: 1024px) 40vw, 100vw" className="h-full w-full object-cover" /> : <div className="photo-placeholder" role="img" aria-label={booking.property.title} />}
+              </div>
+              <h2 className="t-2 mt-6">{booking.property.title}</h2>
+              <p className="mt-1 font-serif text-lg text-muted">{booking.property.neighborhood}, {booking.property.city}</p>
+              {booking.property.verification ? <div className="mt-5"><VerifiedBadge verification={booking.property.verification} compact /></div> : null}
+            </aside>
+          </div>
         </div>
       </div>
-    </div><SiteFooter/></div>
+      <SiteFooter />
+    </div>
   );
 }

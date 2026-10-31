@@ -536,7 +536,18 @@
     "emptyTitle": "Aucune réservation pour le moment",
     "emptyBody": "Choisissez un logement et vos dates : votre demande apparaîtra ici.",
     "browse": "Voir les logements",
-    "changeNumber": "Utiliser un autre numéro"
+    "changeNumber": "Utiliser un autre numéro",
+    "next": {
+      "REQUESTED": "En attente d'acceptation par le propriétaire. Revenez sur cette page pour suivre votre demande.",
+      "ACCEPTED": "Le propriétaire a accepté votre demande. Payez pour confirmer votre séjour.",
+      "PAID": "Réservation payée et confirmée. Votre code et les informations d'accès sont ci-dessous : gardez-les pour votre arrivée.",
+      "IN_PROGRESS": "Séjour en cours. Si le logement ne correspond pas à sa fiche, signalez-le ci-dessous.",
+      "COMPLETED": "Votre séjour est terminé.",
+      "CANCELLED": "Cette demande a été annulée.",
+      "DISPUTED": "Votre signalement est en cours de traitement."
+    },
+    "stayCode": "Code de séjour",
+    "accessTitle": "Informations d'accès"
   },
   "legal": {
     "navLabel": "Informations légales",

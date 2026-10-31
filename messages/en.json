@@ -535,7 +535,18 @@
     "emptyTitle": "No bookings yet",
     "emptyBody": "Pick a home and your dates: your request will show up here.",
     "browse": "See homes",
-    "changeNumber": "Use another number"
+    "changeNumber": "Use another number",
+    "next": {
+      "REQUESTED": "Waiting for the owner to accept. Come back to this page to follow your request.",
+      "ACCEPTED": "The owner accepted your request. Pay to confirm your stay.",
+      "PAID": "Booking paid and confirmed. Your code and access details are below: keep them for your arrival.",
+      "IN_PROGRESS": "Stay in progress. If the home does not match its listing, report it below.",
+      "COMPLETED": "Your stay is over.",
+      "CANCELLED": "This request was cancelled.",
+      "DISPUTED": "Your report is being reviewed."
+    },
+    "stayCode": "Stay code",
+    "accessTitle": "Access details"
   },
   "legal": {
     "navLabel": "Legal information",
