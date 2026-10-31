@@ -5,6 +5,8 @@ import { setRequestLocale, getTranslations, getFormatter } from "next-intl/serve
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/db/client";
 import { PropertyImage } from "@/components/property/PropertyImage";
+import { PropertyGallery, type GalleryRoom } from "@/components/property/PropertyGallery";
+import { BookingBar } from "@/components/property/BookingBar";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import { ApproximateMap } from "@/components/ApproximateMap";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -12,6 +14,10 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { VerificationNote } from "@/components/property/VerificationNote";
 import { buttonClassName } from "@/components/ui/Button";
 import { isVerificationValid } from "@/lib/verification/badge";
+import { resolvePublicStorageUrl } from "@/lib/storage/public-url";
+
+// Ordre de visite : on arrive par la façade, on entre, on traverse les pièces, puis cuisine, sanitaires, vue.
+const SLOT_ORDER = ["FACADE", "ACCES", "ENTREE", "PIECE", "CUISINE", "SANITAIRES", "VUE"] as const;
 
 export default async function PropertyDetailPage({ params, searchParams }: PageProps<"/[locale]/logements/[propertyId]">) {
   const { locale, propertyId } = await params;
@@ -28,38 +34,111 @@ export default async function PropertyDetailPage({ params, searchParams }: PageP
     amenities: { select: { name: true, confirmed: true } },
     verification: { select: {
       status: true, visitDate: true, expiresAt: true,
-      visit: { select: { agent: { select: { fullName: true } }, photos: { select: { id: true, slot: true, label: true, storageKey: true, isDemoPlaceholder: true } } } },
+      visit: { select: { agent: { select: { fullName: true } }, photos: { select: { id: true, slot: true, label: true, storageKey: true, isDemoPlaceholder: true }, orderBy: { takenAt: "asc" } } } },
     } },
   } });
   if (!property || property.status !== "PUBLISHED" || !property.verification || !isVerificationValid(property.verification)) notFound();
   const verification = property.verification;
-  const photos = verification.visit.photos;
-  const realPhotos = photos.filter(photo => !photo.isDemoPlaceholder);
-  const placeholder = photos.find(photo => photo.isDemoPlaceholder) ?? null;
-  const orderedPhotos = [...realPhotos].sort((a,b) => (a.slot === "FACADE" ? -1 : b.slot === "FACADE" ? 1 : 0));
+  const realPhotos = verification.visit.photos.filter(photo => !photo.isDemoPlaceholder);
   const target = `/reserver/${property.id}${query}`;
-  const pageTitle = property.title;
+  const price = `${nbsp(format.number(property.pricePerNight))} FCFA`;
+  const confirmedAmenities = property.amenities.filter(item => item.confirmed).length;
 
-  return <div className="flex min-h-screen flex-col"><SiteHeader active="search"/><div className="flex-1 pb-24 lg:pb-0">
-    <div className="page-shell pt-5 sm:pt-7"><Link href={`/recherche${query}`} className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted transition-colors hover:text-verified"><span aria-hidden="true">←</span>{t("backToSearch")}</Link>
-      {property.isDemo ? <div role="note" className="mb-4 rounded-[.85rem] border border-ocre/40 bg-ocre/10 px-4 py-3 text-sm leading-relaxed text-foreground"><span className="font-semibold">{tc("demoListing")}.</span> {tc("demoListingDetail")}</div> : null}
-      <div className="mt-1 flex flex-col justify-between gap-5 pb-5 sm:mt-3 sm:flex-row sm:items-end"><div><p className="eyebrow">{property.neighborhood} <span aria-hidden="true">·</span> {property.city}</p><h1 className="t-1 mt-2 max-w-[28ch]">{pageTitle}</h1><p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted"><span>{t("guestsMax", { count: property.maxGuests })}</span><span aria-hidden="true">·</span><span>{tf("teamVisitDate", { date: format.dateTime(verification.visitDate, { dateStyle: "long" }) })}</span></p></div><div className="hidden shrink-0 flex-col items-end gap-3 self-start sm:flex sm:self-auto"><VerifiedBadge verification={verification}/><p className="text-sm font-semibold tabular-nums">{nbsp(format.number(property.pricePerNight))} FCFA <span className="font-normal text-muted">/ {t("perNight")}</span></p><Link href={target} className={buttonClassName("primary","!min-h-11 !px-5")}>{t("bookCta")}<span aria-hidden="true">→</span></Link></div></div>
-      {orderedPhotos.length ? <div className={`gallery-grid${orderedPhotos.length === 1 ? " gallery-grid-single" : ""}`} aria-label={t("photoCount", {count: orderedPhotos.length})}>{orderedPhotos.slice(0,5).map((photo,i)=><div key={photo.id} className="gallery-cell"><PropertyImage storageKey={photo.storageKey} alt={photo.label ?? t(`photoSlot.${photo.slot}`)} isDemoPlaceholder={false} width={i===0 ? 1300 : 620} height={i===0 ? 900 : 430} priority={i===0} sizes={i===0 ? "(max-width: 767px) 100vw, 50vw" : "(max-width: 767px) 50vw, 25vw"} className="h-full w-full object-cover"/></div>)}</div> : placeholder ? <div className="gallery-grid gallery-grid-single"><div className="gallery-cell"><PropertyImage storageKey={placeholder.storageKey} isDemoPlaceholder showPlaceholderDetail alt={tc("photoUnavailable")} width={1300} height={900} priority/></div></div> : <div role="img" aria-label={t("noPhotos")} className="gallery-grid gallery-grid-single surface-card-plain grid place-items-center"><div className="flex max-w-[32rem] flex-col items-center gap-3 px-5 py-9 text-center text-muted"><svg viewBox="0 0 24 24" fill="none" className="size-8" aria-hidden="true" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3 3 3-4 5 6"/></svg><span className="font-medium">{t("noPhotos")}</span></div></div>}
-    </div>
+  const rooms: GalleryRoom[] = [];
+  for (const slot of SLOT_ORDER) {
+    const ofSlot = realPhotos.filter(photo => photo.slot === slot);
+    if (!ofSlot.length) continue;
+    const toPhoto = (photo: (typeof ofSlot)[number], label: string) => ({ id: photo.id, src: resolvePublicStorageUrl(photo.storageKey), alt: `${label}, ${property.title}` });
+    if (slot === "PIECE") {
+      const byLabel = new Map<string, typeof ofSlot>();
+      for (const photo of ofSlot) {
+        const label = photo.label?.trim() || t("photoSlot.PIECE");
+        byLabel.set(label, [...(byLabel.get(label) ?? []), photo]);
+      }
+      for (const [label, photos] of byLabel) rooms.push({ id: `piece-${rooms.length}`, label, photos: photos.map(photo => toPhoto(photo, label)) });
+    } else {
+      const label = t(`photoSlot.${slot}`);
+      rooms.push({ id: slot.toLowerCase(), label, photos: ofSlot.map(photo => toPhoto(photo, label)) });
+    }
+  }
+  const cover = SLOT_ORDER.map(slot => realPhotos.find(photo => photo.slot === slot)).find(Boolean);
 
-    <div className="page-shell grid gap-8 py-8 sm:py-10 lg:grid-cols-[minmax(0,1fr)_minmax(19rem,23rem)] lg:gap-12 lg:py-12 xl:gap-16">
-      <div className="min-w-0 space-y-9 sm:space-y-11">
-        <section className="flex flex-col gap-4" aria-labelledby="about-heading"><div className="flex items-center gap-3"><span aria-hidden="true" className="grid size-10 place-items-center rounded-full bg-verified-soft text-verified"><svg viewBox="0 0 24 24" fill="none" className="size-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg></span><div><h2 id="about-heading" className="t-2">{t("verifiedHeading")}</h2><p className="mt-1 text-sm text-muted">{verification.visit.agent?.fullName ? `${tf("verifiedBy", { agentName: verification.visit.agent.fullName })} · ` : ""}{tf("teamVisitDate", { date: format.dateTime(verification.visitDate, { dateStyle: "medium" }) })}</p></div></div><VerificationNote verification={verification} compact/><p className="page-shell-reading text-[.96rem] leading-[1.85] text-foreground/85">{property.description}</p></section>
+  return (
+    <div className="flex min-h-screen flex-col">
+      <SiteHeader active="search" />
+      <div className="flex-1">
+        <section aria-label={property.title} className="relative flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end overflow-hidden bg-surface-alt">
+          {cover ? (
+            <PropertyImage storageKey={cover.storageKey} isDemoPlaceholder={false} alt={property.title} width={1920} height={1080} priority sizes="100vw" className="absolute inset-0 h-full w-full object-cover" />
+          ) : (
+            <div className="motif-porte absolute inset-0" aria-hidden="true" />
+          )}
+          <div className="page-shell relative z-10 pt-6">
+            <Link href={`/recherche${query}`} className="caps inline-flex min-h-11 items-center gap-2 bg-background px-4 text-foreground transition-colors hover:bg-foreground hover:text-background"><span aria-hidden="true">←</span>{t("backToSearch")}</Link>
+          </div>
+          <div className="page-shell relative z-10 mt-auto flex justify-end pb-5 pt-24 sm:pb-10">
+            <div className="w-full bg-background p-6 sm:w-[24rem] sm:p-8">
+              <p className="font-serif text-[2rem] leading-none tabular-nums">{price}</p>
+              <p className="mt-1.5 text-sm text-muted">{t("priceNote")}</p>
+              <Link href={target} className={buttonClassName("primary", "mt-6 !min-h-12 w-full")}>{t("bookCta")}</Link>
+              <p className="mt-4 text-xs leading-relaxed text-muted">{t("requestNote")}</p>
+              {rooms.length ? <a href="#visite" className="quiet-link mt-5 inline-block text-sm font-medium text-foreground underline underline-offset-4">{t("viewPhotos")}</a> : null}
+            </div>
+          </div>
+        </section>
+        <div id="hero-end" aria-hidden="true" />
 
-        <section aria-labelledby="amenities-heading" className="border-t border-border pt-7 sm:pt-8"><h2 id="amenities-heading" className="t-2">{t("sectionAmenities")}</h2><p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-muted">{t("verifiedDescription")}</p>
-          {property.amenities.length ? <ul className="mt-5 grid gap-2 sm:grid-cols-2">{property.amenities.map(item=><li key={item.name} className="flex min-h-12 items-center justify-between gap-3 rounded-[.8rem] border border-border/80 bg-surface px-3.5 py-2.5 text-sm"><span>{item.name}</span><span className={`shrink-0 text-xs font-medium ${item.confirmed ? "text-verified" : "text-muted"}`}>{item.confirmed ? <><span aria-hidden="true">✓ </span>{t("amenityObserved")}</> : t("amenityDeclared")}</span></li>)}</ul> : <p className="mt-4 text-sm text-muted">{t("noAmenities")}</p>}
+        <section className="page-shell py-14 sm:py-20" aria-labelledby="property-title">
+          {property.isDemo ? <div role="note" className="mb-10 border border-ocre/60 bg-ocre/10 px-4 py-3 text-sm leading-relaxed text-foreground"><span className="font-semibold">{tc("demoListing")}.</span> {tc("demoListingDetail")}</div> : null}
+          <div className="grid gap-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:gap-24">
+            <div>
+              <p className="eyebrow">{property.neighborhood}, {property.city}</p>
+              <h1 id="property-title" className="t-hero mt-6">{property.title}</h1>
+              <div className="mt-6"><VerifiedBadge verification={verification} compact /></div>
+              <p className="lede mt-6 max-w-[50ch] text-muted">{property.description}</p>
+            </div>
+            <dl className="divide-y divide-border self-start border-y border-border">
+              <div className="flex items-baseline justify-between gap-6 py-4"><dt className="text-sm text-muted">{t("capacityLabel")}</dt><dd className="text-right font-serif text-lg">{t("guestsMax", { count: property.maxGuests })}</dd></div>
+              <div className="flex items-baseline justify-between gap-6 py-4"><dt className="text-sm text-muted">{t("visitDateLabel")}</dt><dd className="text-right font-serif text-lg">{format.dateTime(verification.visitDate, { dateStyle: "long" })}</dd></div>
+              <div className="flex items-baseline justify-between gap-6 py-4"><dt className="text-sm text-muted">{t("validUntilLabel")}</dt><dd className="text-right font-serif text-lg">{format.dateTime(verification.expiresAt, { dateStyle: "long" })}</dd></div>
+              {property.amenities.length ? <div className="flex items-baseline justify-between gap-6 py-4"><dt className="text-sm text-muted">{t("amenitiesLabel")}</dt><dd className="text-right font-serif text-lg">{t("amenitiesCount", { confirmed: confirmedAmenities, total: property.amenities.length })}</dd></div> : null}
+            </dl>
+          </div>
         </section>
 
-        <section aria-labelledby="area-heading" className="border-t border-border pt-7 sm:pt-8"><h2 id="area-heading" className="t-2">{t("sectionLandmarks")}</h2><p className="mt-2 max-w-[65ch] text-sm leading-relaxed text-muted">{t("landmarksNote")}</p><p className="mt-3 max-w-[65ch] text-sm leading-relaxed">{property.accessLandmarks || t("noLandmarks")}</p>{property.latitude !== null && property.longitude !== null ? <div className="mt-5"><ApproximateMap latitude={property.latitude} longitude={property.longitude}/><p className="mt-2 text-xs leading-relaxed text-muted">{t("mapDisclaimer")}</p></div> : null}</section>
-      </div>
+        {rooms.length ? <PropertyGallery rooms={rooms} /> : (
+          <section className="page-shell border-t border-border py-14 sm:py-20" aria-labelledby="no-photos"><h2 id="no-photos" className="t-2">{t("noPhotos")}</h2><p className="lede mt-3 max-w-[55ch] text-muted">{t("noPhotosDetail")}</p></section>
+        )}
 
-      <aside className="booking-summary hidden lg:block" aria-label={t("stayDetails")}><div className="surface-card p-5 xl:p-6"><p className="eyebrow">{t("priceLabel")}</p><p className="mt-2 text-3xl font-semibold tabular-nums tracking-tight">{nbsp(format.number(property.pricePerNight))} <span className="text-sm font-medium text-muted">FCFA <span aria-hidden="true">/</span> {t("perNight")}</span></p><p className="mt-1 text-xs leading-relaxed text-muted">{t("priceNote")}</p><div className="mt-5 border-t border-border pt-4"><VerificationNote verification={verification} compact/></div><p className="mt-4 text-sm leading-relaxed text-muted">{t("requestNote")}</p><Link href={target} className={buttonClassName("primary", "mt-5 w-full !min-h-12")}>{t("bookCta")}<span aria-hidden="true">→</span></Link></div></aside>
+        <section className="border-t border-border" aria-label={t("verifiedHeading")}>
+          <div className="page-shell grid gap-14 py-16 sm:py-24 lg:grid-cols-2 lg:gap-24">
+            <div className="flex flex-col gap-12">
+              <div className="flex flex-col gap-4" aria-labelledby="about-heading">
+                <h2 id="about-heading" className="t-2">{t("verifiedHeading")}</h2>
+                <p className="text-sm text-muted">{verification.visit.agent?.fullName ? `${tf("verifiedBy", { agentName: verification.visit.agent.fullName })} · ` : ""}{tf("teamVisitDate", { date: format.dateTime(verification.visitDate, { dateStyle: "medium" }) })}</p>
+                <VerificationNote verification={verification} compact />
+              </div>
+              <section aria-labelledby="amenities-heading">
+                <h2 id="amenities-heading" className="t-2">{t("sectionAmenities")}</h2>
+                <p className="mt-2 max-w-[56ch] text-sm leading-relaxed text-muted">{t("verifiedDescription")}</p>
+                {property.amenities.length ? (
+                  <ul className="mt-6 grid gap-x-8 sm:grid-cols-2">{property.amenities.map(item => (
+                    <li key={item.name} className="flex min-h-12 items-center justify-between gap-3 border-t border-border py-2.5 text-sm"><span>{item.name}</span><span className={`shrink-0 text-xs font-medium ${item.confirmed ? "text-verified" : "text-muted"}`}>{item.confirmed ? <><span aria-hidden="true">✓ </span>{t("amenityObserved")}</> : t("amenityDeclared")}</span></li>
+                  ))}</ul>
+                ) : <p className="mt-4 text-sm text-muted">{t("noAmenities")}</p>}
+              </section>
+            </div>
+            <section aria-labelledby="area-heading">
+              <h2 id="area-heading" className="t-2">{t("sectionLandmarks")}</h2>
+              <p className="mt-2 max-w-[56ch] text-sm leading-relaxed text-muted">{t("landmarksNote")}</p>
+              <p className="mt-3 max-w-[56ch] leading-relaxed">{property.accessLandmarks || t("noLandmarks")}</p>
+              {property.latitude !== null && property.longitude !== null ? <div className="mt-6"><ApproximateMap latitude={property.latitude} longitude={property.longitude} /><p className="mt-2 text-xs leading-relaxed text-muted">{t("mapDisclaimer")}</p></div> : null}
+            </section>
+          </div>
+        </section>
+      </div>
+      <BookingBar title={property.title} price={`${price} / ${t("perNight")}`} label={t("bookCta")} href={target} />
+      <SiteFooter />
     </div>
-    <div className="mobile-cta-bar fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 px-4 pt-2 backdrop-blur sm:px-6 lg:hidden"><div className="mx-auto flex max-w-2xl items-center justify-between gap-3"><div className="min-w-0"><p className="truncate text-base font-semibold tabular-nums">{nbsp(format.number(property.pricePerNight))} FCFA<span className="font-normal text-muted"> / {t("perNight")}</span></p><p className="truncate text-xs text-muted">{property.neighborhood} · {tf("badge")}</p></div><Link href={target} className={buttonClassName("primary", "!min-h-11 shrink-0 !px-5")}>{t("bookCta")}</Link></div></div>
-  </div><SiteFooter/></div>;
+  );
 }

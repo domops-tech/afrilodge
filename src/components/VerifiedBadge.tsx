@@ -13,13 +13,13 @@ export function VerifiedBadge({ verification, compact = false }: { verification:
   if (!isVerificationValid(verification)) return null;
 
   return (
-    <span className="inline-flex items-center gap-2 rounded-full bg-verified py-1 pl-2 pr-3.5 text-[.8125rem] font-semibold leading-none text-verified-foreground">
+    <span className="inline-flex items-center gap-2 bg-verified py-1.5 pl-2 pr-3 text-[.625rem] font-medium uppercase leading-none tracking-[.12em] text-verified-foreground">
       <svg viewBox="0 0 24 24" fill="none" className="size-5 shrink-0" aria-hidden="true">
         <path d="M5 22V7.5A2.5 2.5 0 0 1 7.5 5h9A2.5 2.5 0 0 1 19 7.5V22" stroke="currentColor" strokeWidth="2" />
         <path d="m8.5 14.2 2.6 2.7 4.6-5.6" stroke="var(--ocre)" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
       {t("badge")}
-      {!compact && verification.visitDate ? <span className="font-normal opacity-90">· {t("badgeVisited", { date: format.dateTime(verification.visitDate, { day: "numeric", month: "short", year: "numeric" }) })}</span> : null}
+      {!compact && verification.visitDate ? <span className="font-normal normal-case tracking-normal opacity-90">· {t("badgeVisited", { date: format.dateTime(verification.visitDate, { day: "numeric", month: "short", year: "numeric" }) })}</span> : null}
     </span>
   );
 }

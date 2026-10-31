@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { canonicalRoomLabel, mergeRoomLabels, ROOM_LABEL_MAX } from "@/lib/property/room-labels";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
@@ -39,11 +40,13 @@ export function VisitWorkflow({
   visitId,
   propertyTitle,
   announcedAmenities,
+  roomSuggestions,
   alreadyCompleted,
 }: {
   visitId: string;
   propertyTitle: string;
   announcedAmenities: string[];
+  roomSuggestions: string[];
   alreadyCompleted: boolean;
 }) {
   const t = useTranslations("field");
@@ -167,6 +170,8 @@ export function VisitWorkflow({
   }
 
   const roomPhotos = useMemo(() => files.filter((f) => f.kind === "visit-photo" && f.slot === "PIECE"), [files]);
+  const knownRooms = mergeRoomLabels(roomPhotos.map((photo) => photo.label ?? ""), roomSuggestions, t.raw("roomBase") as string[]);
+  const currentRoom = canonicalRoomLabel(roomLabel, knownRooms);
   const fixedPhotoBySlot = useMemo(() => {
     const map = new Map<PhotoSlot, DraftFile>();
     for (const f of files) {
@@ -307,15 +312,34 @@ export function VisitWorkflow({
                 </Button>
               </div>
             ))}
+            <div role="group" aria-label={t("roomPick")} className="flex flex-wrap gap-2">
+              {knownRooms.slice(0, 14).map((room) => (
+                <button
+                  key={room}
+                  type="button"
+                  aria-pressed={currentRoom === room}
+                  onClick={() => setRoomLabel(room)}
+                  className={`caps min-h-10 border px-3 transition-colors ${currentRoom === room ? "border-foreground bg-foreground text-background" : "border-border text-foreground hover:border-foreground"}`}
+                >
+                  {room}
+                </button>
+              ))}
+            </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
               <div className="flex-1">
                 <Field
                   id="roomLabel"
                   label={t("roomLabelLabel")}
                   placeholder={t("roomLabelPlaceholder")}
+                  list="room-label-options"
+                  maxLength={ROOM_LABEL_MAX}
+                  autoComplete="off"
                   value={roomLabel}
                   onChange={(e) => setRoomLabel(e.target.value)}
                 />
+                <datalist id="room-label-options">
+                  {knownRooms.map((room) => <option key={room} value={room} />)}
+                </datalist>
               </div>
               <input
                 ref={roomInputRef}
@@ -328,8 +352,7 @@ export function VisitWorkflow({
                   const file = e.target.files?.[0];
                   e.target.value = "";
                   if (file) {
-                    await captureFile(file, "PIECE", roomLabel || t("slot.PIECE"));
-                    setRoomLabel("");
+                    await captureFile(file, "PIECE", currentRoom || t("slot.PIECE"));
                   }
                 }}
               />
@@ -344,6 +367,8 @@ export function VisitWorkflow({
               </Button>
             </div>
           </div>
+
+          <p className="text-sm text-muted" aria-live="polite">{currentRoom ? t("roomNext", { room: currentRoom }) : t("roomHint")}</p>
 
           <Button disabled={!photosComplete} data-testid="photos-continue" onClick={() => setStep("amenities")}>
             {t("continue")}

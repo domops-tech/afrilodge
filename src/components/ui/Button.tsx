@@ -3,11 +3,11 @@ import { type ButtonHTMLAttributes, forwardRef } from "react";
 type Variant = "primary" | "secondary" | "ghost";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-[var(--radius-default)] px-5 py-2.5 text-[.9375rem] font-semibold transition-colors disabled:opacity-50 disabled:pointer-events-none min-h-11";
+  "inline-flex items-center justify-center gap-2 px-6 text-[0.6875rem] font-medium uppercase tracking-[.14em] transition-colors disabled:opacity-50 disabled:pointer-events-none min-h-11";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-accent text-accent-foreground hover:bg-accent-hover",
-  secondary: "bg-transparent text-foreground border border-foreground/25 hover:bg-surface-alt",
+  primary: "bg-foreground text-background hover:bg-accent",
+  secondary: "border border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background",
   ghost: "text-foreground hover:bg-surface-alt",
 };
 

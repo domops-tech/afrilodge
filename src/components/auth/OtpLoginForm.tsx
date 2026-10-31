@@ -9,6 +9,7 @@ import type { RequestOtpState, VerifyOtpState } from "@/lib/auth/login-flow";
 // Nom du compte mémorisé côté navigateur uniquement (jamais envoyé au
 // serveur) — voir la note sur `showFullName` ci-dessous.
 const FULL_NAME_STORAGE_KEY = "sejours:fullName";
+const alertClass = "border border-danger bg-danger-soft px-4 py-3 text-sm text-danger";
 
 function looksLikeEmail(value: string): boolean {
   return value.includes("@");
@@ -128,7 +129,7 @@ export function OtpLoginForm({
 
   if (step === "identifier") {
     return (
-      <form action={requestAction} className="flex w-full max-w-sm flex-col gap-4">
+      <form action={requestAction} className="flex w-full flex-col gap-5">
         <Field
           id="identifier"
           name="identifier"
@@ -136,25 +137,30 @@ export function OtpLoginForm({
           placeholder={t("identifierPlaceholder")}
           autoComplete="username"
           required
+          className="min-h-12"
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
         />
         {showEmailField && !identifierIsEmail ? (
-          <Field
-            id="email"
-            name="email"
-            label={t("emailLabel")}
-            placeholder={t("emailPlaceholder")}
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <div className="flex flex-col gap-1.5">
+            <Field
+              id="email"
+              name="email"
+              label={t("emailLabel")}
+              placeholder={t("emailPlaceholder")}
+              type="email"
+              autoComplete="email"
+              className="min-h-12"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <p className="text-xs text-muted">{t("emailHint")}</p>
+          </div>
         ) : null}
         {requestState.status === "error" ? (
-          <p className="text-sm text-danger">{t(requestErrorKey(requestState.message))}</p>
+          <p role="alert" className={alertClass}>{t(requestErrorKey(requestState.message))}</p>
         ) : null}
-        <Button type="submit" disabled={requestPending}>
+        <Button type="submit" className="!min-h-12" disabled={requestPending}>
           {identifierIsEmail ? t("sendEmailCode") : t("sendCode")}
         </Button>
       </form>
@@ -162,14 +168,11 @@ export function OtpLoginForm({
   }
 
   return (
-    <form action={verifyAction} className="flex w-full max-w-sm flex-col gap-4">
+    <form action={verifyAction} className="flex w-full flex-col gap-5">
       <input type="hidden" name="identifier" value={identifier} />
       <input type="hidden" name="email" value={email} />
       <input type="hidden" name="locale" value={locale} />
-      <p className="text-sm text-muted">{t("codeSent", { identifier })}</p>
-      {showFullName && !identifierIsEmail ? (
-        <Field id="fullName" name="fullName" label={t("fullNameLabel")} autoComplete="name" ref={fullNameRef} />
-      ) : null}
+      <p className="font-serif text-lg leading-snug">{t("codeSent", { identifier })}</p>
       <Field
         id="code"
         name="code"
@@ -178,17 +181,22 @@ export function OtpLoginForm({
         pattern="[0-9]{6}"
         maxLength={6}
         autoComplete="one-time-code"
+        autoFocus
         required
+        className="min-h-14 text-2xl tracking-[.35em] tabular-nums"
       />
-      {verifyState.status === "error" ? (
-        <p className="text-sm text-danger">{t(verifyErrorKey(verifyState.message))}</p>
+      {showFullName && !identifierIsEmail ? (
+        <Field id="fullName" name="fullName" label={t("fullNameLabel")} autoComplete="name" className="min-h-12" ref={fullNameRef} />
       ) : null}
-      <Button type="submit" disabled={verifyPending}>
+      {verifyState.status === "error" ? (
+        <p role="alert" className={alertClass}>{t(verifyErrorKey(verifyState.message))}</p>
+      ) : null}
+      <Button type="submit" className="!min-h-12" disabled={verifyPending}>
         {t("verify")}
       </Button>
-      <Button type="button" variant="secondary" onClick={() => setStep("identifier")}>
+      <button type="button" onClick={() => setStep("identifier")} className="quiet-link self-start text-sm text-foreground underline underline-offset-4">
         {t("requestAnotherCode")}
-      </Button>
+      </button>
     </form>
   );
 }

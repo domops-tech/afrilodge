@@ -1,3 +1,4 @@
+import { normalizeRoomLabel } from "@/lib/property/room-labels";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireApiRole } from "@/lib/auth/api-guard";
@@ -5,7 +6,7 @@ import { prisma } from "@/lib/db/client";
 
 const photoSchema = z.object({
   slot: z.enum(["FACADE", "ENTREE", "PIECE", "SANITAIRES", "CUISINE", "VUE", "ACCES"]),
-  label: z.string().optional(),
+  label: z.string().optional().transform((value) => (value === undefined ? undefined : normalizeRoomLabel(value) || undefined)),
   storageKey: z.string().min(1),
   takenAt: z.string(),
   latitude: z.number().optional(),

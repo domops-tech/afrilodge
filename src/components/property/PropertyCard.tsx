@@ -33,13 +33,14 @@ export async function PropertyCard({ property, photo, params = {}, priority = fa
       <Link href={target} className="property-card-link group block rounded-[var(--radius)] focus-visible:outline-offset-4">
         <div className="card-photo">
           {photo ? <PropertyImage storageKey={photo.storageKey} isDemoPlaceholder={photo.isDemoPlaceholder} alt="" width={620} height={465} priority={priority} sizes="(max-width: 374px) calc(100vw - 2rem), (max-width: 767px) calc((100vw - 3rem) / 2), (max-width: 1023px) 44vw, (max-width: 1599px) 31vw, 23vw" className="h-full w-full object-cover" /> : <div role="img" aria-label={t("photoUnavailable")} className="photo-placeholder"><span className="photo-placeholder-content"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3 3 3-4 5 6"/></svg><span className="photo-placeholder-caption">{t("photoUnavailable")}</span></span></div>}
-          {property.verification ? <span className="absolute left-3 top-3"><VerifiedBadge verification={property.verification} compact /></span> : null}
-          {property.isDemo ? <span className="absolute bottom-3 left-3 rounded-full bg-background/95 px-2.5 py-1 text-[.7rem] font-semibold text-foreground">{tc("demoListing")}</span> : null}
+          {property.verification ? <span className="absolute left-0 top-0"><VerifiedBadge verification={property.verification} compact /></span> : null}
+          {property.isDemo ? <span className="caps absolute bottom-0 left-0 bg-background/95 px-3 py-1.5 !text-[.625rem] text-foreground">{tc("demoListing")}</span> : null}
         </div>
-        <div className="mt-3.5 flex flex-col gap-1">
-          <h2 className="line-clamp-2 text-[1.0625rem] font-semibold leading-snug tracking-[-.01em] text-foreground transition-colors group-hover:text-accent">{property.title}</h2>
-          <p className="text-sm text-muted">{property.neighborhood} <span aria-hidden="true">·</span> {property.city}</p>
-          <p className="mt-1 text-sm"><span className="font-semibold tabular-nums">{nbsp(formatter.number(property.pricePerNight))} {t("perNight")}</span> <span className="text-muted">· {t("capacity", { count: property.maxGuests })}</span></p>
+        <div className="mt-4 grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-0.5">
+          <h2 className="line-clamp-1 font-serif text-[1.0625rem] leading-snug text-foreground group-hover:underline group-hover:underline-offset-4">{property.title}</h2>
+          <span className="text-right text-[0.9375rem] font-medium tabular-nums">{nbsp(formatter.number(property.pricePerNight))}</span>
+          <p className="font-serif text-[0.9375rem] text-muted">{property.neighborhood}, {property.city}</p>
+          <span className="caps text-right !text-[.625rem] text-muted">{t("perNight")}</span>
         </div>
       </Link>
     </article>

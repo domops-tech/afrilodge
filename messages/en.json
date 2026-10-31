@@ -54,7 +54,7 @@
     "identifierLabel": "Phone or email",
     "identifierPlaceholder": "+229 01 97 00 00 00 or you@example.com",
     "fullNameLabel": "Full name (first login)",
-    "emailLabel": "Email (optional — backup channel for the code)",
+    "emailLabel": "Email (optional)",
     "emailPlaceholder": "you@example.com",
     "sendEmailCode": "Send code by email",
     "emailCodeLabel": "Code received by email",
@@ -72,7 +72,18 @@
     "notRecognized": "This identifier isn't linked to any recognized account for this space. Contact your administrator.",
     "identifierTaken": "Phone or email already used for this account type.",
     "loginIntro": "Sign in to your host, field agent or administrator space.",
-    "accessByCode": "Secure sign-in with a code"
+    "accessByCode": "Secure sign-in with a code",
+    "owner": {
+      "lede": "Manage your homes, your calendar and your bookings. No password: enter your phone or your email and we send you a code. First visit? Your account is created with your number."
+    },
+    "agent": {
+      "lede": "For AyoStay agents carrying out visits. Enter the phone or email of your account: we send you a code. Accounts are created by the administrator."
+    },
+    "admin": {
+      "lede": "For the AyoStay team only. Enter the phone or email of your account: we send you a code."
+    },
+    "otherSpaces": "Do you work for AyoStay?",
+    "emailHint": "To receive the code by email if the SMS does not arrive."
   },
   "home": {
     "tagline": "A furnished home, verified on site.",
@@ -136,7 +147,7 @@
     "removePhoto": "Remove",
     "addRoomPhoto": "+ Add a room",
     "roomLabelLabel": "Room name",
-    "roomLabelPlaceholder": "e.g. Living room",
+    "roomLabelPlaceholder": "e.g. Living room or a new room",
     "continue": "Continue",
     "landmarksPlaceholder": "e.g. 200m from the main pharmacy…",
     "identityDocumentLabel": "Owner's ID document",
@@ -156,7 +167,23 @@
     "introAmenities": "Note each amenity: what the owner states and what you observe.",
     "introLandmarks": "Record landmarks that help guests find the home.",
     "introIdentity": "Check the owner's ID and proof of right to let.",
-    "introNote": "Your location and the time are recorded when the visit opens. You can work offline: everything is sent when the network returns."
+    "introNote": "Your location and the time are recorded when the visit opens. You can work offline: everything is sent when the network returns.",
+    "roomBase": [
+      "Living room",
+      "Bedroom",
+      "Bedroom 2",
+      "Bedroom 3",
+      "Dining room",
+      "Office",
+      "Balcony",
+      "Terrace",
+      "Courtyard",
+      "Hallway",
+      "Laundry room"
+    ],
+    "roomPick": "Common rooms",
+    "roomHint": "Tap a room or type a new one. Names already used are suggested.",
+    "roomNext": "The next photo will be filed under: {room}."
   },
   "admin": {
     "greeting": "Hello, {name}",
@@ -304,7 +331,27 @@
     "amenityObserved": "Observed on visit",
     "amenityDeclared": "Stated by host",
     "requestNote": "Your request is sent to the host. Your stay is confirmed after their acceptance and payment.",
-    "perNight": "night"
+    "perNight": "night",
+    "viewPhotos": "See the photo tour",
+    "capacityLabel": "Capacity",
+    "visitDateLabel": "Visit date",
+    "validUntilLabel": "Label valid until",
+    "amenitiesLabel": "Amenities",
+    "amenitiesCount": "{confirmed} observed out of {total}",
+    "gallery": {
+      "title": "The photo tour",
+      "intro": "{photos, plural, one {# photo} other {# photos}}, in the order of the visit: from the exterior to each room, kitchen and bathroom included.",
+      "start": "Start the tour",
+      "open": "Enlarge: {room}, photo {n}",
+      "viewer": "Photo viewer",
+      "close": "Close",
+      "previous": "Previous photo",
+      "next": "Next photo",
+      "counter": "{current} of {total}",
+      "rooms": "Rooms",
+      "jump": "Jump to a room",
+      "photosCount": "{count, plural, one {# photo} other {# photos}}"
+    }
   },
   "owner": {
     "newPropertyCta": "Add a property",
@@ -420,7 +467,7 @@
     },
     "arrivalAvailableOn": "Arrival confirmation will be available on {date}.",
     "myBookings": "My bookings",
-    "recoveryHint": "Find your bookings with the phone number used to book. If your session has expired, a new code lets you resume tracking your stay.",
+    "recoveryHint": "You book without an account. Enter the number you used to book: we send you a code to find your stays.",
     "recoverCta": "Find my bookings",
     "noBookings": "No bookings found for this number.",
     "requestAnotherCode": "Change phone number or resend code",
@@ -462,6 +509,119 @@
       "DISPUTED": "Report under review"
     },
     "backToBooking": "Back to the booking",
-    "paymentAmountLabel": "Amount to pay"
+    "paymentAmountLabel": "Amount to pay",
+    "statusShort": {
+      "REQUESTED": "Pending",
+      "ACCEPTED": "To pay",
+      "PAID": "Confirmed",
+      "IN_PROGRESS": "In progress",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled",
+      "DISPUTED": "Reported"
+    },
+    "rowHint": {
+      "REQUESTED": "The owner has not replied yet.",
+      "ACCEPTED": "Pay to confirm your stay.",
+      "PAID": "Stay confirmed. Stay code and access details available.",
+      "IN_PROGRESS": "You are staying here.",
+      "COMPLETED": "Stay completed.",
+      "CANCELLED": "This request was cancelled.",
+      "DISPUTED": "Your report is being reviewed."
+    },
+    "stayLength": "{nights, plural, one {# night} other {# nights}}, {guests, plural, one {# guest} other {# guests}}",
+    "bookingsCount": "{count, plural, one {# booking} other {# bookings}}",
+    "upcoming": "Upcoming",
+    "past": "Past and cancelled",
+    "emptyTitle": "No bookings yet",
+    "emptyBody": "Pick a home and your dates: your request will show up here.",
+    "browse": "See homes",
+    "changeNumber": "Use another number"
+  },
+  "legal": {
+    "navLabel": "Legal information",
+    "notice": "Legal notice",
+    "terms": "Terms of use",
+    "privacy": "Privacy",
+    "provisional": "Draft: this text must be completed and validated by legal counsel before going live.",
+    "pages": {
+      "notice": {
+        "title": "Legal notice",
+        "intro": "Information about the publisher of the AyoStay website.",
+        "sections": [
+          {
+            "title": "Publisher",
+            "body": "AyoStay is a service published by VD Technologies. [To be completed: legal form, share capital, registered office, registration number.]"
+          },
+          {
+            "title": "Publication director",
+            "body": "[To be completed.]"
+          },
+          {
+            "title": "Hosting",
+            "body": "[To be completed: name and address of the host.]"
+          },
+          {
+            "title": "Contact",
+            "body": "[To be completed: email address and phone number.]"
+          }
+        ]
+      },
+      "terms": {
+        "title": "Terms of use",
+        "intro": "Rules for using the AyoStay service.",
+        "sections": [
+          {
+            "title": "Purpose of the service",
+            "body": "AyoStay connects guests with owners of furnished homes. Every published home has been visited by the AyoStay team, and its listing shows the date of that visit."
+          },
+          {
+            "title": "Booking",
+            "body": "[To be completed: how a request works, owner acceptance, stay confirmation.]"
+          },
+          {
+            "title": "Payment and cancellation",
+            "body": "[To be completed once the payment provider and the legal framework are validated.]"
+          },
+          {
+            "title": "The “verified in person” label",
+            "body": "[To be completed: scope and limits of the label, twelve-month validity, conditions for withdrawal.]"
+          },
+          {
+            "title": "Liability",
+            "body": "[To be completed.]"
+          },
+          {
+            "title": "Governing law",
+            "body": "[To be completed.]"
+          }
+        ]
+      },
+      "privacy": {
+        "title": "Privacy",
+        "intro": "How AyoStay handles your information.",
+        "sections": [
+          {
+            "title": "Information collected",
+            "body": "To book, you provide your name and phone number; an email address is optional. This information is used to send you a sign-in code and to manage your stay. Guests do not have an account on AyoStay."
+          },
+          {
+            "title": "Session cookie",
+            "body": "The site uses a session cookie to keep you signed in while you use the service."
+          },
+          {
+            "title": "Purposes and retention",
+            "body": "[To be completed.]"
+          },
+          {
+            "title": "Your rights",
+            "body": "[To be completed: access, correction, deletion, contact.]"
+          },
+          {
+            "title": "Supervisory authority",
+            "body": "[To be completed.]"
+          }
+        ]
+      }
+    }
   }
 }

@@ -54,7 +54,7 @@
     "identifierLabel": "Téléphone ou email",
     "identifierPlaceholder": "+229 01 97 00 00 00 ou vous@exemple.com",
     "fullNameLabel": "Nom complet (première connexion)",
-    "emailLabel": "Email (facultatif — canal de secours pour le code)",
+    "emailLabel": "Email (facultatif)",
     "emailPlaceholder": "vous@exemple.com",
     "sendEmailCode": "Envoyer le code par email",
     "emailCodeLabel": "Code reçu par email",
@@ -72,7 +72,18 @@
     "notRecognized": "Cet identifiant n'est associé à aucun compte reconnu pour cet espace. Contactez votre administrateur.",
     "identifierTaken": "Téléphone ou email déjà utilisé pour ce type de compte.",
     "loginIntro": "Connectez-vous à votre espace propriétaire, agent ou administrateur.",
-    "accessByCode": "Accès sécurisé par code"
+    "accessByCode": "Accès sécurisé par code",
+    "owner": {
+      "lede": "Gérez vos logements, votre calendrier et vos réservations. Pas de mot de passe : entrez votre téléphone ou votre email, nous vous envoyons un code. Première visite ? Votre compte se crée avec votre numéro."
+    },
+    "agent": {
+      "lede": "Réservée aux agents d'AyoStay pour réaliser les visites. Entrez le téléphone ou l'email de votre compte : nous vous envoyons un code. Les comptes sont créés par l'administrateur."
+    },
+    "admin": {
+      "lede": "Réservé à l'équipe AyoStay. Entrez le téléphone ou l'email de votre compte : nous vous envoyons un code."
+    },
+    "otherSpaces": "Vous travaillez pour AyoStay ?",
+    "emailHint": "Pour recevoir le code par email si le SMS n'arrive pas."
   },
   "home": {
     "tagline": "Un logement meublé, vérifié sur place.",
@@ -136,7 +147,7 @@
     "removePhoto": "Supprimer",
     "addRoomPhoto": "+ Ajouter une pièce",
     "roomLabelLabel": "Nom de la pièce",
-    "roomLabelPlaceholder": "ex. Salon",
+    "roomLabelPlaceholder": "ex. Salon ou une pièce nouvelle",
     "continue": "Continuer",
     "landmarksPlaceholder": "ex. À 200 m de la pharmacie principale…",
     "identityDocumentLabel": "Pièce d'identité du propriétaire",
@@ -156,7 +167,24 @@
     "introAmenities": "Notez chaque équipement : ce que le propriétaire annonce et ce que vous constatez.",
     "introLandmarks": "Relevez des repères pour permettre de trouver le logement.",
     "introIdentity": "Contrôlez la pièce d'identité du propriétaire et son titre de location.",
-    "introNote": "Votre position et l'heure sont enregistrées à l'ouverture de la visite. Vous pouvez travailler sans connexion : tout est envoyé au retour du réseau."
+    "introNote": "Votre position et l'heure sont enregistrées à l'ouverture de la visite. Vous pouvez travailler sans connexion : tout est envoyé au retour du réseau.",
+    "roomBase": [
+      "Salon",
+      "Chambre",
+      "Chambre 2",
+      "Chambre 3",
+      "Séjour",
+      "Salle à manger",
+      "Bureau",
+      "Balcon",
+      "Terrasse",
+      "Cour",
+      "Couloir",
+      "Buanderie"
+    ],
+    "roomPick": "Pièces courantes",
+    "roomHint": "Touchez une pièce ou saisissez-en une nouvelle. Les noms déjà utilisés sont proposés.",
+    "roomNext": "La prochaine photo sera classée dans : {room}."
   },
   "admin": {
     "greeting": "Bonjour, {name}",
@@ -304,7 +332,27 @@
     "amenityObserved": "Constaté",
     "amenityDeclared": "Annoncé",
     "requestNote": "Votre demande est envoyée au propriétaire. Le séjour est confirmé après son acceptation et le paiement.",
-    "perNight": "nuit"
+    "perNight": "nuit",
+    "viewPhotos": "Voir la visite en photos",
+    "capacityLabel": "Capacité",
+    "visitDateLabel": "Date de la visite",
+    "validUntilLabel": "Mention valable jusqu'au",
+    "amenitiesLabel": "Équipements",
+    "amenitiesCount": "{confirmed} constatés sur {total}",
+    "gallery": {
+      "title": "La visite en photos",
+      "intro": "{photos, plural, one {# photo} other {# photos}}, dans l'ordre de la visite : de la façade aux pièces, jusqu'à la cuisine et aux sanitaires.",
+      "start": "Commencer la visite",
+      "open": "Agrandir : {room}, photo {n}",
+      "viewer": "Visionneuse de photos",
+      "close": "Fermer",
+      "previous": "Photo précédente",
+      "next": "Photo suivante",
+      "counter": "{current} sur {total}",
+      "rooms": "Pièces",
+      "jump": "Aller à une pièce",
+      "photosCount": "{count, plural, one {# photo} other {# photos}}"
+    }
   },
   "owner": {
     "newPropertyCta": "Ajouter un bien",
@@ -420,7 +468,7 @@
     },
     "arrivalAvailableOn": "La confirmation d’arrivée sera disponible le {date}.",
     "myBookings": "Mes réservations",
-    "recoveryHint": "Retrouvez vos réservations avec le numéro de téléphone utilisé lors de la demande. Si votre session a expiré, un nouveau code vous permet de reprendre le suivi.",
+    "recoveryHint": "Vous réservez sans compte. Entrez le numéro utilisé pour réserver : nous vous envoyons un code pour retrouver vos séjours.",
     "recoverCta": "Retrouver mes réservations",
     "noBookings": "Aucune réservation associée à ce numéro.",
     "requestAnotherCode": "Modifier le numéro ou renvoyer un code",
@@ -462,6 +510,119 @@
       "DISPUTED": "Signalement en cours"
     },
     "backToBooking": "Retour à la réservation",
-    "paymentAmountLabel": "Montant à payer"
+    "paymentAmountLabel": "Montant à payer",
+    "statusShort": {
+      "REQUESTED": "En attente",
+      "ACCEPTED": "À payer",
+      "PAID": "Confirmée",
+      "IN_PROGRESS": "En cours",
+      "COMPLETED": "Terminée",
+      "CANCELLED": "Annulée",
+      "DISPUTED": "Signalement"
+    },
+    "rowHint": {
+      "REQUESTED": "Le propriétaire n'a pas encore répondu.",
+      "ACCEPTED": "Payez pour confirmer votre séjour.",
+      "PAID": "Séjour confirmé. Code de séjour et accès disponibles.",
+      "IN_PROGRESS": "Vous êtes en séjour.",
+      "COMPLETED": "Séjour terminé.",
+      "CANCELLED": "Cette demande est annulée.",
+      "DISPUTED": "Votre signalement est en cours de traitement."
+    },
+    "stayLength": "{nights, plural, one {# nuit} other {# nuits}}, {guests, plural, one {# voyageur} other {# voyageurs}}",
+    "bookingsCount": "{count, plural, one {# réservation} other {# réservations}}",
+    "upcoming": "À venir",
+    "past": "Passées et annulées",
+    "emptyTitle": "Aucune réservation pour le moment",
+    "emptyBody": "Choisissez un logement et vos dates : votre demande apparaîtra ici.",
+    "browse": "Voir les logements",
+    "changeNumber": "Utiliser un autre numéro"
+  },
+  "legal": {
+    "navLabel": "Informations légales",
+    "notice": "Mentions légales",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Confidentialité",
+    "provisional": "Version provisoire : ce texte doit être complété et validé par un conseil juridique avant la mise en ligne.",
+    "pages": {
+      "notice": {
+        "title": "Mentions légales",
+        "intro": "Informations sur l'éditeur du site AyoStay.",
+        "sections": [
+          {
+            "title": "Éditeur du site",
+            "body": "AyoStay est un service édité par VD Technologies. [À compléter : forme juridique, capital, adresse du siège, numéro d'immatriculation.]"
+          },
+          {
+            "title": "Directeur de la publication",
+            "body": "[À compléter.]"
+          },
+          {
+            "title": "Hébergement",
+            "body": "[À compléter : nom et adresse de l'hébergeur.]"
+          },
+          {
+            "title": "Contact",
+            "body": "[À compléter : adresse email et téléphone.]"
+          }
+        ]
+      },
+      "terms": {
+        "title": "Conditions d'utilisation",
+        "intro": "Règles d'utilisation du service AyoStay.",
+        "sections": [
+          {
+            "title": "Objet du service",
+            "body": "AyoStay met en relation des voyageurs et des propriétaires de logements meublés. Chaque logement publié a été visité par l'équipe AyoStay, et sa fiche indique la date de cette visite."
+          },
+          {
+            "title": "Réservation",
+            "body": "[À compléter : déroulement de la demande, acceptation par le propriétaire, confirmation du séjour.]"
+          },
+          {
+            "title": "Paiement et annulation",
+            "body": "[À compléter après validation du prestataire de paiement et du cadre juridique.]"
+          },
+          {
+            "title": "La mention « vérifié sur place »",
+            "body": "[À compléter : portée et limites de la mention, durée de validité de douze mois, conditions de retrait.]"
+          },
+          {
+            "title": "Responsabilités",
+            "body": "[À compléter.]"
+          },
+          {
+            "title": "Droit applicable",
+            "body": "[À compléter.]"
+          }
+        ]
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "intro": "Comment AyoStay traite vos informations.",
+        "sections": [
+          {
+            "title": "Informations collectées",
+            "body": "Pour réserver, vous indiquez votre nom et votre numéro de téléphone ; l'adresse email est facultative. Ces informations servent à vous envoyer un code de connexion et à gérer votre séjour. Le voyageur n'a pas de compte sur AyoStay."
+          },
+          {
+            "title": "Cookie de session",
+            "body": "Le site utilise un cookie de session pour vous maintenir connecté, le temps de votre séjour sur le service."
+          },
+          {
+            "title": "Finalités et durée de conservation",
+            "body": "[À compléter.]"
+          },
+          {
+            "title": "Vos droits",
+            "body": "[À compléter : accès, rectification, suppression, contact.]"
+          },
+          {
+            "title": "Autorité de contrôle",
+            "body": "[À compléter.]"
+          }
+        ]
+      }
+    }
   }
 }
