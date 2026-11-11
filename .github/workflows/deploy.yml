@@ -1,49 +1,40 @@
-# Déploiement en production — dérivé du gabarit vd-platform
-# (templates/ci/deploy.yml). Se déclenche après le succès du workflow CI
-# existant (ci.yml, name: CI), construit l'image en CI (jamais sur le
-# serveur — un `next build` peut dépasser 2 Go de pic sur une machine de
-# 3,7 Go qui sert déjà d'autres projets), la pousse sur GHCR, puis demande
-# au serveur de la tirer et de l'appliquer.
+# Déploiement — develop -> staging (test.ayostay.com), main -> production
+# (ayostay.com, après approbation : Settings > Environments > production >
+# Required reviewers). Se déclenche une fois le workflow "CI" réussi.
 #
-# Secrets de dépôt à créer avant le premier déclenchement (Settings →
-# Secrets and variables → Actions) :
-#   DEPLOY_SSH_KEY   clé privée dédiée au déploiement (pas une clé
-#                    personnelle), dont la publique est ajoutée à
-#                    authorized_keys du compte de déploiement sur le
-#                    serveur.
-#   DEPLOY_HOST      62.238.36.27
-#   DEPLOY_USER      vincent
+# Secrets PAR environnement GitHub (staging et production) :
+#   DEPLOY_HOST (91.90.83.31 | 91.90.83.30), DEPLOY_USER (= deploy), DEPLOY_SSH_KEY.
+# Variable PAR environnement : PUBLIC_HOST (test.ayostay.com | ayostay.com).
 #
-# Le serveur doit pouvoir tirer l'image une fois avant le premier
-# déploiement :
-#   echo "$TOKEN" | docker login ghcr.io -u <compte GitHub> --password-stdin
-# avec un token à portée `read:packages` seulement.
-#
-# Tant que ces secrets ne sont pas configurés, ce workflow échoue à l'étape
-# SSH sans effet sur le site (rien n'est encore déployé) — la construction
-# et la publication sur GHCR, elles, réussissent indépendamment.
-
+# L'image est construite EN CI, une fois par environnement : NEXT_PUBLIC_IMAGES_CDN_URL
+# est figée au build (Next.js), donc une image de staging ne peut pas être
+# promue telle quelle en production. Le serveur ne fait que `pull`.
+# Prérequis serveur, une fois : docker login ghcr.io (token read:packages).
 name: Deploy
 
 on:
   workflow_run:
     workflows: ["CI"]
-    branches: [main]
+    branches: [develop, main]
     types: [completed]
 
 jobs:
-  build-and-push:
+  deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    environment: ${{ github.event.workflow_run.head_branch == 'main' && 'production' || 'staging' }}
     permissions:
       contents: read
       packages: write
-    outputs:
-      sha: ${{ steps.sha.outputs.short }}
     steps:
       - uses: actions/checkout@v4
-      - id: sha
-        run: echo "short=${GITHUB_SHA::12}" >> "$GITHUB_OUTPUT"
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}   # le commit testé, pas la tête de main
+      - id: v
+        run: |
+          sha="${{ github.event.workflow_run.head_sha }}"
+          env=${{ github.event.workflow_run.head_branch == 'main' && 'prod' || 'staging' }}
+          echo "tag=${sha::12}-$env" >> "$GITHUB_OUTPUT"
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -54,18 +45,11 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:${{ steps.sha.outputs.short }}
-            ghcr.io/${{ github.repository }}:main
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ghcr.io/${{ github.repository }}:${{ steps.v.outputs.tag }}
+          cache-from: type=gha,scope=${{ steps.v.outputs.tag }}
+          cache-to: type=gha,mode=max,scope=${{ steps.v.outputs.tag }}
           build-args: |
-            NEXT_PUBLIC_IMAGES_CDN_URL=https://afrilodge.vd-technologies.com/media
-
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    steps:
+            NEXT_PUBLIC_IMAGES_CDN_URL=https://${{ vars.PUBLIC_HOST }}/media
       - uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
@@ -73,27 +57,20 @@ jobs:
           ssh -o StrictHostKeyChecking=accept-new \
             "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" '
             set -euo pipefail
-            cd /srv/apps/afrilodge
-            # IMAGE_TAG doit vivre DANS .env, pas dans un fichier à part :
-            # docker compose ne lit que .env (nom exact) pour interpoler
-            # ${IMAGE_TAG} du compose.yml.
+            cd /srv/apps/ayostay
+            # IMAGE_TAG vit dans .env : seul fichier lu par compose pour interpoler.
             grep -v "^IMAGE_TAG=" .env > .env.tmp || true
-            echo "IMAGE_TAG=${{ needs.build-and-push.outputs.sha }}" >> .env.tmp
+            echo "IMAGE_TAG=${{ steps.v.outputs.tag }}" >> .env.tmp
             mv .env.tmp .env
-            docker compose pull
+            docker compose pull app migrate
             docker compose run --rm migrate
-            docker compose up -d app
+            docker compose up -d app          # db et minio ne sont jamais recréés
             for i in $(seq 1 20); do
-              status=$(docker inspect -f "{{.State.Health.Status}}" afrilodge-app 2>/dev/null || echo starting)
-              [ "$status" = "healthy" ] && exit 0
+              [ "$(docker inspect -f "{{.State.Health.Status}}" ayostay-app 2>/dev/null || echo starting)" = healthy ] && exit 0
               sleep 3
             done
-            echo "le conteneur n'\''est jamais devenu healthy — voir docker compose logs app" >&2
-            exit 1
+            echo "ayostay-app jamais healthy" >&2; docker compose logs --tail=50 app >&2; exit 1
           '
 
-# Retour arrière (aucun rebuild, quelques secondes) :
-#   ssh vincent@62.238.36.27 'cd /srv/apps/afrilodge && \
-#     grep -v "^IMAGE_TAG=" .env > .env.tmp && \
-#     echo "IMAGE_TAG=<sha précédent>" >> .env.tmp && mv .env.tmp .env && \
-#     docker compose up -d app'
+# Retour arrière (sans rebuild), sur le tag précédent visible dans GHCR :
+#   ssh deploy@<hôte> 'cd /srv/apps/ayostay && sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=<tag précédent>/" .env && docker compose up -d app'
